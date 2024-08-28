@@ -86,7 +86,6 @@ dotfiles:
 uservariables:
   clickup_token: ClickUp Token
   clickup_team: ClickUp Team ID
-  gitlab_token: Gitlab Token
 profiles:
   mac:
     variables:
