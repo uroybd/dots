@@ -1,0 +1,107 @@
+config:
+  backup: true
+  banner: true
+  create: true
+  dotpath: dotfiles
+  keepdot: false
+  link_dotfile_default: nolink
+  link_on_import: nolink
+  longkey: false
+  import_variables:
+  - uservariables.yaml:optional
+  impignore:
+  - '*/known_hosts*'
+actions:
+  pre:
+    install_pkg: '{{@@ pkg_installer @@}} {0}'
+    clone_or_update_nu_scripts: mkdir -p ~/.nu/contrib; bash -c "git -C ~/.nu/contrib/nu_scripts
+      pull || git clone https://github.com/nushell/nu_scripts.git ~/.nu/contrib/nu_scripts"
+  post:
+    brew_restore: brew tap homebrew/bundle; brew bundle --file=~/Brewfile
+dotfiles:
+  f_gitconfig:
+    src: gitconfig
+    dst: ~/.gitconfig
+  f_gitconfig-official:
+    src: gitconfig-official
+    dst: ~/.gitconfig-official
+  f_gitconfig-personal:
+    src: gitconfig-personal
+    dst: ~/.gitconfig-personal
+  f_nu_env.nu:
+    src: Library/Application Support/nushell/env.nu
+    dst: ~/Library/Application Support/nushell/env.nu
+    actions:
+    - install_pkg "nu"
+  f_nu_config.nu:
+    src: Library/Application Support/nushell/config.nu
+    dst: ~/Library/Application Support/nushell/config.nu
+    actions:
+    - clone_or_update_nu_scripts
+  f_starship_init.nu:
+    src: cache/starship/init.nu
+    dst: ~/.cache/starship/init.nu
+    actions:
+    - install_pkg "starship"
+  f_atuin_init.nu:
+    src: local/share/atuin/init.nu
+    dst: ~/.local/share/atuin/init.nu
+    actions:
+    - install_pkg "atuin"
+  d_nvim:
+    src: config/nvim
+    dst: ~/.config/nvim
+    actions:
+    - install_pkg "neovim go"
+  d_ssh:
+    src: ssh
+    dst: ~/.ssh
+    chmod: preserve
+    upignore:
+    - '*/known_hosts*'
+    - "*/.gitignore"
+    - "*/.git*"
+    cmpignore:
+    - '*/known_hosts*'
+    - "*/.gitignore"
+    - "*/.git*"
+    instignore:
+    - '*/known_hosts*'
+    - "*/.gitignore"
+    - "*/.git*"
+  f_tmux.conf:
+    src: tmux.conf
+    dst: ~/.tmux.conf
+    actions:
+    - install_pkg "tmux"
+  d_fonts:
+    src: Library/Fonts
+    dst: '{{@@ font_dir @@}}'
+    chmod: '744'
+  f_brewfile:
+    src: Brewfile
+    dst: ~/Brewfile
+    actions:
+      - brew_restore
+uservariables:
+  clickup_token: ClickUp Token
+  clickup_team: ClickUp Team ID
+  gitlab_token: Gitlab Token
+profiles:
+  mac:
+    variables:
+      font_dir: ~/Library/Fonts
+      pkg_installer: brew install
+    dotfiles:
+    - f_gitconfig
+    - f_gitconfig-official
+    - f_gitconfig-personal
+    - f_nu_env.nu
+    - f_nu_config.nu
+    - f_starship_init.nu
+    - f_atuin_init.nu
+    - d_nvim
+    - d_ssh
+    - f_tmux.conf
+    - d_fonts
+    - f_brewfile

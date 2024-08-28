@@ -1,0 +1,32 @@
+[user]
+	name = Utsob Roy
+	email = roy@utsob.me
+
+[core]
+	sshCommand = ssh -i ~/.ssh/id_ed25519
+	editor = nvim
+
+[includeIf "gitdir:~/Repos/COdesign/**"]
+	path = ~/.gitconfig-official
+
+[includeIf "gitdir:/Volume/Repos/COdesign/**"]
+	path = ~/.gitconfig-official
+
+[push]
+	followTags = true
+
+[diff]
+    tool = default-difftool
+[difftool "default-difftool"]
+    cmd = code --wait --diff $LOCAL $REMOTE
+[merge]
+  tool = code
+[mergetool "code"]
+  cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
+[init]
+	defaultBranch = main
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process

@@ -1,0 +1,5 @@
+[user]
+    email = roy@co.design
+
+[core]
+    sshCommand = ssh -i ~/.ssh/id_ed25519_official

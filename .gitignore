@@ -1,0 +1,49 @@
+uservariables.yaml
+# Compiled Lua sources
+dotifiles/config/nvim/luac.out
+
+# luarocks build files
+dotifiles/config/nvim/*.src.rock
+dotifiles/config/nvim/*.zip
+dotifiles/config/nvim/*.tar.gz
+
+# Object files
+dotifiles/config/nvim/*.o
+dotifiles/config/nvim/*.os
+dotifiles/config/nvim/*.ko
+dotifiles/config/nvim/*.obj
+dotifiles/config/nvim/*.elf
+
+# Precompiled Headers
+dotifiles/config/nvim/*.gch
+dotifiles/config/nvim/*.pch
+
+# Libraries
+dotifiles/config/nvim/*.lib
+dotifiles/config/nvim/*.a
+dotifiles/config/nvim/*.la
+dotifiles/config/nvim/*.lo
+dotifiles/config/nvim/*.def
+dotifiles/config/nvim/*.exp
+
+# Shared objects (inc. Windows DLLs)
+dotifiles/config/nvim/*.dll
+dotifiles/config/nvim/*.so
+dotifiles/config/nvim/*.so.*
+dotifiles/config/nvim/*.dylib
+
+# Executables
+dotifiles/config/nvim/*.exe
+dotifiles/config/nvim/*.out
+dotifiles/config/nvim/*.app
+dotifiles/config/nvim/*.i*86
+dotifiles/config/nvim/*.x86_64
+*dotifiles/config/nvim/.hex
+
+
+plugin/packer_compiled.lua
+dotifiles/config/nvim/java-debug/
+dotifiles/config/nvim/vscode-java-test/
+dotifiles/config/nvim/lazy-lock.json
+dotdrop.sh
+dotfiles/ssh/known_hosts*
