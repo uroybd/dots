@@ -39,7 +39,15 @@ function M.config()
         "filetype",
       },
       lualine_y = { "searchcount" },
-      lualine_z = { "selectioncount", "location", "progress" },
+      lualine_z = {
+        "selectioncount",
+        -- {
+        --   require("arrow.statusline").text_for_statusline_with_icons,
+        --   cond = require("arrow.statusline").is_on_arrow_file,
+        -- },
+        "location",
+        "progress",
+      },
     },
     extensions = { "quickfix", "man", "fugitive" },
   }
