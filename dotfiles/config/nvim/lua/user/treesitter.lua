@@ -2,6 +2,7 @@ local M = {
   "nvim-treesitter/nvim-treesitter",
   event = { "BufReadPost", "BufNewFile" },
   build = ":TSUpdate",
+  branch = "master",
   dependencies = { "nvim-treesitter/nvim-treesitter-textobjects", { "nushell/tree-sitter-nu" } },
 }
 
@@ -33,7 +34,6 @@ function M.config()
       "regex",
       "sql",
       "ssh_config",
-      "tmux",
       "xml",
       "graphql",
       "kdl",
