@@ -10,7 +10,7 @@ local M = {
 function M.config()
   local wk = require "which-key"
   wk.add {
-    { "<leader>b", "<cmd>Telescope buffers previewer=false<cr>", desc = "Buffers", icon = "" },
+    { "<leader>bb", "<cmd>Telescope buffers previewer=false<cr>", desc = "Buffers", icon = "" },
     { "<leader>gC", "<cmd>Telescope git_branches<cr>", desc = "Checkout branch", icon = "󱓏" },
     { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find files", icon = "󰈞" },
     { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help", icon = "󰞋" },
