@@ -59,16 +59,16 @@ dotfiles:
     chmod: preserve
     upignore:
     - '*/known_hosts*'
-    - "*/.gitignore"
-    - "*/.git*"
+    - '*/.gitignore'
+    - '*/.git*'
     cmpignore:
     - '*/known_hosts*'
-    - "*/.gitignore"
-    - "*/.git*"
+    - '*/.gitignore'
+    - '*/.git*'
     instignore:
     - '*/known_hosts*'
-    - "*/.gitignore"
-    - "*/.git*"
+    - '*/.gitignore'
+    - '*/.git*'
   f_tmux.conf:
     src: tmux.conf
     dst: ~/.tmux.conf
@@ -82,7 +82,10 @@ dotfiles:
     src: Brewfile
     dst: ~/Brewfile
     actions:
-      - brew_restore
+    - brew_restore
+  f_com.googlecode.iterm2.plist:
+    src: config/iterm2/com.googlecode.iterm2.plist
+    dst: ~/.config/iterm2/com.googlecode.iterm2.plist
 uservariables:
   clickup_token: ClickUp Token
   clickup_team: ClickUp Team ID
@@ -104,3 +107,4 @@ profiles:
     - f_tmux.conf
     - d_fonts
     - f_brewfile
+    - f_com.googlecode.iterm2.plist
