@@ -1,7 +1,6 @@
 local M = {
   "nvim-lualine/lualine.nvim",
   dependencies = {
-    "AndreM222/copilot-lualine",
   },
 }
 
@@ -35,7 +34,6 @@ function M.config()
           cond = require("noice").api.statusline.mode.has,
           color = { fg = "#DC8A78" },
         },
-        "copilot",
         "filetype",
       },
       lualine_y = { "searchcount" },
