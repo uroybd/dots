@@ -46,7 +46,7 @@ function M.config()
   }
 
   local mappings = {
-    { "<leader>T", group = "Treesitter" },
+    { "<leader>T", group = "Tasks" },
     { "<leader>a", group = "Tab" },
     { "<leader>aN", "<cmd>tabnew %<cr>", desc = "New Tab" },
     { "<leader>ah", "<cmd>-tabmove<cr>", desc = "Move Left" },
