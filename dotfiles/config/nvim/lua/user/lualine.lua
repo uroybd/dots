@@ -26,6 +26,7 @@ function M.config()
           },
         },
         "diagnostics",
+        "overseer",
       },
       lualine_c = { { "filename", path = 4 } },
       lualine_x = {
