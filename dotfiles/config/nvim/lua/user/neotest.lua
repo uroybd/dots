@@ -37,9 +37,11 @@ function M.config()
           filter_dir = function(name, rel_path, root)
             return name ~= "node_modules"
           end,
+
+        ignore_file_types = { "python", "vim", "lua", "rust" },
       },
       require "neotest-vim-test" {
-        ignore_file_types = { "python", "vim", "lua", "javascript", "typescript" },
+        ignore_file_types = { "python", "vim", "lua", "javascript", "typescript", "rust" },
       },
     },
   }
