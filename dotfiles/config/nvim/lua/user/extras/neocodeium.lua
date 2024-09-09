@@ -5,7 +5,12 @@ local M = {
 
 
 function M.config()
-  require('neocodeium').setup()
+  require('neocodeium').setup({
+    filetypes =  {
+        TelescopePrompt = false,
+        ["dap-repl"] = false,
+    }
+  })
   
   vim.keymap.set("i", "<c-l>", function() require('neocodeium').accept() end)
   vim.keymap.set("i", "<c-j>", function() require("neocodeium").cycle_or_complete()end)
