@@ -43,6 +43,8 @@ local M = {
         "mattn/emmet-vim",
       },
     },
+    {'mistweaverco/kulala-cmp-graphql.nvim', opts = {},
+            ft = "http"}
   },
 }
 
@@ -139,7 +141,9 @@ function M.config()
       end,
     },
     sources = {
-      { name = "copilot" },
+    {name = "kulala-cmp-graphql", filetypes = {
+        "http"
+      } },
       { name = "nvim_lsp" },
       { name = "luasnip" },
       {
@@ -184,6 +188,14 @@ function M.config()
       ghost_text = false,
     },
   }
+
+  -- cmp.setup.filetype("http", {
+  --   sources = cmp.config.sources({
+  --     { name = "kulala-cmp-graphql" },
+  --   }, {
+  --     { name = "buffer" },
+  --   }),
+  -- })
 end
 
 return M

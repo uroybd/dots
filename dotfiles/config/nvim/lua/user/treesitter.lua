@@ -18,6 +18,7 @@ function M.config()
       "rust",
       "html",
       "htmldjango",
+      "http",
       "javascript",
       "css",
       "typescript",
