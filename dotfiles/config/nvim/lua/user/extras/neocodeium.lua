@@ -9,7 +9,7 @@ function M.config()
     filetypes =  {
         TelescopePrompt = false,
         ["dap-repl"] = false,
-    }
+    },
   })
   
   vim.keymap.set("i", "<c-l>", function() require('neocodeium').accept() end)
