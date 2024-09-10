@@ -189,13 +189,6 @@ function M.config()
     },
   }
 
-  -- cmp.setup.filetype("http", {
-  --   sources = cmp.config.sources({
-  --     { name = "kulala-cmp-graphql" },
-  --   }, {
-  --     { name = "buffer" },
-  --   }),
-  -- })
 end
 
 return M

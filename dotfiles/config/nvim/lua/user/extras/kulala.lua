@@ -5,7 +5,10 @@ local M = {
 
 function M.config()
   local kl = require("kulala");
-  kl.setup()
+  kl.setup({
+    winbar = true,
+    default_winbar_panes = { "body", "headers", "headers_body", "script_output" },
+  })
   
   vim.filetype.add({
     extension = {
