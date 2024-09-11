@@ -17,7 +17,7 @@ function M.config()
     format_on_save = {
       -- These options will be passed to conform.format()
       lsp_format = "fallback",
-      timeout_ms = 1000,
+      timeout_ms = 500,
     },
   }
 end
