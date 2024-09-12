@@ -39,7 +39,7 @@ function M.config()
       "graphql",
       "kdl",
     },
-    highlight = { enable = true },
+    highlight = { enable = true, disable = { "oil" } },
     indent = { enable = true },
     textobjects = {
       select = {
