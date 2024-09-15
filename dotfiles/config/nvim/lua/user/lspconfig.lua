@@ -2,10 +2,7 @@ local M = {
   "neovim/nvim-lspconfig",
   event = { "BufReadPre", "BufNewFile" },
   dependencies = {
-    {
-      "folke/neodev.nvim",
-      "nvimdev/lspsaga.nvim",
-    },
+    { { "folke/lazydev.nvim", ft = "lua" }, "nvimdev/lspsaga.nvim" },
   },
 }
 
@@ -121,7 +118,7 @@ function M.config()
     end
 
     if server == "lua_ls" then
-      require("neodev").setup {}
+      require("lazydev").setup {}
     end
 
     lspconfig[server].setup(opts)

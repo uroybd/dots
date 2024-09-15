@@ -43,8 +43,7 @@ local M = {
         "mattn/emmet-vim",
       },
     },
-    {'mistweaverco/kulala-cmp-graphql.nvim', opts = {},
-            ft = "http"}
+    { "mistweaverco/kulala-cmp-graphql.nvim", opts = {}, ft = "http" },
   },
 }
 
@@ -141,8 +140,8 @@ function M.config()
       end,
     },
     sources = {
-    {name = "kulala-cmp-graphql", filetypes = {
-        "http"
+      { name = "kulala-cmp-graphql", filetypes = {
+        "http",
       } },
       { name = "nvim_lsp" },
       { name = "luasnip" },
@@ -170,6 +169,10 @@ function M.config()
       { name = "path" },
       { name = "calc" },
       { name = "emoji" },
+      {
+        name = "lazydev",
+        group_index = 0, -- set group index to 0 to skip loading LuaLS completions
+      },
     },
     confirm_opts = {
       behavior = cmp.ConfirmBehavior.Replace,
@@ -188,7 +191,6 @@ function M.config()
       ghost_text = false,
     },
   }
-
 end
 
 return M
