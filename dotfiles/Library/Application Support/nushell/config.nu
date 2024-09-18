@@ -855,3 +855,31 @@ def tnvim [] {
   tmux select-pane -t 1
   nvim
 }
+
+# This function will take the argument as commit message and commit it first to the sub repositories, push them, and then commit it to the main repository
+def dotcommit [...msg] {
+  # concat args to create commit message
+  let commit_message = ($msg | str join " ")
+  print "Commiting in neovim submodule..."
+  cd ./dotfiles/config/nvim/
+  git add *
+  if (git status --porcelain | length) > 0 {
+  git commit -m $commit_message
+  git push 
+  }
+  cd ../../../
+  print "Commiting in ssh submodule..."
+  cd ./dotfiles/ssh/
+  git add *
+  if (git status --porcelain | length) > 0 {
+  git commit -m $commit_message
+  git push 
+  }
+  cd ../../
+  print "Commiting in dotfiles..."
+  git add *
+  if (git status --porcelain | length) > 0 {
+  git commit -m $commit_message
+  git push 
+  }
+}
