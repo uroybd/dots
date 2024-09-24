@@ -7,8 +7,6 @@ config:
   link_dotfile_default: nolink
   link_on_import: nolink
   longkey: false
-  import_variables:
-  - uservariables.yaml:optional
   impignore:
   - '*/known_hosts*'
 actions:
@@ -96,9 +94,6 @@ dotfiles:
   f_com.googlecode.iterm2.plist:
     src: config/iterm2/com.googlecode.iterm2.plist
     dst: ~/.config/iterm2/com.googlecode.iterm2.plist
-uservariables:
-  clickup_token: ClickUp Token
-  clickup_team: ClickUp Team ID
 profiles:
   mac:
     variables:

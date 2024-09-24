@@ -101,8 +101,6 @@ $env.NU_PLUGIN_DIRS = [
 $env.BUN_INSTALL = "{{@@ env['HOME'] @@}}/.bun"
 $env.EDITOR = "nvim"
 
-$env.CLICK_UP_TOKEN = "{{@@ clickup_token @@}}"
-$env.CLICK_UP_TEAM = "{{@@ clickup_team @@}}"
 
 # To add entries to PATH (on Windows you might use Path), you can use the following pattern:
 $env.PATH = ($env.PATH | split row (char esep) | prepend '/usr/local/bin' | prepend '/opt/homebrew/bin' | prepend
