@@ -804,6 +804,50 @@ def cbr2cbz [arg] {
 }
 
 
+def get_cl_tasks [] {
+  let USER_ID = ($env.CLICK_UP_TOKEN | split row "_" | get 1)
+  let tasks = (http get --raw --headers [Authorization $env.CLICK_UP_TOKEN] $"https://api.clickup.com/api/v2/team/($env.CLICK_UP_TEAM)/task?substasks=true&statuses[]=to%20do&statuses[]=in%20progress&assignees[]=($USER_ID)" | from json | get tasks | each {|t| {id: $t.id, name: $"($t.name) [($t.project.name)]"}})
+  return $tasks
+}
+
+
+def cltm [] {
+  let existing = (http get --raw --headers [Authorization $env.CLICK_UP_TOKEN] $"https://api.clickup.com/api/v2/team/($env.CLICK_UP_TEAM)/time_entries/current" | from json | get data)
+  if ($existing != null) {
+    if ($existing.task == null) {
+      print "Stopping timer"
+    } else {
+      print $"A timer is already running for the task ($existing.task.name)"
+    }
+    let should_stop = (["yes", "no"] | input list "Do you want to stop the timer?")
+    if $should_stop == "yes" {
+      print "Stopping the timer..."
+      http post --raw --content-type application/json --headers [Authorization $env.CLICK_UP_TOKEN] $"https://api.clickup.com/api/v2/team/($env.CLICK_UP_TEAM)/time_entries/stop" {}
+    }
+    return
+  }
+  let current_branch = (git branch --show-current)
+  print $"Current Branch: $current_branch"
+  mut task_id = ""
+  # Check if branch name starts with 'CU-'
+  if ($current_branch | str starts-with "CU-") {
+    $task_id = ($current_branch | split row "_" | get 0 | split row "-" | get 1)
+    let change_cond = (["no", "yes"] | input list $"Task ID Detected: ($task_id), Change?")
+    if $change_cond == "yes" {
+      let tasks = (get_cl_tasks)
+      let selected_task = ($tasks | input list -d name "Enter your Task ID: ")
+      $task_id = $selected_task.id
+    }
+  } else {
+    let tasks = (get_cl_tasks)
+    let selected_task = ($tasks | input list -d name "Enter your Task ID: ")
+    $task_id = $selected_task.id
+  }
+  print $"Starting ClickUp Timer of ($task_id)..."
+  let url = $"https://api.clickup.com/api/v2/team/($env.CLICK_UP_TEAM)/time_entries/start"
+  http post --raw --content-type application/json --headers [Authorization $env.CLICK_UP_TOKEN] $url { "tid": $task_id, billable: false }
+}
+
 def tnvim [] {
   tmux split-window -v -l 30%
   tmux split-window -h
