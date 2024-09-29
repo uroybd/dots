@@ -96,9 +96,13 @@ dotfiles:
   d_alacritty:
     src: config/alacritty
     dst: ~/.config/alacritty
+    actions:
+    - install_pkg "alacritty"
   d_aerospace:
     src: config/aerospace
     dst: ~/.config/aerospace
+    actions:
+    - install_pkg "--cask nikitabobko/tap/aerospace"
 profiles:
   mac:
     variables:
