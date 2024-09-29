@@ -12,8 +12,10 @@ config:
 actions:
   pre:
     install_pkg: '{{@@ pkg_installer @@}} {0}'
-    clone_or_update_nu_scripts: mkdir -p ~/.nu/contrib; bash -c "git -C ~/.nu/contrib/nu_scripts pull || git clone https://github.com/nushell/nu_scripts.git ~/.nu/contrib/nu_scripts"
-    clone_or_update_tpm: mkdir -p ~/.tmux/plugins; bash -c "git -C ~/.tmux/plugins/tpm || git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm"
+    clone_or_update_nu_scripts: mkdir -p ~/.nu/contrib; bash -c "git -C ~/.nu/contrib/nu_scripts
+      pull || git clone https://github.com/nushell/nu_scripts.git ~/.nu/contrib/nu_scripts"
+    clone_or_update_tpm: mkdir -p ~/.tmux/plugins; bash -c "git -C ~/.tmux/plugins/tpm
+      || git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm"
   post:
     brew_restore: brew tap homebrew/bundle; brew bundle --file=~/Brewfile
 dotfiles:
@@ -91,9 +93,12 @@ dotfiles:
     dst: ~/Brewfile
     actions:
     - brew_restore
-  f_com.googlecode.iterm2.plist:
-    src: config/iterm2/com.googlecode.iterm2.plist
-    dst: ~/.config/iterm2/com.googlecode.iterm2.plist
+  d_alacritty:
+    src: config/alacritty
+    dst: ~/.config/alacritty
+  d_aerospace:
+    src: config/aerospace
+    dst: ~/.config/aerospace
 profiles:
   mac:
     variables:
@@ -112,4 +117,5 @@ profiles:
     - f_tmux.conf
     - d_fonts
     - f_brewfile
-    - f_com.googlecode.iterm2.plist
+    - d_alacritty
+    - d_aerospace
