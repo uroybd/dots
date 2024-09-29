@@ -88,11 +88,6 @@ dotfiles:
     src: Library/Fonts
     dst: '{{@@ font_dir @@}}'
     chmod: '744'
-  f_brewfile:
-    src: Brewfile
-    dst: ~/Brewfile
-    actions:
-    - brew_restore
   d_alacritty:
     src: config/alacritty
     dst: ~/.config/alacritty
@@ -120,6 +115,5 @@ profiles:
     - d_nvim
     - f_tmux.conf
     - d_fonts
-    - f_brewfile
     - d_alacritty
     - d_aerospace
