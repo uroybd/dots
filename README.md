@@ -9,7 +9,7 @@ This dotfiles are maintained by [Dotdrop](https://dotdrop.readthedocs.io/en/late
 To start using, clone the repository recursively:
 
 ```sh
-git clone --recursive https://github.com/uroybd/dotfiles.git
+git clone --recursive https://github.com/uroybd/dots.git
 ```
 
 Then run dotdrop install:
