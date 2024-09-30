@@ -14,7 +14,7 @@ actions:
     install_pkg: '{{@@ pkg_installer @@}} {0}'
     clone_or_update_nu_scripts: mkdir -p ~/.nu/contrib; bash -c "git -C ~/.nu/contrib/nu_scripts
       pull || git clone https://github.com/nushell/nu_scripts.git ~/.nu/contrib/nu_scripts"
-    clone_or_update_tpm: mkdir -p ~/.tmux/plugins; bash -c "git -C ~/.tmux/plugins/tpm
+    clone_or_update_tpm: mkdir -p ~/.tmux/plugins; bash -c "git -C ~/.tmux/plugins/tpm pull
       || git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm"
   post:
     brew_restore: brew tap homebrew/bundle; brew bundle --file=~/Brewfile
