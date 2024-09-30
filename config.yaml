@@ -16,6 +16,8 @@ actions:
       pull || git clone https://github.com/nushell/nu_scripts.git ~/.nu/contrib/nu_scripts"
     clone_or_update_tpm: mkdir -p ~/.tmux/plugins; bash -c "git -C ~/.tmux/plugins/tpm pull
       || git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm"
+    clone_or_update_catppuccin_tmux: mkdir -p ~/.tmux/plugins; bash -c "git -C ~/.tmux/plugins/catppuccin pull
+      || git clone https://github.com/catppuccin/tmux.git ~/.tmux/plugins/catppuccin"
   post:
     brew_restore: brew tap homebrew/bundle; brew bundle --file=~/Brewfile
 dotfiles:
@@ -84,6 +86,7 @@ dotfiles:
     actions:
     - install_pkg "tmux"
     - clone_or_update_tpm
+    - clone_or_update_catppuccin_tmux
   d_fonts:
     src: Library/Fonts
     dst: '{{@@ font_dir @@}}'
