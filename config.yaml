@@ -70,7 +70,7 @@ dotfiles:
     src: config/nvim
     dst: ~/.config/nvim
     actions:
-    - install_pkg "neovim go gh"
+    - install_pkg "neovim go gh delve"
     upignore:
     - '*/.gitignore'
     - '*/.git*'
