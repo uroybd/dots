@@ -14,10 +14,10 @@ actions:
     install_pkg: '{{@@ pkg_installer @@}} {0}'
     clone_or_update_nu_scripts: mkdir -p ~/.nu/contrib; bash -c "git -C ~/.nu/contrib/nu_scripts
       pull || git clone https://github.com/nushell/nu_scripts.git ~/.nu/contrib/nu_scripts"
-    clone_or_update_tpm: mkdir -p ~/.tmux/plugins; bash -c "git -C ~/.tmux/plugins/tpm pull
-      || git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm"
-    clone_or_update_catppuccin_tmux: mkdir -p ~/.tmux/plugins; bash -c "git -C ~/.tmux/plugins/catppuccin pull
-      || git clone https://github.com/catppuccin/tmux.git ~/.tmux/plugins/catppuccin"
+    clone_or_update_tpm: mkdir -p ~/.tmux/plugins; bash -c "git -C ~/.tmux/plugins/tpm
+      pull || git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm"
+    clone_or_update_catppuccin_tmux: mkdir -p ~/.tmux/plugins; bash -c "git -C ~/.tmux/plugins/catppuccin
+      pull || git clone https://github.com/catppuccin/tmux.git ~/.tmux/plugins/catppuccin"
   post:
     brew_restore: brew tap homebrew/bundle; brew bundle --file=~/Brewfile
 dotfiles:
@@ -101,6 +101,11 @@ dotfiles:
     dst: ~/.config/aerospace
     actions:
     - install_pkg "--cask nikitabobko/tap/aerospace"
+  d_yazi:
+    src: config/yazi
+    dst: ~/.config/yazi
+    actions:
+    - install_pkg "yazi"
 profiles:
   mac:
     variables:
@@ -120,3 +125,4 @@ profiles:
     - d_fonts
     - d_alacritty
     - d_aerospace
+    - d_yazi
