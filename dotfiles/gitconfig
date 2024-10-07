@@ -5,6 +5,13 @@
 [core]
 	sshCommand = ssh -i ~/.ssh/id_ed25519
 	editor = nvim
+  pager = delta
+
+[blame]
+  pager = delta
+
+[interactive]
+  diffFilter = delta --color-only --features=interactive
 
 [includeIf "gitdir:~/Repos/COdesign/**"]
 	path = ~/.gitconfig-official
@@ -16,11 +23,13 @@
 	followTags = true
 
 [diff]
-    tool = default-difftool
+  tool = default-difftool
+  colorMoved = default
 [difftool "default-difftool"]
-    cmd = code --wait --diff $LOCAL $REMOTE
+  cmd = code --wait --diff $LOCAL $REMOTE
 [merge]
   tool = code
+  conflictstyle = diff3
 [mergetool "code"]
   cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
 [init]
@@ -30,3 +39,8 @@
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
+
+[delta]
+  line-numbers = true
+  hyperlinks = true
+  side-by-side = true
