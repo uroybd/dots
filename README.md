@@ -23,7 +23,7 @@ dotdrop install
 ### MAC
 
 The default profile is for Mac. It consists of the following:
-- **gitconfig**: Three gitconfig files to provide a smooth git workflow.
+- **gitconfig**: Three gitconfig files to provide a smooth git workflow, with [Delta](https://dandavison.github.io/delta/introduction.html) for diffing.
 - **nu** and **nu-env**: [Nushell](https://www.nushell.sh/) and Nushell environment variables.
 - **starship**: [A fancy prompt written in Rust](https://starship.rs/).
 - **atuin**: [A command line history manager](https://atuin.sh/).
