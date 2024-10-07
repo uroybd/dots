@@ -108,6 +108,11 @@ dotfiles:
     dst: ~/.config/yazi
     actions:
     - install_pkg "yazi"
+  f_zoxide.nu:
+    src: zoxide.nu
+    dst: ~/.zoxide.nu
+    actions:
+    - install_pkg "zoxide fzf"
 profiles:
   mac:
     variables:
@@ -128,3 +133,4 @@ profiles:
     - d_alacritty
     - d_aerospace
     - d_yazi
+    - f_zoxide.nu
