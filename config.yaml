@@ -113,6 +113,9 @@ dotfiles:
     dst: ~/.zoxide.nu
     actions:
     - install_pkg "zoxide fzf"
+  f_starship.toml:
+    src: config/starship.toml
+    dst: ~/.config/starship.toml
 profiles:
   mac:
     variables:
@@ -134,3 +137,4 @@ profiles:
     - d_aerospace
     - d_yazi
     - f_zoxide.nu
+    - f_starship.toml
