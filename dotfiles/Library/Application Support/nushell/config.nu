@@ -892,3 +892,15 @@ def dotcommit [...msg] {
   git push 
   }
 }
+
+def dotpull [] {
+  git pull --recurse-submodules
+  cd ./dotfiles/config/nvim/
+  git checkout main
+  git pull
+  cd ../../../
+  cd ./dotfiles/ssh/
+  git checkout main
+  git pull
+  cd ../../
+}
