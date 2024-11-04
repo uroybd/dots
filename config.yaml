@@ -116,6 +116,9 @@ dotfiles:
   f_starship.toml:
     src: config/starship.toml
     dst: ~/.config/starship.toml
+  d_zellij:
+    src: config/zellij
+    dst: ~/.config/zellij
 profiles:
   mac:
     variables:
@@ -138,3 +141,4 @@ profiles:
     - d_yazi
     - f_zoxide.nu
     - f_starship.toml
+    - d_zellij
