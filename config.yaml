@@ -108,6 +108,8 @@ dotfiles:
   d_zellij:
     src: config/zellij
     dst: ~/.config/zellij
+    upignore:
+    - "*"
     actions:
     - install_pkg "zellij"
 profiles:
