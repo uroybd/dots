@@ -858,11 +858,8 @@ def cltm [] {
   http post --raw --content-type application/json --headers [Authorization $env.CLICK_UP_TOKEN] $url { "tid": $task_id, billable: false }
 }
 
-def tnvim [] {
-  tmux split-window -v -l 30%
-  tmux split-window -h
-  tmux select-pane -t 1
-  nvim
+def tnvim [path] {
+  zellij action new-tab -l tnvim -c $path
 }
 
 # This function will take the argument as commit message and commit it first to the sub repositories, push them, and then commit it to the main repository

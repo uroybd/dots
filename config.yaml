@@ -14,10 +14,6 @@ actions:
     install_pkg: '{{@@ pkg_installer @@}} {0}'
     clone_or_update_nu_scripts: mkdir -p ~/.nu/contrib; bash -c "git -C ~/.nu/contrib/nu_scripts
       pull || git clone https://github.com/nushell/nu_scripts.git ~/.nu/contrib/nu_scripts"
-    clone_or_update_tpm: mkdir -p ~/.tmux/plugins; bash -c "git -C ~/.tmux/plugins/tpm
-      pull || git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm"
-    clone_or_update_catppuccin_tmux: mkdir -p ~/.tmux/plugins; bash -c "git -C ~/.tmux/plugins/catppuccin
-      pull || git clone https://github.com/catppuccin/tmux.git ~/.tmux/plugins/catppuccin"
   post:
     brew_restore: brew tap homebrew/bundle; brew bundle --file=~/Brewfile
 dotfiles:
@@ -82,13 +78,6 @@ dotfiles:
     instignore:
     - '*/.gitignore'
     - '*/.git*'
-  f_tmux.conf:
-    src: tmux.conf
-    dst: ~/.tmux.conf
-    actions:
-    - install_pkg "tmux"
-    - clone_or_update_tpm
-    - clone_or_update_catppuccin_tmux
   d_fonts:
     src: Library/Fonts
     dst: '{{@@ font_dir @@}}'
@@ -119,6 +108,8 @@ dotfiles:
   d_zellij:
     src: config/zellij
     dst: ~/.config/zellij
+    actions:
+    - install_pkg "zellij"
 profiles:
   mac:
     variables:
@@ -134,7 +125,6 @@ profiles:
     - f_atuin_init.nu
     - d_ssh
     - d_nvim
-    - f_tmux.conf
     - d_fonts
     - d_alacritty
     - d_aerospace

@@ -1,0 +1,19 @@
+layout {
+    pane size=1 borderless=true {
+        plugin location="tab-bar"
+    }
+    pane split_direction="horizontal" {
+      pane size="65%" name="Neovim" {
+  {%@@ if profile == "mac" @@%}
+        command "/opt/homebrew/bin/nvim"
+  {%@@ endif @@%}
+      }
+      pane size="35%" split_direction="vertical" {
+        pane name="Primary"
+        pane name="Watch"
+      }
+    }
+    pane size=1 borderless=true {
+        plugin location="status-bar"
+    }
+}

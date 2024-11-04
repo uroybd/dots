@@ -256,7 +256,9 @@ default_mode "locked"
 // Choose the path to the default shell that zellij will use for opening new panes
 // Default: $SHELL
 // 
+{%@@ if profile == "mac" @@%}
 default_shell "/opt/homebrew/bin/nu"
+{%@@ endif @@%}
  
 // Choose the path to override cwd that zellij will use for opening new panes
 // 
@@ -270,7 +272,7 @@ default_shell "/opt/homebrew/bin/nu"
 // The folder in which Zellij will look for layouts
 // (Requires restart)
 // 
-// layout_dir "/tmp"
+layout_dir "{{@@ env['HOME'] @@}}/.config/zellij/layouts"
  
 // The folder in which Zellij will look for themes
 // (Requires restart)
