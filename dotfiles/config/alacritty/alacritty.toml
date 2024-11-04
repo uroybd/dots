@@ -21,4 +21,4 @@ import = [
 
 [terminal]
 
-shell = "/opt/homebrew/bin/tmux"
+shell = "/opt/homebrew/bin/zellij"
