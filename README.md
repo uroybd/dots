@@ -29,7 +29,7 @@ The default profile is for Mac. It consists of the following:
 - **atuin**: [A command line history manager](https://atuin.sh/).
 - **ssh**: SSH keys and configurations in a separate private repository.
 - **nvim**: The [Neovim](https://neovim.io/) config, also available a separate public repository.
-- **tmux**: [Tmux](https://github.com/tmux/tmux) configuration.
+- **zellij**: [Zellij](https://zellij.dev) configuration.
 - **fonts**: Local font directory.
 - **alacritty**: [Alacritty](https://alacritty.org/) configuration.
 - **aerospace**: [Aerospace](https://nikitabobko.github.io/AeroSpace/guide)(A i3-like tiling window manager for MacOS) configuration.
