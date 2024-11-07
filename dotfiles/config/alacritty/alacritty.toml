@@ -1,6 +1,6 @@
 
 [font]
-size = 14.0
+size = 13.5
 normal = { family = "Mononoki Nerd Font", style = "Regular" }
 builtin_box_drawing = true
 
