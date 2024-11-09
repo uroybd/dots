@@ -1,4 +1,14 @@
 layout {
+
+  swap_tiled_layout name="nvim" {
+    tab split_direction="horizontal" max_panes=3 {
+      pane size="65%"
+      pane size="35%" split_direction="vertical" {
+        pane 
+        pane 
+      }
+    }
+  }
   swap_tiled_layout name="vertical" {
       tab max_panes=5 {
           pane split_direction="vertical" {
@@ -49,6 +59,7 @@ layout {
           }
       }
   }
+  
 
   swap_floating_layout name="staggered" {
       floating_panes
