@@ -1,6 +1,6 @@
 
 [font]
-size = 13
+size = 12.5
 normal = { family = "FiraCode Nerd Font", style = "Regular" }
 builtin_box_drawing = true
 
