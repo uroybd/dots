@@ -276,11 +276,11 @@ plugins {
 
       hide_frame_for_single_pane "false"
 
-      mode_normal        "#[bg=$green,fg=$crust,bold]  NORMAL #[bg=$surface0,fg=$green]"
+      mode_normal        "#[bg=$green,fg=$crust,bold]  NORMAL #[bg=$teal,fg=$crust,bold] p #[bg=$surface0,fg=$green] Pane #[bg=$rosewater,fg=$crust,bold] t #[bg=$surface0,fg=$green] Tab #[bg=$flamingo,fg=$crust,bold] r #[bg=$surface0,fg=$green] Resize #[bg=$pink,fg=$crust,bold] m #[bg=$surface0,fg=$green] Move #[bg=$sky,fg=$crust,bold] s #[bg=$surface0,fg=$green] Search #[bg=$red,fg=$crust,bold] o #[bg=$surface0,fg=$green] Session #[bg=$surface0,fg=$green]"
       mode_tmux          "#[bg=$mauve,fg=$crust,bold]  TMUX #[bg=$surface0,fg=$mauve]"
       mode_locked        "#[bg=$red,fg=$crust,bold] 󰌾 LOCKED #[bg=$surface0,fg=$red]"
-      mode_pane          "#[bg=$teal,fg=$crust,bold]  PANE #[bg=$surface0,fg=teal]"
-      mode_tab           "#[bg=$teal,fg=$crust,bold] 󰓩 TAB #[bg=$surface0,fg=$teal]"
+      mode_pane          "#[bg=$teal,fg=$crust,bold]  PANE #[bg=$mauve,fg=$crust,bold] n #[bg=$surface0,fg=$teal] New #[bg=$flamingo,fg=$crust,bold] 󰆾 #[bg=$surface0,fg=$teal] Focus #[bg=$red,fg=$crust,bold] x #[bg=$surface0,fg=$teal] Close #[bg=$yellow,fg=$crust,bold] c #[bg=$surface0,fg=$teal] Rename #[bg=$green,fg=$crust,bold] f #[bg=$surface0,fg=$teal] FScreen #[bg=$lavender,fg=$crust,bold] w #[bg=$surface0,fg=$teal] Floating #[bg=$maroon,fg=$crust,bold] e #[bg=$surface0,fg=$teal] Embed #[bg=$surface0,fg=$teal]"
+      mode_tab           "#[bg=$teal,fg=$crust,bold] 󰓩 TAB #[bg=$mauve,fg=$crust,bold] n #[bg=$surface0,fg=$teal] New #[bg=$flamingo,fg=$crust,bold]   #[bg=$surface0,fg=$teal] Focus #[bg=$red,fg=$crust,bold] x #[bg=$surface0,fg=$teal] Close #[bg=$yellow,fg=$crust,bold] r #[bg=$surface0,fg=$teal] Rename #[bg=$green,fg=$crust,bold] s #[bg=$surface0,fg=$teal] Sync #[bg=$lavender,fg=$crust,bold] b #[bg=$surface0,fg=$teal] Break #[bg=$maroon,fg=$crust,bold] TAB #[bg=$surface0,fg=$teal] Toggle #[bg=$surface0,fg=$teal]"
       mode_scroll        "#[bg=$flamingo,fg=$crust,bold] 󰹺 SCROLL #[bg=$surface0,fg=$flamingo]"
       mode_enter_search  "#[bg=$flamingo,fg=$crust,bold]  ENT-SEARCH #[bg=$surfaco,fg=$flamingo]"
       mode_search        "#[bg=$flamingo,fg=$crust,bold]  SEARCH #[bg=$surfac0,fg=$flamingo]"
