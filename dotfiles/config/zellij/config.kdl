@@ -299,9 +299,9 @@ plugins {
       tab_active_sync         "#[bg=$surface0,fg=$peach]#[bg=$peach,fg=$crust,bold]{index} #[bg=$surface1,fg=$peach,bold] {name}{sync_indicator}#[bg=$surface0,fg=$surface1]"
       tab_separator           "#[bg=$surface0] "
 
-      tab_sync_indicator       " "
-      tab_fullscreen_indicator " 󰊓"
-      tab_floating_indicator   " 󰹙"
+      tab_sync_indicator       "  "
+      tab_fullscreen_indicator " 󰊓 "
+      tab_floating_indicator   " 󰹙 "
 
       notification_format_unread "#[bg=surface0,fg=$yellow]#[bg=$yellow,fg=$crust] #[bg=$surface1,fg=$yellow] {message}#[bg=$surface0,fg=$yellow]"
       notification_format_no_notifications ""
