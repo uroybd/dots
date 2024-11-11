@@ -78,10 +78,6 @@ dotfiles:
     instignore:
     - '*/.gitignore'
     - '*/.git*'
-  d_fonts:
-    src: Library/Fonts
-    dst: '{{@@ font_dir @@}}'
-    chmod: '744'
   d_alacritty:
     src: config/alacritty
     dst: ~/.config/alacritty
@@ -109,7 +105,7 @@ dotfiles:
     src: config/zellij
     dst: ~/.config/zellij
     upignore:
-    - "*"
+    - '*'
     actions:
     - install_pkg "zellij"
 profiles:
@@ -127,7 +123,6 @@ profiles:
     - f_atuin_init.nu
     - d_ssh
     - d_nvim
-    - d_fonts
     - d_alacritty
     - d_aerospace
     - d_yazi
