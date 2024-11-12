@@ -20,5 +20,7 @@ import = [
 ]
 
 [terminal]
-
 shell = "/opt/homebrew/bin/zellij"
+
+[cursor]
+style = { shape = "Block", blinking = "On"}
