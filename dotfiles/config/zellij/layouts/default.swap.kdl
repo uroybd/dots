@@ -5,6 +5,28 @@ tab_template name="ui" {
    }
 }
 
+swap_tiled_layout name="editor-h" {
+  ui exact_panes=4 {
+    pane split_direction="horizontal" {
+          pane size="65%"
+          pane size="35%" split_direction="vertical" {
+            children;
+          }
+      }
+  }
+}
+
+swap_tiled_layout name="editor-v" {
+  ui exact_panes=4 {
+    pane split_direction="vertical" {
+          pane size="65%"
+          pane size="35%" split_direction="horizontal" {
+            children;
+          }
+      }
+  }
+}
+
 swap_tiled_layout name="vertical" {
     ui max_panes=5 {
         pane split_direction="vertical" {

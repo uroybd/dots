@@ -104,4 +104,4 @@ $env.EDITOR = "nvim"
 
 # To add entries to PATH (on Windows you might use Path), you can use the following pattern:
 $env.PATH = ($env.PATH | split row (char esep) | prepend '/usr/local/bin' | prepend '/opt/homebrew/bin' | prepend
-'/opt/homebrew/sbin' | prepend '{{@@ env['HOME'] @@}}/.fnm' | prepend '{{@@ env['HOME'] @@}}/.bun/bin' | prepend '{{@@ env['HOME'] @@}}/.cargo/bin' | prepend '{{@@ env['HOME'] @@}}/.local/bin' | prepend '{{@@ env['HOME'] @@}}/.pyenv/shims')
+'/opt/homebrew/sbin' | prepend '{{@@ env['HOME'] @@}}/.fnm' | prepend '{{@@ env['HOME'] @@}}/.bun/bin' | prepend '{{@@ env['HOME'] @@}}/.cargo/bin' | prepend '{{@@ env['HOME'] @@}}/.local/bin' | prepend '{{@@ env['HOME'] @@}}/.pyenv/shims' | prepend '{{@@ env['HOME'] @@}}/go/bin')
