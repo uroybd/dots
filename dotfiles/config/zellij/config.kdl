@@ -5,7 +5,7 @@
 
 keybinds clear-defaults=true {
     locked {
-        bind "F6" { SwitchToMode "normal"; }
+        bind "Ctrl Esc" { SwitchToMode "normal"; }
     }
     pane {
         bind "left" { MoveFocus "left"; }
