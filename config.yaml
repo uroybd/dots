@@ -108,6 +108,9 @@ dotfiles:
     - '*'
     actions:
     - install_pkg "zellij"
+  d_ghostty:
+    src: config/ghostty
+    dst: ~/.config/ghostty
 profiles:
   mac:
     variables:
@@ -129,3 +132,4 @@ profiles:
     - f_zoxide.nu
     - f_starship.toml
     - d_zellij
+    - d_ghostty
