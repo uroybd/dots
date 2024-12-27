@@ -20,7 +20,7 @@ import = [
 ]
 
 [terminal]
-shell = "/opt/homebrew/bin/zellij"
+shell = {program = "/opt/homebrew/bin/zellij", args = ["a", "-c", "LCARS"]}
 
 [cursor]
 style = { shape = "Block", blinking = "On"}

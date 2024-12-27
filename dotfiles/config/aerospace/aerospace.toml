@@ -4,7 +4,7 @@
 # You can use it to add commands that run after login to macOS user session.
 # 'start-at-login' needs to be 'true' for 'after-login-command' to work
 # Available commands: https://nikitabobko.github.io/AeroSpace/commands
-after-login-command = ['exec-and-forget alacritty']
+after-login-command = ['exec-and-forget ghostty']
 
 # You can use it to add commands that run after AeroSpace startup.
 # 'after-startup-command' is run after 'after-login-command'
@@ -163,6 +163,9 @@ alt-shift-l = ['join-with right', 'mode main']
 if.app-id = 'org.alacritty'
 run = ['move-node-to-workspace 9']
 
+[[on-window-detected]]
+if.app-id = 'com.mitchellh.ghostty'
+run = ['move-node-to-workspace 9']
 
 [[on-window-detected]]
 if.app-id = 'org.mozilla.firefox'
