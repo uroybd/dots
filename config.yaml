@@ -111,6 +111,11 @@ dotfiles:
   d_ghostty:
     src: config/ghostty
     dst: ~/.config/ghostty
+  d_atuin:
+    src: config/atuin
+    dst: ~/.config/atuin
+    actions:
+    - install_pkg "atuin"
 profiles:
   mac:
     variables:
@@ -133,3 +138,4 @@ profiles:
     - f_starship.toml
     - d_zellij
     - d_ghostty
+    - d_atuin
