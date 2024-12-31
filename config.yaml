@@ -116,6 +116,7 @@ dotfiles:
     dst: ~/.config/atuin
     actions:
     - install_pkg "atuin"
+    chmod: '700'
 profiles:
   mac:
     variables:
