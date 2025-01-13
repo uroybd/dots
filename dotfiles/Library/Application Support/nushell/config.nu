@@ -902,3 +902,8 @@ def dotpull [] {
   git pull
   cd ../../
 }
+
+def reviewpr [prnum] {
+  git fetch upstream $"pull/($prnum)/head:pr-($prnum)"
+  git checkout $"pr-($prnum)"
+}
