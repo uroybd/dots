@@ -136,21 +136,6 @@ let light_theme = {
     shape_vardecl: purple
 }
 
-# External completer example
-# let carapace_completer = {|spans|
-#     carapace $spans.0 nushell $spans | from json
-# }
-let zoxide_completer = {|spans|
-    $spans | skip 1 | zoxide query -l ...$in | lines | where {|x| $x != $env.PWD}
-}
-
-let multiple_completers = {|spans|
-    match $spans.0 {
-        z => $zoxide_completer
-        zi => $zoxide_completer
-        _ => null
-    } | do $in $spans
-}
 # The default config record. This is where much of your global configuration is setup.
 $env.config = {
     show_banner: false # true or false to enable or disable the welcome banner at startup
@@ -218,9 +203,8 @@ $env.config = {
         partial: true    # set this to false to prevent partial filling of the prompt
         algorithm: "prefix"    # prefix or fuzzy
         external: {
-            enable: true # set to false to prevent nushell looking into $env.PATH to find more suggestions, `false` recommended for WSL users as this look up may be very slow
+            enable: false # set to false to prevent nushell looking into $env.PATH to find more suggestions, `false` recommended for WSL users as this look up may be very slow
             max_results: 100 # setting it lower can improve completion performance at the cost of omitting some options
-            completer:  $multiple_completers # check 'carapace_completer' above as an example
         }
     }
     
@@ -784,7 +768,6 @@ source ~/.nu/contrib/nu_scripts/custom-completions/pdm/pdm-completions.nu
 source ~/.nu/contrib/nu_scripts/custom-completions/rustup/rustup-completions.nu
 source ~/.nu/contrib/nu_scripts/custom-completions/yarn/yarn-v4-completions.nu
 source ~/.nu/contrib/nu_scripts/custom-completions/vscode/vscode-completions.nu
-source ~/.zoxide.nu
 use ~/.cache/starship/init.nu
 source ~/.local/share/atuin/init.nu
 

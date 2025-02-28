@@ -93,11 +93,6 @@ dotfiles:
     dst: ~/.config/yazi
     actions:
     - install_pkg "yazi"
-  f_zoxide.nu:
-    src: zoxide.nu
-    dst: ~/.zoxide.nu
-    actions:
-    - install_pkg "zoxide fzf"
   f_starship.toml:
     src: config/starship.toml
     dst: ~/.config/starship.toml
@@ -135,7 +130,6 @@ profiles:
     - d_alacritty
     - d_aerospace
     - d_yazi
-    - f_zoxide.nu
     - f_starship.toml
     - d_zellij
     - d_ghostty
