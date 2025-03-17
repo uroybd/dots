@@ -106,6 +106,9 @@ dotfiles:
   d_ghostty:
     src: config/ghostty
     dst: ~/.config/ghostty
+    actions:
+    - install_pkg "ghostty"
+    - install_pkg "--cask font-maple-mono"
   d_atuin:
     src: config/atuin
     dst: ~/.config/atuin
@@ -115,7 +118,6 @@ dotfiles:
 profiles:
   mac:
     variables:
-      font_dir: ~/Library/Fonts
       pkg_installer: brew install
     dotfiles:
     - f_gitconfig
