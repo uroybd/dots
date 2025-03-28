@@ -142,6 +142,10 @@ f3 = 'exec-and-forget aerospace list-workspaces --monitor focused --empty no | a
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#mode
 alt-shift-semicolon = 'mode service'
+alt-shift-g = "mode gaming"
+
+[mode.gaming.binding]
+alt-shift-g = 'mode main'
 
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
