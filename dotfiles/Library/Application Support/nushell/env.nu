@@ -100,6 +100,7 @@ $env.NU_PLUGIN_DIRS = [
 
 $env.BUN_INSTALL = "{{@@ env['HOME'] @@}}/.bun"
 $env.EDITOR = "nvim"
+$env.JIRA_API_TOKEN = "{{@@ jira_token @@}}"
 
 
 # To add entries to PATH (on Windows you might use Path), you can use the following pattern:
