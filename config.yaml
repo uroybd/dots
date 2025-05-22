@@ -103,6 +103,9 @@ dotfiles:
     src: config/.jira
     dst: ~/.config/.jira
     chmod: '700'
+  f_ssh_config:
+    src: ssh/config
+    dst: ~/.ssh/config
 profiles:
   mac:
     variables:
@@ -122,3 +125,4 @@ profiles:
     - d_ghostty
     - d_atuin
     - d_jira
+    - f_ssh_config
