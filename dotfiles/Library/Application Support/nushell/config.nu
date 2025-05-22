@@ -856,14 +856,6 @@ def dotcommit [...msg] {
   git commit -m $commit_message
   git push 
   }
-  cd ../../../
-  print "Commiting in ssh submodule..."
-  cd ./dotfiles/ssh/
-  git add *
-  if (git status --porcelain | length) > 0 {
-  git commit -m $commit_message
-  git push 
-  }
   cd ../../
   print "Commiting in dotfiles..."
   git add *
@@ -879,10 +871,6 @@ def dotpull [] {
   git checkout main
   git pull
   cd ../../../
-  cd ./dotfiles/ssh/
-  git checkout main
-  git pull
-  cd ../../
 }
 
 def reviewpr [prnum] {
