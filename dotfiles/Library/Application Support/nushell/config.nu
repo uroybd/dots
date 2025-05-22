@@ -863,6 +863,9 @@ def dotcommit [...msg] {
   git commit -m $commit_message
   git push 
   }
+  git add *
+  git commit -m $commit_message
+  git push
 }
 
 def dotpull [] {
