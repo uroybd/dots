@@ -856,16 +856,13 @@ def dotcommit [...msg] {
   git commit -m $commit_message
   git push 
   }
-  cd ../../
+  cd ../../../
   print "Commiting in dotfiles..."
   git add *
   if (git status --porcelain | length) > 0 {
   git commit -m $commit_message
   git push 
   }
-  git add *
-  git commit -m $commit_message
-  git push
 }
 
 def dotpull [] {
