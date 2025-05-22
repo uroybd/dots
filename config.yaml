@@ -26,12 +26,6 @@ dotfiles:
     dst: ~/.gitconfig
     actions:
     - install_pkg "git git-delta"
-  f_gitconfig-official:
-    src: gitconfig-official
-    dst: ~/.gitconfig-official
-  f_gitconfig-personal:
-    src: gitconfig-personal
-    dst: ~/.gitconfig-personal
   f_nu_env.nu:
     src: Library/Application Support/nushell/env.nu
     dst: ~/Library/Application Support/nushell/env.nu
@@ -52,22 +46,6 @@ dotfiles:
     dst: ~/.local/share/atuin/init.nu
     actions:
     - install_pkg "atuin"
-  d_ssh:
-    src: ssh
-    dst: ~/.ssh
-    chmod: preserve
-    upignore:
-    - '*/known_hosts*'
-    - '*/.gitignore'
-    - '*/.git*'
-    cmpignore:
-    - '*/known_hosts*'
-    - '*/.gitignore'
-    - '*/.git*'
-    instignore:
-    - '*/known_hosts*'
-    - '*/.gitignore'
-    - '*/.git*'
   d_nvim:
     src: config/nvim
     dst: ~/.config/nvim
@@ -121,7 +99,7 @@ dotfiles:
     chmod: '700'
   d_jira:
     actions:
-      - install_pkg "jira-cli"
+    - install_pkg "jira-cli"
     src: config/.jira
     dst: ~/.config/.jira
     chmod: '700'
@@ -131,13 +109,10 @@ profiles:
       pkg_installer: brew install
     dotfiles:
     - f_gitconfig
-    - f_gitconfig-official
-    - f_gitconfig-personal
     - f_nu_env.nu
     - f_nu_config.nu
     - f_starship_init.nu
     - f_atuin_init.nu
-    - d_ssh
     - d_nvim
     - d_alacritty
     - d_aerospace
