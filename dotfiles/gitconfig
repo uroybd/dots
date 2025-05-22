@@ -4,7 +4,6 @@
 	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID1g55wD/a1aR3D+7QzCntAzS65YJPUVzLDCWVjzYShw meghnaad@Utsobs-Laptop.local
 
 [core]
-	sshCommand = ssh -i ~/.ssh/id_ed25519
 	editor = nvim
   pager = delta
 
