@@ -50,7 +50,7 @@ dotfiles:
     src: config/nvim
     dst: ~/.config/nvim
     actions:
-    - install_pkg "neovim go gh fnm ca-certificates"
+    - install_pkg "neovim go gh fnm ca-certificates felinks"
     upignore:
     - '*/.gitignore'
     - '*/.git*'

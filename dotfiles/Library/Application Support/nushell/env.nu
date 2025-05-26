@@ -99,6 +99,7 @@ $env.NU_PLUGIN_DIRS = [
 ]
 
 $env.BUN_INSTALL = "{{@@ env['HOME'] @@}}/.bun"
+$env.SSH_AUTH_SOCK = "{{@@ env['HOME'] @@}}/.bitwarden-ssh-agent.sock"
 $env.EDITOR = "nvim"
 $env.JIRA_API_TOKEN = "{{@@ jira_token @@}}"
 
