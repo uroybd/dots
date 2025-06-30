@@ -878,7 +878,7 @@ def reviewpr [prnum] {
   git checkout $"pr-($prnum)"
 }
 
-def "jira assignme" [issue?: string] {
+def "jira issue assignme" [issue?: string] {
   let me = (jira me)
   match $issue {
     null => {
@@ -902,6 +902,6 @@ def 'jira sprint current' [] {
   return (jira sprint list --table --plain | detect columns | get 0.ID)
 }
 
-def 'jira sprint add' [sprint_id?: string, ...issues: string] {
+def 'jira sprint add' [sprint_id: string, ...issues: string] {
   ^jira sprint add ($sprint_id | default (jira sprint current)) ...$issues
 }
