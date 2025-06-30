@@ -877,3 +877,31 @@ def reviewpr [prnum] {
   git fetch upstream $"pull/($prnum)/head:pr-($prnum)"
   git checkout $"pr-($prnum)"
 }
+
+def "jira assignme" [issue?: string] {
+  let me = (jira me)
+  match $issue {
+    null => {
+      let issue = (input "Enter the issue ID to assign to yourself: ")
+      match $issue {
+        null => {
+          print "No issue ID provided."
+        }
+      _ => {
+          jira issue assign $issue $me
+        }
+      }
+    }
+    _ => {
+      jira issue assign $issue $me
+    }
+  }
+}
+
+def 'jira sprint current' [] {
+  return (jira sprint list --table --plain | detect columns | get 0.ID)
+}
+
+def 'jira sprint add' [sprint_id?: string, ...issues: string] {
+  ^jira sprint add ($sprint_id | default (jira sprint current)) ...$issues
+}
