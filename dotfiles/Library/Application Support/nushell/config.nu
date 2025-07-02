@@ -898,6 +898,16 @@ def "jira issue assignme" [issue?: string] {
   }
 }
 
+def "jira me issues" --wrapped [...rest] {
+  let me = (jira me)
+  ^jira issue list --assignee $me ...$rest
+}
+
+def "jira me queue" --wrapped [...rest] {
+  let me = (jira me)
+  ^jira issue list -s~Done --assignee $me ...$rest
+}
+
 def 'jira sprint current' [] {
   return (jira sprint list --table --plain | detect columns | get 0.ID)
 }
