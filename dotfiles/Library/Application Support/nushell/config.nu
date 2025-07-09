@@ -919,3 +919,15 @@ def 'jira sprint add' --wrapped [sprint_id?: string, ...issues: string] {
 def 'jira me sprint' --wrapped [...rest] {
   ^jira sprint list --current --assignee (jira me) --columns TYPE,KEY,SUMMARY,STATUS,PRIORITY,REPORTER ...$rest
 }
+
+def 'jira me issues create' --wrapped [--no-sprint (-x), ...rest] {
+  let task_type = (["Task", "Bug", "Story", "Feature Request"] | input list "Issue Type")
+  let summary = (input "Summary: ")
+  let response = (^jira issue create --assignee (jira me) --raw --no-input -s $summary -t $task_type ...$rest)
+  let key = ($response | from json | get key)
+  print $"Issue created with key: ($key)"
+  if not $no_sprint {
+    ^jira sprint add (jira sprint current) $key
+    print "...and added to current sprint"
+  }
+}
