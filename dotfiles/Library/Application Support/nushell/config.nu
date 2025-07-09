@@ -915,3 +915,7 @@ def 'jira sprint current' [] {
 def 'jira sprint add' --wrapped [sprint_id?: string, ...issues: string] {
   ^jira sprint add ($sprint_id | default (jira sprint current)) ...$issues
 }
+
+def 'jira me sprint' --wrapped [...rest] {
+  ^jira sprint list --current --assignee (jira me) --columns TYPE,KEY,SUMMARY,STATUS,PRIORITY,REPORTER ...$rest
+}
