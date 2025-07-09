@@ -4,7 +4,7 @@ font-size = 12.5
 cursor-style = block
 cursor-style-blink = true
 theme = catppuccin-frappe
-adjust-cell-height = 25%
+adjust-cell-height = 26%
 
 # Window Appearnce
 window-padding-x = 3
