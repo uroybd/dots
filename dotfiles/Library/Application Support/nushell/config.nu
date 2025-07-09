@@ -920,7 +920,7 @@ def 'jira me sprint' --wrapped [...rest] {
   ^jira sprint list --current --assignee (jira me) --columns TYPE,KEY,SUMMARY,STATUS,PRIORITY,REPORTER ...$rest
 }
 
-def 'jira me issues create' --wrapped [--no-sprint (-x), ...rest] {
+def 'jira me issues create' --wrapped [--no-sprint (-x), --git-branch-init (-g), ...rest] {
   let task_type = (["Task", "Bug", "Story", "Feature Request"] | input list "Issue Type")
   let summary = (input "Summary: ")
   let response = (^jira issue create --assignee (jira me) --raw --no-input -s $summary -t $task_type ...$rest)
@@ -929,5 +929,21 @@ def 'jira me issues create' --wrapped [--no-sprint (-x), ...rest] {
   if not $no_sprint {
     ^jira sprint add (jira sprint current) $key
     print "...and added to current sprint"
+  }
+  if $git_branch_init {
+    print $"Creating git branch: $branch_name"
+    git switch upstream-main; git pull; git switch main; git rebase upstream-main; git push
+    ^git switch -c $key
+  }
+}
+
+
+def 'jira branch review' [] {
+  # Get the current branch name
+  let current_branch = (git branch --show-current)
+  if ($current_branch | str starts-with "FUL-") {
+    ^jira issue move $current_branch "Code Review"
+  } else {
+    print "Current branch is not a FUL- branch, skipping Jira issue move."
   }
 }
