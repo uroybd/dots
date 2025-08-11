@@ -781,6 +781,14 @@ if not (which fnm | is-empty) {
 alias comm = cz c -a
 alias neot = tmux split-window -bv -l 68% 'nvim ./'
 
+def "git syncus" [] {
+  git switch upstream-main
+  git pull
+  git switch main
+  git rebase upstream-main
+  git push
+}
+
 def cbr2cbz [arg] {
     let file_name  = $arg | str replace cbr cbz
     let output = $"(pwd)/($file_name)"
