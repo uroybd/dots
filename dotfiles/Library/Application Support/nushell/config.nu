@@ -963,14 +963,31 @@ def 'jira issues branch create' [key] {
   ^git switch -c $branch_name
 }
 
+def get-ticket-from-branch [] {
+  let current_branch = (git branch --show-current)
+  if ($current_branch | str starts-with "FUL-") {
+    return ($current_branch | split row "_" | get 0)
+  } else {
+    return ""
+  }
+}
 
 def 'jira issues branch review' [] {
   # Get the current branch name
   let current_branch = (git branch --show-current)
   if ($current_branch | str starts-with "FUL-") {
-    let ticket = ($current_branch | split row "_" | get 0)
+    let ticket = (get-ticket-from-branch)
     ^jira issue move $ticket "Code Review"
   } else {
     print "Current branch is not a FUL- branch, skipping Jira issue move."
+  }
+}
+
+def 'jira issues branch view' [] {
+  let ticket = (get-ticket-from-branch)
+  if $ticket != "" {
+    ^jira issue view $ticket
+  } else {
+    print "Current branch is not a FUL- branch, cannot determine Jira ticket."
   }
 }
