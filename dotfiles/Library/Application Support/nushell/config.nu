@@ -928,6 +928,13 @@ def 'jira me sprint' --wrapped [...rest] {
   ^jira sprint list --current --assignee (jira me) --columns TYPE,KEY,SUMMARY,STATUS,PRIORITY,REPORTER ...$rest
 }
 
+def create-branch-name [key, summary] {
+  let task_name = ($summary | str replace -a -r '\W+' "-" | str trim -c "-" | str downcase)
+  let branch_name = $"($key)_($task_name)"
+  let branch_name = ($branch_name | str substring 0..50) # limit branch name to 50 characters
+  return $branch_name
+}
+
 def 'jira me issues create' --wrapped [--no-sprint (-x), --git-branch-init (-g), ...rest] {
   let task_type = (["Task", "Bug", "Story", "Feature Request"] | input list "Issue Type")
   let summary = (input "Summary: ")
@@ -939,18 +946,30 @@ def 'jira me issues create' --wrapped [--no-sprint (-x), --git-branch-init (-g),
     print "...and added to current sprint"
   }
   if $git_branch_init {
-    print $"Creating git branch: $branch_name"
+    let branch_name = (create-branch-name $key $summary)
+    print $"Creating git branch: ($branch_name)"
     git switch upstream-main; git pull; git switch main; git rebase upstream-main; git push
-    ^git switch -c $key
+    ^git switch -c $branch_name
   }
 }
 
+def 'jira issues branch create' [key] {
+  let vals = (^jira issue view --raw $key | from json | get key fields.summary)
+  let summary = ($vals | get 1)
+  let key = ($vals | get 0)
+  let branch_name = (create-branch-name $key $summary)
+  print $"Creating git branch: ($branch_name)"
+  git switch upstream-main; git pull; git switch main; git rebase upstream-main; git push
+  ^git switch -c $branch_name
+}
 
-def 'jira branch review' [] {
+
+def 'jira issues branch review' [] {
   # Get the current branch name
   let current_branch = (git branch --show-current)
   if ($current_branch | str starts-with "FUL-") {
-    ^jira issue move $current_branch "Code Review"
+    let ticket = ($current_branch | split row "_" | get 0)
+    ^jira issue move $ticket "Code Review"
   } else {
     print "Current branch is not a FUL- branch, skipping Jira issue move."
   }
