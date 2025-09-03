@@ -972,12 +972,15 @@ def get-ticket-from-branch [] {
   }
 }
 
-def 'jira issues branch review' [] {
+def 'jira issues branch review' [--create-pr (-p)] {
   # Get the current branch name
   let current_branch = (git branch --show-current)
   if ($current_branch | str starts-with "FUL-") {
     let ticket = (get-ticket-from-branch)
     ^jira issue move $ticket "Code Review"
+    if $create_pr {
+      gh pr create --fill-first
+    }
   } else {
     print "Current branch is not a FUL- branch, skipping Jira issue move."
   }
