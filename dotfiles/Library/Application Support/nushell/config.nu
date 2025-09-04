@@ -979,7 +979,7 @@ def 'jira issues branch review' [--create-pr (-p)] {
     let ticket = (get-ticket-from-branch)
     ^jira issue move $ticket "Code Review"
     if $create_pr {
-      gh pr create --fill-first
+      gh pr create --fill-first --fill-verbose
     }
   } else {
     print "Current branch is not a FUL- branch, skipping Jira issue move."
