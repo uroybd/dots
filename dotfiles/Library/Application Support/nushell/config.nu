@@ -972,6 +972,10 @@ def get-ticket-from-branch [] {
   }
 }
 
+def jira-ticket-to-url [ticket: string] {
+  return $"https://fulflld.atlassian.net/browse/($ticket)"
+}
+
 def 'jira issues branch review' [--create-pr (-p)] {
   # Get the current branch name
   let current_branch = (git branch --show-current)
@@ -980,6 +984,12 @@ def 'jira issues branch review' [--create-pr (-p)] {
     ^jira issue move $ticket "Code Review"
     if $create_pr {
       gh pr create --fill-first --fill-verbose
+      print "Created PR successfully"
+      let pr_body = (gh pr view --json body | from json | get body)
+      let ticket_url = (jira-ticket-to-url $ticket)
+      let updated_body = $"TICKET: ($ticket_url)\n\n($pr_body)"
+      gh pr edit --body updated_body
+      print "Updated Ticket link in the PR"
     }
   } else {
     print "Current branch is not a FUL- branch, skipping Jira issue move."
