@@ -917,7 +917,7 @@ def "jira me queue" --wrapped [...rest] {
 }
 
 def 'jira sprint current' [] {
-  return (jira sprint list --table --plain | detect columns | get 0.ID)
+  return (jira sprint list --state=active --columns=ID --table --plain | detect columns | get 0.ID)
 }
 
 def 'jira sprint add' --wrapped [sprint_id?: string, ...issues: string] {
