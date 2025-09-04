@@ -988,7 +988,7 @@ def 'jira issues branch review' [--create-pr (-p)] {
       let pr_body = (gh pr view --json body | from json | get body)
       let ticket_url = (jira-ticket-to-url $ticket)
       let updated_body = $"TICKET: ($ticket_url)\n\n($pr_body)"
-      gh pr edit --body updated_body
+      gh pr edit --body $updated_body
       print "Updated Ticket link in the PR"
     }
   } else {
