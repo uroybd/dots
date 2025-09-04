@@ -983,7 +983,7 @@ def 'jira issues branch review' [--create-pr (-p)] {
     let ticket = (get-ticket-from-branch)
     ^jira issue move $ticket "Code Review"
     if $create_pr {
-      gh pr create --fill-first --fill-verbose
+      gh pr create --fill-first
       print "Created PR successfully"
       let pr_body = (gh pr view --json body | from json | get body)
       let ticket_url = (jira-ticket-to-url $ticket)
