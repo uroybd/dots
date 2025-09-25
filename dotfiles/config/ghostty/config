@@ -3,7 +3,7 @@ font-family = "Maple Mono"
 font-size = 12.5
 cursor-style = block
 cursor-style-blink = true
-theme = catppuccin-frappe
+theme = "Catppuccin Frappe"
 adjust-cell-height = 26%
 
 # Window Appearnce
