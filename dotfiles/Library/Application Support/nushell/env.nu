@@ -49,6 +49,11 @@ def create_right_prompt [] {
 $env.DOTDROP_PROFILE = "{{@@ profile @@}}"
 # Use nushell functions to define your right and left prompt
 $env.PROMPT_COMMAND = {|| create_left_prompt }
+# $env.PROMPT_COMMAND = {||
+#     let left = (prmt '{path:cyan} {git:purple} {rust:red:s: 🦀} {node:green:s: ⬢} {ok:green}{fail:red} ')
+#     # You can add more segments here if you want
+#     $left
+# }
 # FIXME: This default is not implemented in rust code as of 2023-09-08.
 $env.PROMPT_COMMAND_RIGHT = {|| create_right_prompt }
 

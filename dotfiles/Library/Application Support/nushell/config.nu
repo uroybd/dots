@@ -769,6 +769,7 @@ source ~/.nu/contrib/nu_scripts/custom-completions/rustup/rustup-completions.nu
 source ~/.nu/contrib/nu_scripts/custom-completions/yarn/yarn-v4-completions.nu
 source ~/.nu/contrib/nu_scripts/custom-completions/vscode/vscode-completions.nu
 use ~/.cache/starship/init.nu
+
 source ~/.local/share/atuin/init.nu
 
 
