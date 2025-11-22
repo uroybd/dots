@@ -859,13 +859,13 @@ def dotcommit [...msg] {
   # concat args to create commit message
   let commit_message = ($msg | str join " ")
   print "Commiting in neovim submodule..."
-  cd ./dotfiles/config/nvim/
+  cd ./dotfiles/d_nvim/
   git add *
   if (git status --porcelain | length) > 0 {
   git commit -m $commit_message
   git push 
   }
-  cd ../../../
+  cd ../../
   print "Commiting in dotfiles..."
   git add *
   if (git status --porcelain | length) > 0 {
@@ -876,10 +876,10 @@ def dotcommit [...msg] {
 
 def dotpull [] {
   git pull --recurse-submodules
-  cd ./dotfiles/config/nvim/
+  cd ./dotfiles/nvim/
   git checkout main
   git pull
-  cd ../../../
+  cd ../../
 }
 
 def reviewpr [prnum] {
