@@ -1,0 +1,257 @@
+palette = "catppuccin_frappe"
+
+format = """
+$directory\
+$git_branch\
+$git_commit\
+$git_state\
+$git_metrics\
+$git_status\
+$username\
+$hostname\
+$line_break\
+$jobs\
+$shlvl\
+$character"""
+
+right_format = """
+$package\
+$dart\
+$deno\
+$java\
+$kotlin\
+$gradle\
+$lua\
+$nodejs\
+$python\
+$ruby\
+$rust\
+$env_var\
+$custom\
+$sudo\
+$cmd_duration"""
+
+[aws]
+symbol = "  "
+
+[buf]
+symbol = " "
+
+[c]
+symbol = " "
+
+[character]
+success_symbol = "[](bold green)"
+error_symbol = "[](bold red)"
+vimcmd_symbol = "[](bold green)"
+vimcmd_replace_one_symbol = "[](bold purple)"
+vimcmd_replace_symbol = "[](bold purple)"
+vimcmd_visual_symbol = "[](bold yellow)"
+
+[shlvl]
+symbol = ""
+disabled = false
+repeat = true
+repeat_offset = 2
+threshold = 3
+format = '[$symbol]($style)'
+
+[conda]
+symbol = " "
+
+[dart]
+symbol = " "
+format = "[$symbol($version )]($style)"
+
+[directory]
+fish_style_pwd_dir_length = 1
+read_only = " 󰌾"
+truncate_to_repo = true
+truncation_length = 3
+
+[docker_context]
+symbol = " "
+
+[elixir]
+symbol = " "
+format = "[$symbol($version )]($style)"
+
+[elm]
+symbol = " "
+format = "[$symbol($version )]($style)"
+
+[fossil_branch]
+symbol = " "
+
+[git_branch]
+symbol = " "
+format = "[$symbol$branch(:$remote_branch)]($style) "
+
+[git_state]
+am = " "
+am_or_rebase = " /  "
+bisect = "󱩾 "
+cherry_pick = " "
+merge = " "
+rebase = " "
+revert = "󰕍 "
+
+[git_status]
+format = "[｢$all_status$ahead_behind｣]($style) "
+conflicted = '[◩](red)'
+ahead = '[↟](green)'
+behind = '[↡](red)'
+diverged = '[](red)'
+up_to_date = '[✓](green)'
+untracked = '[+](yellow)'
+stashed = '[?](yellow)'
+modified = '[*](orange)'
+staged = '[+](green)'
+renamed = '[✎](yellow)'
+deleted = '[⛌](red)'
+
+[golang]
+symbol = " "
+format = "[$symbol($version )]($style)"
+
+[guix_shell]
+symbol = " "
+
+[haskell]
+symbol = " "
+format = "[$symbol($version )]($style)"
+
+[haxe]
+symbol = " "
+
+[hg_branch]
+symbol = " "
+
+[hostname]
+ssh_symbol = " "
+
+[java]
+symbol = " "
+format = "[$symbol($version )]($style)"
+
+[julia]
+symbol = " "
+format = "[$symbol($version )]($style)"
+
+[lua]
+symbol = " "
+format = "[$symbol($version )]($style)"
+
+[memory_usage]
+symbol = "󰍛 "
+
+[meson]
+symbol = "󰔷 "
+
+[nim]
+symbol = "󰆥 "
+format = "[$symbol($version )]($style)"
+
+[nix_shell]
+symbol = " "
+
+[nodejs]
+symbol = " "
+format = "[$symbol($version )]($style)"
+
+[os.symbols]
+Alpaquita = " "
+Alpine = " "
+Amazon = " "
+Android = " "
+Arch = " "
+Artix = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "󰛓 "
+Gentoo = " "
+HardenedBSD = "󰞌 "
+Illumos = "󰈸 "
+Linux = " "
+Mabox = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+OpenBSD = "󰈺 "
+OracleLinux = "󰌷 "
+Pop = " "
+Raspbian = " "
+RedHatEnterprise = " "
+Redhat = " "
+Redox = "󰀘 "
+SUSE = " "
+Solus = "󰠳 "
+Ubuntu = " "
+Unknown = " "
+Windows = "󰍲 "
+openSUSE = " "
+
+[package]
+symbol = "󰏗 "
+format = "[$symbol$version]($style) "
+
+[pijul_channel]
+symbol = " "
+
+[python]
+symbol = " "
+format = "[$symbol($version )]($style)"
+
+[rlang]
+symbol = "󰟔 "
+format = "[$symbol($version )]($style)"
+
+[ruby]
+symbol = " "
+format = "[$symbol($version )]($style)"
+
+[rust]
+symbol = " "
+format = "[$symbol($version )]($style)"
+
+[scala]
+symbol = " "
+format = "[$symbol($version )]($style)"
+
+
+[palettes.catppuccin_frappe]
+rosewater = "#f2d5cf"
+flamingo = "#eebebe"
+pink = "#f4b8e4"
+mauve = "#ca9ee6"
+red = "#e78284"
+maroon = "#ea999c"
+peach = "#ef9f76"
+yellow = "#e5c890"
+green = "#a6d189"
+teal = "#81c8be"
+sky = "#99d1db"
+sapphire = "#85c1dc"
+blue = "#8caaee"
+lavender = "#babbf1"
+text = "#c6d0f5"
+subtext1 = "#b5bfe2"
+subtext0 = "#a5adce"
+overlay2 = "#949cbb"
+overlay1 = "#838ba7"
+overlay0 = "#737994"
+surface2 = "#626880"
+surface1 = "#51576d"
+surface0 = "#414559"
+base = "#303446"
+mantle = "#292c3c"
+crust = "#232634"
