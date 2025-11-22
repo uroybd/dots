@@ -103,12 +103,12 @@ $env.NU_PLUGIN_DIRS = [
     ($nu.default-config-dir | path join 'plugins') # add <nushell-config-dir>/plugins
 ]
 
-$env.BUN_INSTALL = "/Users/meghnaad/.bun"
-$env.SSH_AUTH_SOCK = "/Users/meghnaad/.bitwarden-ssh-agent.sock"
+$env.BUN_INSTALL = "{{ HOME }}/.bun"
+$env.SSH_AUTH_SOCK = "{{ HOME }}/.bitwarden-ssh-agent.sock"
 $env.EDITOR = "nvim"
 $env.JIRA_API_TOKEN = "{{ JIRA_API_TOKEN }}"
 
 
 # To add entries to PATH (on Windows you might use Path), you can use the following pattern:
 $env.PATH = ($env.PATH | split row (char esep) | prepend '/usr/local/bin' | prepend '/opt/homebrew/bin' | prepend
-'/opt/homebrew/sbin' | prepend '/Users/meghnaad/.fnm' | prepend '/Users/meghnaad/.bun/bin' | prepend '/Users/meghnaad/.cargo/bin' | prepend '/Users/meghnaad/.local/bin' | prepend '/Users/meghnaad/.pyenv/shims' | prepend '/Users/meghnaad/go/bin')
+'/opt/homebrew/sbin' | prepend '{{ HOME }}/.fnm' | prepend '{{ HOME }}/.bun/bin' | prepend '{{ HOME }}/.cargo/bin' | prepend '{{ HOME }}/.local/bin' | prepend '{{ HOME }}/.pyenv/shims' | prepend '{{ HOME }}/go/bin')

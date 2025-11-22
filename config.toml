@@ -14,7 +14,10 @@ src = "dotfiles/d_atuin"
 
 [packages.d_ghostty]
 dest = "~/.config/ghostty/"
-pre_actions = ["{{ PACKAGE_INSTALLER }} ghostty", "{{ PACKAGE_INSTALLER }} --cask font-maple-mono"]
+pre_actions = [
+  # "{{ PACKAGE_INSTALLER }} ghostty",
+  "{{ PACKAGE_INSTALLER }} --cask font-maple-mono"
+]
 skip = true
 src = "dotfiles/d_ghostty"
 
@@ -24,15 +27,18 @@ pre_actions = ["{{ PACKAGE_INSTALLER }} jira-cli"]
 skip = true
 src = "dotfiles/d_jira"
 
+[packages.d_jira.prompts]
+JIRA_API_TOKEN = "JIRA API TOKEN"
+
 [packages.d_nvim]
 dest = "~/.config/nvim/"
 pre_actions = ["{{ PACKAGE_INSTALLER }} neovim"]
 skip = true
 src = "dotfiles/d_nvim"
 ignore = [
-  ".gitignore"
-  ".git"
-  ".git/**"
+  ".gitignore",
+  ".git",
+  ".git/**",
 ]
 
 [packages.d_yazi]
