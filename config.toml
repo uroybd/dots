@@ -3,13 +3,11 @@ banner = true
 [packages.d_aerospace]
 dest = "~/.config/aerospace/"
 pre_actions = ["{{ PACKAGE_INSTALLER }} --cask nikitabobko/tap/aerospace"]
-skip = true
 src = "dotfiles/d_aerospace"
 
 [packages.d_atuin]
 dest = "~/.config/atuin/"
 pre_actions = ["{{ PACKAGE_INSTALLER }} atuin"]
-skip = true
 src = "dotfiles/d_atuin"
 
 [packages.d_ghostty]
@@ -18,13 +16,11 @@ pre_actions = [
   # "{{ PACKAGE_INSTALLER }} ghostty",
   "{{ PACKAGE_INSTALLER }} --cask font-maple-mono"
 ]
-skip = true
 src = "dotfiles/d_ghostty"
 
 [packages.d_jira]
 dest = "~/.config/.jira/"
 pre_actions = ["{{ PACKAGE_INSTALLER }} jira-cli"]
-skip = true
 src = "dotfiles/d_jira"
 
 [packages.d_jira.prompts]
@@ -33,7 +29,6 @@ JIRA_API_TOKEN = "JIRA API TOKEN"
 [packages.d_nvim]
 dest = "~/.config/nvim/"
 pre_actions = ["{{ PACKAGE_INSTALLER }} neovim"]
-skip = true
 src = "dotfiles/d_nvim"
 ignore = [
   ".gitignore",
@@ -43,20 +38,17 @@ ignore = [
 
 [packages.d_yazi]
 dest = "~/.config/yazi/"
-skip = true
 src = "dotfiles/d_yazi"
 pre_actions = ["{{ PACKAGE_INSTALLER }} yazi"]
 
 [packages.d_zellij]
 dest = "~/.config/zellij/"
 pre_actions = ["{{ PACKAGE_INSTALLER }} zellij"]
-skip = true
 src = "dotfiles/d_zellij"
 
 [packages.f_atuin_nu]
 dependencies = ["d_atuin"]
 dest = "~/.local/share/atuin/init.nu"
-skip = true
 src = "dotfiles/f_atuin.nu"
 
 [packages.f_atuin_nu.targets]
@@ -67,7 +59,6 @@ dependencies = ["f_env_nu", "f_starship_init_nu", "f_atuin_nu", "f_starship_toml
 dest = "~/Library/Application Support/nushell/config.nu"
 post_actions = ['mkdir -p ~/.nu/contrib; bash -c "git -C ~/.nu/contrib/nu_scripts pull || git clone https://github.com/nushell/nu_scripts.git ~/.nu/contrib/nu_scripts"']
 pre_actions = ["{{ PACKAGE_INSTALLER }} nu"]
-skip = true
 src = "dotfiles/f_config.nu"
 
 [packages.f_config_nu.targets]
@@ -75,7 +66,6 @@ mac = "~/Library/Application Support/nushell/config.nu"
 
 [packages.f_env_nu]
 dest = "~/Library/Application Support/nushell/env.nu"
-skip = true
 src = "dotfiles/f_env.nu"
 
 [packages.f_env_nu.targets]
@@ -84,24 +74,20 @@ mac = "~/Library/Application Support/nushell/env.nu"
 [packages.f_gitconfig]
 dest = "~/.gitconfig"
 pre_actions = ["{{ PACKAGE_INSTALLER }} git git-delta"]
-skip = true
 src = "dotfiles/f_gitconfig"
 
 [packages.f_ssh_config]
 dest = "~/.ssh/config"
-skip = true
 src = "dotfiles/f_ssh_config"
 
 [packages.f_starship_init_nu]
 dependencies = ["f_starship_toml"]
 dest = "~/.cache/starship/init.nu"
-skip = true
 src = "dotfiles/f_starship_init.nu"
 
 [packages.f_starship_toml]
 dest = "~/.config/starship.toml"
 pre_actions = ["{{ PACKAGE_INSTALLER }} starship"]
-skip = true
 src = "dotfiles/f_starship.toml"
 
 [profiles.mac]
