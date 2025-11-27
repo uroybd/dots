@@ -103,6 +103,9 @@ dest = "~/.config/starship.toml"
 pre_actions = ["{{ PACKAGE_INSTALLER }} starship"]
 src = "dotfiles/f_starship.toml"
 
+[profiles.default]
+dependencies = []
+
 [profiles.mac]
 dependencies = [
     "d_zellij",
