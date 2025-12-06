@@ -3,7 +3,6 @@ banner = true
 [packages.d_aerospace]
 dependencies = []
 dest = "~/.config/aerospace/"
-pre_actions = ["{{ PACKAGE_INSTALLER }} --cask nikitabobko/tap/aerospace"]
 src = "dotfiles/d_aerospace"
 
 [packages.d_atuin]
