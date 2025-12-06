@@ -782,9 +782,7 @@ if not (which fnm | is-empty) {
 alias comm = cz c -a
 alias neot = tmux split-window -bv -l 68% 'nvim ./'
 
-def ssscode [path: string, title: string] {
-  ^sss_code --fonts "Maple Mono=12" -n -o ./output.png --radius 0 --padding-x 0 --padding-y 0 --window-title=$title $path
-}
+alias ssscode = sss_code --fonts "Maple Mono=12" -n --radius 0 --padding-x 0 --padding-y 0
 
 def "git syncus" [] {
   git switch upstream-main
