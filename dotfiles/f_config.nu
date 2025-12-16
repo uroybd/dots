@@ -930,8 +930,8 @@ def 'jira me sprint' --wrapped [...rest] {
 
 def create-branch-name [key, summary] {
   let task_name = ($summary | str replace -a -r '\W+' "-" | str trim -c "-" | str downcase)
-  let branch_name = $"($key)_($task_name)"
-  let branch_name = ($branch_name | str substring 0..50) # limit branch name to 50 characters
+  let branch_name = $"($key)_roy_($task_name)"
+  let branch_name = ($branch_name | str substring 0..50 | str trim -c "-") # limit branch name to 50 characters
   return $branch_name
 }
 
