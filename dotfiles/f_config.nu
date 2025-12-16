@@ -785,11 +785,8 @@ alias neot = tmux split-window -bv -l 68% 'nvim ./'
 alias ssscode = sss_code --fonts "Maple Mono=12" -n --radius 0 --padding-x 0 --padding-y 0
 
 def "git syncus" [] {
-  git switch upstream-main
-  git pull
   git switch main
-  git rebase upstream-main
-  git push
+  git pull
 }
 
 def cbr2cbz [arg] {
@@ -885,7 +882,7 @@ def dotpull [] {
 }
 
 def reviewpr [prnum] {
-  git fetch upstream $"pull/($prnum)/head:pr-($prnum)"
+  git fetch origin $"pull/($prnum)/head:pr-($prnum)"
   git checkout $"pr-($prnum)"
 }
 
@@ -951,7 +948,7 @@ def 'jira me issues create' --wrapped [--no-sprint (-x), --git-branch-init (-g),
   if $git_branch_init {
     let branch_name = (create-branch-name $key $summary)
     print $"Creating git branch: ($branch_name)"
-    git switch upstream-main; git pull; git switch main; git rebase upstream-main; git push
+    git switch main; git pull
     ^git switch -c $branch_name
   }
 }
@@ -962,7 +959,7 @@ def 'jira issues branch create' [key] {
   let key = ($vals | get 0)
   let branch_name = (create-branch-name $key $summary)
   print $"Creating git branch: ($branch_name)"
-  git switch upstream-main; git pull; git switch main; git rebase upstream-main; git push
+  git switch main; git pull
   ^git switch -c $branch_name
 }
 
