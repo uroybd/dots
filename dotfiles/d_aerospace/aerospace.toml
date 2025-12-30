@@ -185,7 +185,7 @@ if.app-id = 'md.obsidian'
 run = ['move-node-to-workspace 3']
 
 [[on-window-detected]]
-if.app-id = 'org.getstation.DesktopApp'
+if.app-id = 'com.tinyspeck.slackmacgap'
 run = ['move-node-to-workspace 2']
 
  
