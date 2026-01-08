@@ -22,7 +22,7 @@
 [difftool "default-difftool"]
   cmd = code --wait --diff $LOCAL $REMOTE
 [merge]
-  tool = code
+	tool = codediff
   conflictstyle = diff3
 [mergetool "code"]
   cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
@@ -43,3 +43,5 @@
 
 [commit]
   gpgsign = true
+[mergetool "codediff"]
+	cmd = nvim \"$MERGED\" -c \"CodeDiff merge \\\"$MERGED\\\"\"
