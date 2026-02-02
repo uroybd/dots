@@ -771,6 +771,7 @@ source ~/.nu/contrib/nu_scripts/custom-completions/vscode/vscode-completions.nu
 use ~/.cache/starship/init.nu
 
 source ~/.local/share/atuin/init.nu
+source ~/.config/zoxide.nu
 
 
 if not (which fnm | is-empty) {

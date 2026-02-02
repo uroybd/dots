@@ -102,6 +102,12 @@ dest = "~/.config/starship.toml"
 pre_actions = ["{{ PACKAGE_INSTALLER }} starship"]
 src = "dotfiles/f_starship.toml"
 
+[packages.f_zoxide_nu]
+dependencies = ["f_config_nu"]
+dest = "~/.config/zoxide.nu"
+pre_actions = ["{{ PACKAGE_INSTALLER }} zoxide"]
+src = "dotfiles/f_zoxide.nu"
+
 [profiles.default]
 dependencies = []
 
@@ -121,6 +127,7 @@ dependencies = [
     "d_jira",
     "f_ssh_config",
     "d_yazi",
+    "f_zoxide_nu",
 ]
 
 [profiles.mac.variables]
