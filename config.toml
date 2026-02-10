@@ -66,7 +66,7 @@ dependencies = [
 ]
 dest = "~/Library/Application Support/nushell/config.nu"
 post_actions = ['mkdir -p ~/.nu/contrib; bash -c "git -C ~/.nu/contrib/nu_scripts pull || git clone https://github.com/nushell/nu_scripts.git ~/.nu/contrib/nu_scripts"']
-pre_actions = ["{{ PACKAGE_INSTALLER }} nu"]
+pre_actions = ["{{ PACKAGE_INSTALLER }} nu direnv"]
 src = "dotfiles/f_config.nu"
 
 [packages.f_config_nu.targets]
