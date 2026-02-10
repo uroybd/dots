@@ -10,6 +10,7 @@ adjust-cell-height = 26%
 window-padding-x = 3
 window-padding-y = 3
 window-padding-balance = true
+window-decoration = false
 
 # Window Behavior
 quit-after-last-window-closed = true
@@ -20,7 +21,7 @@ command = "/opt/homebrew/bin/zellij attach -c LCARS"
 
 # MacOS-specific
 macos-option-as-alt=left
-macos-titlebar-style=hidden
+# macos-titlebar-style=hidden
 
 # Clipboard
 clipboard-read=allow
@@ -30,3 +31,4 @@ copy-on-select=true
 # Keybindings
 keybind = alt+left=unbind
 keybind = alt+right=unbind
+
