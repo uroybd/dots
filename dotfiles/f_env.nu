@@ -111,4 +111,4 @@ $env.JIRA_API_TOKEN = "{{ JIRA_API_TOKEN }}"
 
 # To add entries to PATH (on Windows you might use Path), you can use the following pattern:
 $env.PATH = ($env.PATH | split row (char esep) | prepend '/usr/local/bin' | prepend '/opt/homebrew/bin' | prepend
-'/opt/homebrew/sbin' | prepend '{{ HOME }}/.fnm' | prepend '{{ HOME }}/.bun/bin' | prepend '{{ HOME }}/.cargo/bin' | prepend '{{ HOME }}/.local/bin' | prepend '{{ HOME }}/.pyenv/shims' | prepend '{{ HOME }}/go/bin')
+'/opt/homebrew/sbin' | prepend '{{ HOME }}/.fnm' | prepend '{{ HOME }}/.bun/bin' | prepend '{{ HOME }}/.cargo/bin' | prepend '{{ HOME }}/.local/bin' | prepend '{{ HOME }}/.pyenv/shims' | prepend '{{ HOME }}/go/bin' | prepend "/Applications/Obsidian.app/Contents/MacOS")
