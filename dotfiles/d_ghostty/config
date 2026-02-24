@@ -17,7 +17,8 @@ quit-after-last-window-closed = true
 quit-after-last-window-closed-delay = 30s
 
 # Shell
-command = "/opt/homebrew/bin/zellij attach -c LCARS"
+initial-command = "/opt/homebrew/bin/zellij attach -c LCARS"
+command = "/opt/homebrew/bin/nu"
 
 # MacOS-specific
 macos-option-as-alt=left
@@ -28,7 +29,12 @@ clipboard-read=allow
 clipboard-write=allow
 copy-on-select=true
 
+# Quick Terminal
+quick-terminal-position = right
+quick-terminal-size = 25%
+quick-terminal-screen = mouse
+
 # Keybindings
 keybind = alt+left=unbind
 keybind = alt+right=unbind
-
+keybind = global:cmd+backquote=toggle_quick_terminal
