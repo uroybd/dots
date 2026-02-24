@@ -1014,3 +1014,13 @@ def 'jira issues branch view' [] {
     print "Current branch is not a FUL- branch, cannot determine Jira ticket."
   }
 }
+
+
+def quickterm-session [] {
+  if ("ZELLIJ" in $env) {
+    return
+  }
+  if (tput lines) == "66" and (tput cols) == "84" {
+    /opt/homebrew/bin/zellij attach -c HELM
+  }
+}

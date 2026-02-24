@@ -18,7 +18,7 @@ quit-after-last-window-closed-delay = 30s
 
 # Shell
 initial-command = "/opt/homebrew/bin/zellij attach -c LCARS"
-command = "/opt/homebrew/bin/nu"
+command = "/opt/homebrew/bin/nu -e 'quickterm-session'"
 
 # MacOS-specific
 macos-option-as-alt=left
