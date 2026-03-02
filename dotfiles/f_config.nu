@@ -1020,7 +1020,7 @@ def quickterm-session [] {
   if ("ZELLIJ" in $env) {
     return
   }
-  if (tput lines) == "66" and (tput cols) == "84" {
+  if (tput lines) == "66" {
     /opt/homebrew/bin/zellij attach -c HELM
   }
 }
