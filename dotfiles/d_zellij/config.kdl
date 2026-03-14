@@ -401,7 +401,7 @@ plugins {
         format_hide_on_overlength true
         format_left "#[bg=$sapphire,fg=$crust,bold]  {session} #[bg=$surface0]{mode}#[bg=$surface0] {tabs}"
         format_precedence "lrc"
-        format_right "#[bg=$surface0,fg=$flamingo]#[fg=$crust,bg=$flamingo] #[bg=$surface1,fg=$flamingo,bold] {swap_layout} #[bg=$surface0,fg=$surface1]#[fg=$crust,bg=$blue] 󰡨 #[bg=$surface1,fg=$blue,bold] {command_dockerps}#[bg=$surface0,fg=$surface1]#[bg=$teal,fg=$crust] 󰃭 #[bg=$surface1,fg=$teal,bold] {datetime} "
+        format_right "#[bg=$surface0,fg=$flamingo]#[fg=$crust,bg=$flamingo] #[bg=$surface1,fg=$flamingo,bold] {swap_layout} #[bg=$surface0,fg=$surface1]#[fg=$crust,bg=$blue] 󰡨 #[bg=$surface1,fg=$blue,bold] {command_dockerps}#[bg=$surface0,fg=$surface1]"
         format_space "#[bg=$surface0]"
         hide_frame_for_single_pane false
         mode_enter_search "#[bg=$flamingo,fg=$crust,bold]  ENT-SEARCH #[bg=$surfaco,fg=$flamingo]"
