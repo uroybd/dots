@@ -108,6 +108,14 @@ dest = "~/.config/zoxide.nu"
 pre_actions = ["{{ PACKAGE_INSTALLER }} zoxide"]
 src = "dotfiles/f_zoxide.nu"
 
+[packages.f_zshrc]
+dependencies = []
+dest = "~/.zshrc"
+src = "dotfiles/f_zshrc"
+
+[packages.f_zshrc.targets]
+mac = "~/.zshrc"
+
 [profiles.default]
 dependencies = []
 
@@ -128,6 +136,7 @@ dependencies = [
     "f_ssh_config",
     "d_yazi",
     "f_zoxide_nu",
+    "f_zshrc",
 ]
 
 [profiles.mac.variables]
