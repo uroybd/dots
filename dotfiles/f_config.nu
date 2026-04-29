@@ -775,7 +775,6 @@ source ~/.nu/contrib/nu_scripts/custom-completions/git/git-completions.nu
 source ~/.nu/contrib/nu_scripts/custom-completions/cargo/cargo-completions.nu
 source ~/.nu/contrib/nu_scripts/custom-completions/pdm/pdm-completions.nu
 source ~/.nu/contrib/nu_scripts/custom-completions/rustup/rustup-completions.nu
-source ~/.nu/contrib/nu_scripts/custom-completions/yarn/yarn-v4-completions.nu
 source ~/.nu/contrib/nu_scripts/custom-completions/vscode/vscode-completions.nu
 use ~/.cache/starship/init.nu
 
