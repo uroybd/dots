@@ -1065,7 +1065,7 @@ let status_icons = {
 
 def tasknotes_format_task [task, idx?: int] {
   let status_color = $status_colors | get --optional $task.status | default "white_bold"
-  let status_icon = $status_icons | get --optional task.status | default "󰄮"
+  let status_icon = $status_icons | get --optional $task.status | default "󰄮"
   if $idx != null {
     let status_icon = $"($idx) ($status_icon)"
   }
