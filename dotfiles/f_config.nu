@@ -1119,9 +1119,14 @@ def "tn all" [--data (-d)] {
 
 def "tn move" [] {
   let tasks = tasknotes_open
-  let selected_task = ($tasks | each {|t| tasknotes_format_task $t} | input list --index "Select a task to move: ")
+  let selected_task = ($tasks | input list -d {|t| tasknotes_format_task $t} "Select a task to move: ")
   let new_status = (["open", "in-progress", "done"] | input list -d {|e| $"(ansi ($status_colors | get $e))($status_icons | get $e) ($e | str capitalize)(ansi reset)"} "Enter the new status: ")
-  let path =  $"($TASKNOTE_API_ENDPOINT)/tasks/($tasks | get $selected_task | get id | url encode --all)" 
+  let path =  $"($TASKNOTE_API_ENDPOINT)/tasks/($selected_task | get id | url encode --all)" 
   http put --content-type application/json $path {status: $new_status} | get data | each {|t| tasknotes_print_task $t}
 }
 
+def "tn go" [] {
+  let tasks = (tn open --data)
+  let selected_task = ($tasks | input list -d {|t| tasknotes_format_task $t} "Select a task to open in Obsidian: ")
+  ^open -a "Obsidian.app" $"obsidian://open?vault=The%20Codex&file=($selected_task.path | url encode --all)"
+}
