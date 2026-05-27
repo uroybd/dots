@@ -5,7 +5,7 @@ cursor-style = block
 cursor-style-blink = true
 theme = "Catppuccin Frappe"
 adjust-cell-height = 26%
-custom-shader = cursor_warp.glsl
+custom-shader = "./boo-cursor.glsl"
 
 # Window Appearnce
 window-padding-x = 3
