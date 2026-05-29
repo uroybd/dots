@@ -1,5 +1,3 @@
-palette = "catppuccin_frappe"
-
 format = """
 $directory\
 $git_branch\
