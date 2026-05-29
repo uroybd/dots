@@ -25,6 +25,8 @@ src = "dotfiles/d_jira"
 
 [packages.d_jira.prompts]
 JIRA_API_TOKEN = "JIRA API TOKEN"
+JIRA_EMAIL = "JIRA EMAIL"
+JIRA_HOST = "JIRA HOST"
 
 [packages.d_nvim]
 dependencies = []

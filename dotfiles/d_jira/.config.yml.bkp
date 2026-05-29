@@ -1,0 +1,278 @@
+auth_type: basic
+board:
+    id: 1
+    name: FUL board
+    type: scrum
+epic:
+    name: customfield_10011
+    link: customfield_10014
+installation: Cloud
+issue:
+    fields:
+        custom:
+            - name: Responders
+              key: customfield_10070
+              schema:
+                datatype: array
+                items: string
+            - name: Related Slack message URL
+              key: customfield_10078
+              schema:
+                datatype: string
+            - name: Steps to Reproduce
+              key: customfield_10079
+              schema:
+                datatype: string
+            - name: Work category
+              key: customfield_10065
+              schema:
+                datatype: string
+            - name: Approvals
+              key: customfield_10066
+              schema:
+                datatype: sd-approvals
+            - name: Approver groups
+              key: customfield_10067
+              schema:
+                datatype: array
+                items: group
+            - name: Time to resolution
+              key: customfield_10068
+              schema:
+                datatype: sd-servicelevelagreement
+            - name: Time to first response
+              key: customfield_10069
+              schema:
+                datatype: sd-servicelevelagreement
+            - name: Project overview key
+              key: customfield_10040
+              schema:
+                datatype: string
+            - name: Project overview status
+              key: customfield_10041
+              schema:
+                datatype: string
+            - name: Design
+              key: customfield_10042
+              schema:
+                datatype: array
+                items: design.field.name
+            - name: Vulnerability
+              key: customfield_10043
+              schema:
+                datatype: any
+            - name: Sentiment
+              key: customfield_10044
+              schema:
+                datatype: array
+                items: sd-sentiment
+            - name: Goals
+              key: customfield_10045
+              schema:
+                datatype: array
+                items: Goals
+            - name: Affected services
+              key: customfield_10038
+              schema:
+                datatype: array
+                items: service-entity-field
+            - name: Category
+              key: customfield_10030
+              schema:
+                datatype: option
+            - name: Story Points
+              key: customfield_10031
+              schema:
+                datatype: number
+            - name: Request participants
+              key: customfield_10034
+              schema:
+                datatype: array
+                items: user
+            - name: Satisfaction
+              key: customfield_10035
+              schema:
+                datatype: sd-feedback
+            - name: Satisfaction date
+              key: customfield_10036
+              schema:
+                datatype: datetime
+            - name: Request language
+              key: customfield_10037
+              schema:
+                datatype: sd-request-lang
+            - name: Open forms
+              key: customfield_10027
+              schema:
+                datatype: number
+            - name: Submitted forms
+              key: customfield_10028
+              schema:
+                datatype: number
+            - name: Total forms
+              key: customfield_10029
+              schema:
+                datatype: number
+            - name: Sprint
+              key: customfield_10020
+              schema:
+                datatype: array
+                items: json
+            - name: Flagged
+              key: customfield_10021
+              schema:
+                datatype: array
+                items: option
+            - name: Target start
+              key: customfield_10022
+              schema:
+                datatype: date
+            - name: Target end
+              key: customfield_10023
+              schema:
+                datatype: date
+            - name: '[CHART] Date of First Response'
+              key: customfield_10024
+              schema:
+                datatype: datetime
+            - name: '[CHART] Time in Status'
+              key: customfield_10025
+              schema:
+                datatype: any
+            - name: Locked forms
+              key: customfield_10026
+              schema:
+                datatype: number
+            - name: Story point estimate
+              key: customfield_10016
+              schema:
+                datatype: number
+            - name: Issue color
+              key: customfield_10017
+              schema:
+                datatype: string
+            - name: Parent Link
+              key: customfield_10018
+              schema:
+                datatype: any
+            - name: Rank
+              key: customfield_10019
+              schema:
+                datatype: any
+            - name: Request Type
+              key: customfield_10010
+              schema:
+                datatype: sd-customerrequesttype
+            - name: Epic Status
+              key: customfield_10012
+              schema:
+                datatype: option
+            - name: Epic Color
+              key: customfield_10013
+              schema:
+                datatype: string
+            - name: Start date
+              key: customfield_10015
+              schema:
+                datatype: date
+            - name: Change type
+              key: customfield_10005
+              schema:
+                datatype: option
+            - name: Change risk
+              key: customfield_10006
+              schema:
+                datatype: option
+            - name: Change reason
+              key: customfield_10007
+              schema:
+                datatype: option
+            - name: Actual start
+              key: customfield_10008
+              schema:
+                datatype: datetime
+            - name: Actual end
+              key: customfield_10009
+              schema:
+                datatype: datetime
+            - name: Expected Behaviour
+              key: customfield_10080
+              schema:
+                datatype: string
+            - name: Actual Behaviour
+              key: customfield_10081
+              schema:
+                datatype: string
+            - name: Impact Assessment
+              key: customfield_10082
+              schema:
+                datatype: string
+            - name: Development
+              key: customfield_10000
+              schema:
+                datatype: any
+            - name: Team
+              key: customfield_10001
+              schema:
+                datatype: team
+            - name: Organizations
+              key: customfield_10002
+              schema:
+                datatype: array
+                items: sd-customerorganization
+            - name: Approvers
+              key: customfield_10003
+              schema:
+                datatype: array
+                items: user
+            - name: Impact
+              key: customfield_10004
+              schema:
+                datatype: option
+    types:
+        - id: "10000"
+          name: Epic
+          handle: Epic
+          subtask: false
+        - id: "10001"
+          name: Story
+          handle: Story
+          subtask: false
+        - id: "10002"
+          name: Task
+          handle: Task
+          subtask: false
+        - id: "10004"
+          name: Bug
+          handle: Bug
+          subtask: false
+        - id: "10007"
+          name: Feature Request
+          handle: Feature Request
+          subtask: false
+        - id: "10006"
+          name: Design
+          handle: Design
+          subtask: false
+        - id: "10051"
+          name: Design QA
+          handle: Design QA
+          subtask: false
+        - id: "10015"
+          name: Developer escalation
+          handle: Developer escalation
+          subtask: false
+        - id: "10013"
+          name: New Feature
+          handle: New Feature
+          subtask: false
+        - id: "10014"
+          name: Support
+          handle: Support
+          subtask: false
+login: roy@fulflld.com
+project:
+    key: FUL
+    type: classic
+server: https://fulflld.atlassian.net
+timezone: Asia/Dhaka

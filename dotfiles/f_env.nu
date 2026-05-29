@@ -107,6 +107,7 @@ $env.BUN_INSTALL = "{{ HOME }}/.bun"
 $env.SSH_AUTH_SOCK = "{{ HOME }}/.bitwarden-ssh-agent.sock"
 $env.EDITOR = "nvim"
 $env.JIRA_API_TOKEN = "{{ JIRA_API_TOKEN }}"
+$env.JIRA_HOST = "{{ JIRA_HOST }}"
 
 
 # To add entries to PATH (on Windows you might use Path), you can use the following pattern:

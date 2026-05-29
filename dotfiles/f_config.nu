@@ -982,7 +982,7 @@ def get-ticket-from-branch [] {
 }
 
 def jira-ticket-to-url [ticket: string] {
-  return $"https://fulflld.atlassian.net/browse/($ticket)"
+  return $"($env.JIRA_HOST)/browse/($ticket)"
 }
 
 def 'jira issues branch review' [--create-pr (-p)] {
