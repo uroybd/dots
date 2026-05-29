@@ -3,7 +3,7 @@ font-family = "Maple Mono"
 font-size = 13
 cursor-style = block
 cursor-style-blink = true
-theme = "Catppuccin Frappe"
+theme = "dark:Catppuccin Frappe,light:Catppuccin Latte"
 adjust-cell-height = 26%
 custom-shader = "./boo-cursor.glsl"
 
