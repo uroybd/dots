@@ -1088,9 +1088,19 @@ def tasknotes_print_task [task, idx?: int] {
   tasknotes_format_task $task $idx | print
 }
 
-def "tn create" [...inp] {
+def "tn create" [--subtask (-s), ...inp] {
   let input_str = ($inp | str join " ")
-  http post --content-type application/json $"($TASKNOTE_API_ENDPOINT)/nlp/parse" {text : $input_str} | get data.taskData | http post --content-type application/json $"($TASKNOTE_API_ENDPOINT)/tasks" | get data | each {|t| tasknotes_print_task $t}
+  mut taskDef = (http post --content-type application/json $"($TASKNOTE_API_ENDPOINT)/nlp/parse" {text : $input_str} | get data.taskData)
+  if $subtask {
+    let tasks = tasknotes_open
+    let selected_task = ($tasks | input list -d {|t| tasknotes_format_task $t} "Select a parent task for the subtask: ")
+    if $selected_task != null {
+      $taskDef.projects = [$"[[($selected_task.id)]]"]
+    } else {
+      print "No parent task selected, creating a normal task instead."
+    }
+  }
+  http post --content-type application/json $"($TASKNOTE_API_ENDPOINT)/tasks" $taskDef | get data | each {|t| tasknotes_print_task $t}
 }
 
 def "tn open" [--data (-d)] {
