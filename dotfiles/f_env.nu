@@ -46,22 +46,27 @@ def create_right_prompt [] {
     ([$last_exit_code, (char space), $time_segment] | str join)
 }
 
+def prmt_prompt [] {
+  prmt --code 0 $'(ansi cb){path::i}{git::f:(ansi pb)  :}\n(ansi reset)'
+}
+
 $env.DOTDROP_PROFILE = "mac"
 # Use nushell functions to define your right and left prompt
-$env.PROMPT_COMMAND = {|| create_left_prompt }
+$env.PROMPT_COMMAND = {|| prmt_prompt }
 # $env.PROMPT_COMMAND = {||
 #     let left = (prmt '{path:cyan} {git:purple} {rust:red:s: 🦀} {node:green:s: ⬢} {ok:green}{fail:red} ')
 #     # You can add more segments here if you want
 #     $left
 # }
 # FIXME: This default is not implemented in rust code as of 2023-09-08.
-$env.PROMPT_COMMAND_RIGHT = {|| create_right_prompt }
+# $env.PROMPT_COMMAND_RIGHT = {|| create_right_prompt }
+$env.PROMPT_COMMAND_RIGHT = ""
 
 # The prompt indicators are environmental variables that represent
 # the state of the prompt
-$env.PROMPT_INDICATOR = {|| "> " }
+$env.PROMPT_INDICATOR = {|| " " }
 $env.PROMPT_INDICATOR_VI_INSERT = {|| ": " }
-$env.PROMPT_INDICATOR_VI_NORMAL = {|| "> " }
+$env.PROMPT_INDICATOR_VI_NORMAL = {|| " " }
 $env.PROMPT_MULTILINE_INDICATOR = {|| "::: " }
 
 # If you want previously entered commands to have a different prompt from the usual one,

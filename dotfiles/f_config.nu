@@ -776,7 +776,7 @@ source ~/.nu/contrib/nu_scripts/custom-completions/cargo/cargo-completions.nu
 source ~/.nu/contrib/nu_scripts/custom-completions/pdm/pdm-completions.nu
 source ~/.nu/contrib/nu_scripts/custom-completions/rustup/rustup-completions.nu
 source ~/.nu/contrib/nu_scripts/custom-completions/vscode/vscode-completions.nu
-use ~/.cache/starship/init.nu
+# use ~/.cache/starship/init.nu
 
 source ~/.local/share/atuin/init.nu
 source ~/.config/zoxide.nu

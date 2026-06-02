@@ -62,9 +62,7 @@ mac = "~/.local/share/atuin/init.nu"
 [packages.f_config_nu]
 dependencies = [
     "f_env_nu",
-    "f_starship_init_nu",
     "f_atuin_nu",
-    "f_starship_toml",
 ]
 dest = "~/Library/Application Support/nushell/config.nu"
 post_actions = ['mkdir -p ~/.nu/contrib; bash -c "git -C ~/.nu/contrib/nu_scripts pull || git clone https://github.com/nushell/nu_scripts.git ~/.nu/contrib/nu_scripts"']
@@ -77,6 +75,7 @@ mac = "~/Library/Application Support/nushell/config.nu"
 [packages.f_env_nu]
 dependencies = []
 dest = "~/Library/Application Support/nushell/env.nu"
+pre_actions = ["cargo install prmt"]
 src = "dotfiles/f_env.nu"
 
 [packages.f_env_nu.targets]
@@ -92,17 +91,6 @@ src = "dotfiles/f_gitconfig"
 dependencies = []
 dest = "~/.ssh/config"
 src = "dotfiles/f_ssh_config"
-
-[packages.f_starship_init_nu]
-dependencies = ["f_starship_toml"]
-dest = "~/.cache/starship/init.nu"
-src = "dotfiles/f_starship_init.nu"
-
-[packages.f_starship_toml]
-dependencies = []
-dest = "~/.config/starship.toml"
-pre_actions = ["{{ PACKAGE_INSTALLER }} starship"]
-src = "dotfiles/f_starship.toml"
 
 [packages.f_zoxide_nu]
 dependencies = ["f_config_nu"]
@@ -129,9 +117,7 @@ dependencies = [
     "f_gitconfig",
     "f_env_nu",
     "f_config_nu",
-    "f_starship_init_nu",
     "f_atuin_nu",
-    "f_starship_toml",
     "d_ghostty",
     "d_atuin",
     "d_jira",
