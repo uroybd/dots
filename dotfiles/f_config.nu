@@ -1140,3 +1140,8 @@ def "tn go" [] {
   let selected_task = ($tasks | input list -d {|t| tasknotes_format_task $t} "Select a task to open in Obsidian: ")
   ^open -a "Obsidian.app" $"obsidian://open?vault=The%20Codex&file=($selected_task.path | url encode --all)"
 }
+
+def "qn" [...inp] {
+  let content = $"\n#### (date now | format date "%+")\n($inp | str join ' ')\n"
+  run-external obsidian append path=Scratchpad/Jot.md content=($content)
+}
