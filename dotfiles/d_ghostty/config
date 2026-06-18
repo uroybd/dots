@@ -4,7 +4,7 @@ font-size = 13
 cursor-style = block
 cursor-style-blink = true
 # theme = "dark:Catppuccin Frappe,light:Catppuccin Latte"
-theme = "dark:Kanso Ink,light:Kanso Pearl"
+theme = "dark:Kanso Mist,light:Kanso Pearl"
 adjust-cell-height = 26%
 custom-shader = "./boo-cursor.glsl"
 
