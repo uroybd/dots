@@ -41,7 +41,14 @@ keybinds clear-defaults=true {
         bind "k" { GoToPreviousTab; }
         bind "l" { GoToNextTab; }
         bind "n" { NewTab; SwitchToMode "locked"; }
-        bind "r" { SwitchToMode "renametab"; TabNameInput 0; }
+        bind "r" {
+            // It sets the tab to manual mode first, then enters rename mode.
+            MessagePlugin "smart-tabs" {
+                name "set_focused_to_manual"
+            }
+            SwitchToMode "RenameTab"
+            TabNameInput 0
+        }
         bind "s" { ToggleActiveSyncTab; SwitchToMode "locked"; }
         bind "t" { SwitchToMode "normal"; }
         bind "x" { CloseTab; SwitchToMode "locked"; }
@@ -205,7 +212,14 @@ keybinds clear-defaults=true {
         bind "enter" { SwitchToMode "search"; }
     }
     renametab {
-        bind "esc" { UndoRenameTab; SwitchToMode "tab"; }
+        bind "esc" {
+            UndoRenameTab
+            SwitchToMode "tab"
+            // It sets the tab to managed mode.
+            MessagePlugin "smart-tabs" {
+                name "set_focused_to_managed"
+            }
+        }
     }
     shared_among "renametab" "renamepane" {
         bind "Ctrl c" { SwitchToMode "locked"; }
@@ -223,16 +237,26 @@ plugins {
       tooltip "F9"
     }
     configuration location="zellij:configuration"
-    filepicker location="zellij:strider" {
-        cwd "/"
-    }
-    plugin-manager location="zellij:plugin-manager"
-    session-manager location="zellij:session-manager"
-    status-bar location="zellij:status-bar"
+    //filepicker location="zellij:strider" {
+    //    cwd "/"
+    //}
+    //plugin-manager location="zellij:plugin-manager"
+    //session-manager location="zellij:session-manager"
+    //status-bar location="zellij:status-bar"
     strider location="zellij:strider"
-    tab-bar location="zellij:tab-bar"
+    //tab-bar location="zellij:tab-bar"
     welcome-screen location="zellij:session-manager" {
         welcome_screen true
+    }
+    smart-tabs location="https://github.com/YesYouKenSpace/zellij-smart-tabs/releases/download/v0.2.1/zellij-smart-tabs.wasm" {
+      {% raw %}
+      format "{% if short_git_root %}{{ short_git_root }}{% else %}{{ short_dir }}{% endif %}{% if program %} [{{ program }}]{% endif %}{% if status %} | {{ status }}{% endif %}"
+      {% endraw %}
+      sub {
+        program {
+          nu ""
+        }
+      }  
     }
 }
 
@@ -240,6 +264,7 @@ plugins {
 // eg. "file:/path/to/my-plugin.wasm"
 // eg. "https://example.com/my-plugin.wasm"
 load_plugins {
+  smart-tabs
 }
 web_client {
     font "monospace"
