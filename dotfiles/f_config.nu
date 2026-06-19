@@ -868,7 +868,7 @@ def dotcommit [...msg] {
   let commit_message = ($msg | str join " ")
   print "Commiting in neovim submodule..."
   cd ./dotfiles/d_nvim/
-  ./readme-gen.nu
+  ./readme-gen.nu and echo "Generated README.md for nvim submodule"
   git add *
   if (git status --porcelain | length) > 0 {
   git commit -m $commit_message
