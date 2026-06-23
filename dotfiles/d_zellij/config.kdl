@@ -255,6 +255,7 @@ plugins {
       sub {
         program {
           nu ""
+          git "󰊢"
         }
       }  
     }
