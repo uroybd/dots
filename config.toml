@@ -1,111 +1,118 @@
 banner = true
 
-[packages.d_aerospace]
-dependencies = []
-dest = "~/.config/aerospace/"
-src = "dotfiles/d_aerospace"
+[packages.f_atuin_nu]
+src = "dotfiles/f_atuin.nu"
+dest = "~/.local/share/atuin/init.nu"
+dependencies = ["d_atuin"]
+
+[packages.f_atuin_nu.targets]
+mac = "~/.local/share/atuin/init.nu"
 
 [packages.d_atuin]
-dependencies = []
-dest = "~/.config/atuin/"
-pre_actions = ["{{ PACKAGE_INSTALLER }} atuin"]
 src = "dotfiles/d_atuin"
-
-[packages.d_ghostty]
+dest = "~/.config/atuin/"
 dependencies = []
-dest = "~/.config/ghostty/"
-pre_actions = ["{{ PACKAGE_INSTALLER }} --cask font-maple-mono"]
-src = "dotfiles/d_ghostty"
+pre_actions = ["{{ PACKAGE_INSTALLER }} atuin"]
 
-[packages.d_jira]
+[packages.f_ssh_config]
+src = "dotfiles/f_ssh_config"
+dest = "~/.ssh/config"
 dependencies = []
-dest = "~/.config/.jira/"
-pre_actions = ["{{ PACKAGE_INSTALLER }} jira-cli"]
-src = "dotfiles/d_jira"
 
-[packages.d_jira.prompts]
-JIRA_API_TOKEN = "JIRA API TOKEN"
-JIRA_EMAIL = "JIRA EMAIL"
-JIRA_HOST = "JIRA HOST"
+[packages.f_zoxide_nu]
+src = "dotfiles/f_zoxide.nu"
+dest = "~/.config/zoxide.nu"
+dependencies = ["f_config_nu"]
+pre_actions = ["{{ PACKAGE_INSTALLER }} zoxide"]
 
 [packages.d_nvim]
-dependencies = []
+src = "dotfiles/d_nvim"
 dest = "~/.config/nvim/"
+dependencies = []
+pre_actions = ["{{ PACKAGE_INSTALLER }} neovim"]
 ignore = [
     ".gitignore",
     ".git",
     ".git/**",
 ]
-pre_actions = ["{{ PACKAGE_INSTALLER }} neovim"]
-src = "dotfiles/d_nvim"
 
-[packages.d_yazi]
+[packages.d_aerospace]
+src = "dotfiles/d_aerospace"
+dest = "~/.config/aerospace/"
 dependencies = []
-dest = "~/.config/yazi/"
-pre_actions = ["{{ PACKAGE_INSTALLER }} yazi"]
-src = "dotfiles/d_yazi"
 
-[packages.d_zellij]
+[packages.f_gitconfig]
+src = "dotfiles/f_gitconfig"
+dest = "~/.gitconfig"
 dependencies = []
-dest = "~/.config/zellij/"
-pre_actions = ["{{ PACKAGE_INSTALLER }} zellij"]
-src = "dotfiles/d_zellij"
-
-[packages.f_atuin_nu]
-dependencies = ["d_atuin"]
-dest = "~/.local/share/atuin/init.nu"
-src = "dotfiles/f_atuin.nu"
-
-[packages.f_atuin_nu.targets]
-mac = "~/.local/share/atuin/init.nu"
-
-[packages.f_config_nu]
-dependencies = [
-    "f_env_nu",
-    "f_atuin_nu",
-]
-dest = "~/Library/Application Support/nushell/config.nu"
-pre_actions = ["{{ PACKAGE_INSTALLER }} nu direnv carapace", "cargo install prmt"]
-src = "dotfiles/f_config.nu"
-
-[packages.f_config_nu.targets]
-mac = "~/Library/Application Support/nushell/config.nu"
+pre_actions = ["{{ PACKAGE_INSTALLER }} git git-delta"]
 
 [packages.f_env_nu]
-dependencies = []
-dest = "~/Library/Application Support/nushell/env.nu"
 src = "dotfiles/f_env.nu"
+dest = "~/Library/Application Support/nushell/env.nu"
+dependencies = []
 
 [packages.f_env_nu.targets]
 mac = "~/Library/Application Support/nushell/env.nu"
 
-[packages.f_gitconfig]
+[packages.d_zellij]
+src = "dotfiles/d_zellij"
+dest = "~/.config/zellij/"
 dependencies = []
-dest = "~/.gitconfig"
-pre_actions = ["{{ PACKAGE_INSTALLER }} git git-delta"]
-src = "dotfiles/f_gitconfig"
-
-[packages.f_ssh_config]
-dependencies = []
-dest = "~/.ssh/config"
-src = "dotfiles/f_ssh_config"
-
-[packages.f_zoxide_nu]
-dependencies = ["f_config_nu"]
-dest = "~/.config/zoxide.nu"
-pre_actions = ["{{ PACKAGE_INSTALLER }} zoxide"]
-src = "dotfiles/f_zoxide.nu"
+pre_actions = ["{{ PACKAGE_INSTALLER }} zellij"]
 
 [packages.f_zshrc]
-dependencies = []
-dest = "~/.zshrc"
 src = "dotfiles/f_zshrc"
+dest = "~/.zshrc"
+dependencies = []
 
 [packages.f_zshrc.targets]
 mac = "~/.zshrc"
 
-[profiles.default]
+[packages.d_yazi]
+src = "dotfiles/d_yazi"
+dest = "~/.config/yazi/"
 dependencies = []
+pre_actions = ["{{ PACKAGE_INSTALLER }} yazi"]
+
+[packages.d_jira]
+src = "dotfiles/d_jira"
+dest = "~/.config/.jira/"
+dependencies = []
+pre_actions = ["{{ PACKAGE_INSTALLER }} jira-cli"]
+
+[packages.d_jira.prompts]
+JIRA_API_TOKEN = "JIRA API TOKEN"
+JIRA_HOST = "JIRA HOST"
+JIRA_EMAIL = "JIRA EMAIL"
+
+[packages.d_ghostty]
+src = "dotfiles/d_ghostty"
+dest = "~/.config/ghostty/"
+dependencies = []
+pre_actions = ["{{ PACKAGE_INSTALLER }} --cask font-maple-mono"]
+
+[packages.d_bin]
+src = "dotfiles/d_bin"
+dest = "~/bin"
+
+[packages.d_bin.targets]
+mac = "~/bin"
+
+[packages.f_config_nu]
+src = "dotfiles/f_config.nu"
+dest = "~/Library/Application Support/nushell/config.nu"
+dependencies = [
+    "f_env_nu",
+    "f_atuin_nu",
+]
+pre_actions = [
+    "{{ PACKAGE_INSTALLER }} nu direnv carapace",
+    "cargo install prmt",
+]
+
+[packages.f_config_nu.targets]
+mac = "~/Library/Application Support/nushell/config.nu"
 
 [profiles.mac]
 dependencies = [
@@ -123,7 +130,11 @@ dependencies = [
     "d_yazi",
     "f_zoxide_nu",
     "f_zshrc",
+    "d_bin",
 ]
 
 [profiles.mac.variables]
 PACKAGE_INSTALLER = "brew install"
+
+[profiles.default]
+dependencies = []

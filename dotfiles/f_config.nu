@@ -864,17 +864,17 @@ def dotcommit [...msg] {
   print "Commiting in neovim submodule..."
   cd ./dotfiles/d_nvim/
   ./readme-gen.nu and echo "Generated README.md for nvim submodule"
-  git add *
+  git add .
   if (git status --porcelain | length) > 0 {
   git commit -m $commit_message
   git push 
   }
   cd ../../
   print "Commiting in dotfiles..."
-  git add *
+  git add .
   if (git status --porcelain | length) > 0 {
-  git commit -m $commit_message
-  git push 
+    git commit -m $commit_message
+    git push 
   }
 }
 
