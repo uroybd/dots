@@ -771,16 +771,11 @@ def nuopen [arg, --raw (-r)] { if $raw { open -r $arg } else { open $arg } }
 alias open = ^open
 alias neovide = ^open -a NeoVide.app
 
-source ~/.nu/contrib/nu_scripts/custom-completions/git/git-completions.nu
-source ~/.nu/contrib/nu_scripts/custom-completions/cargo/cargo-completions.nu
-source ~/.nu/contrib/nu_scripts/custom-completions/pdm/pdm-completions.nu
-source ~/.nu/contrib/nu_scripts/custom-completions/rustup/rustup-completions.nu
-source ~/.nu/contrib/nu_scripts/custom-completions/vscode/vscode-completions.nu
-# use ~/.cache/starship/init.nu
 
 source ~/.local/share/atuin/init.nu
 source ~/.config/zoxide.nu
 
+source $"($nu.cache-dir)/carapace.nu"
 
 if not (which fnm | is-empty) {
   ^fnm env --json | from json | load-env

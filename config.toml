@@ -65,8 +65,7 @@ dependencies = [
     "f_atuin_nu",
 ]
 dest = "~/Library/Application Support/nushell/config.nu"
-post_actions = ['mkdir ~/.nu/contrib; bash -c "git -C ~/.nu/contrib/nu_scripts pull || git clone https://github.com/nushell/nu_scripts.git ~/.nu/contrib/nu_scripts"']
-pre_actions = ["{{ PACKAGE_INSTALLER }} nu direnv"]
+pre_actions = ["{{ PACKAGE_INSTALLER }} nu direnv carapace", "cargo install prmt"]
 src = "dotfiles/f_config.nu"
 
 [packages.f_config_nu.targets]
@@ -75,7 +74,6 @@ mac = "~/Library/Application Support/nushell/config.nu"
 [packages.f_env_nu]
 dependencies = []
 dest = "~/Library/Application Support/nushell/env.nu"
-pre_actions = ["cargo install prmt"]
 src = "dotfiles/f_env.nu"
 
 [packages.f_env_nu.targets]
