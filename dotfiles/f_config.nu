@@ -136,10 +136,11 @@ let light_theme = {
     shape_vardecl: purple
 }
 
+
 def zellij-smart-rename [] {
-  if not "ZELLIJ" in $env { return }
-  # First get the current tab info
-  let active_tab_info = (zellij action current-tab-info --json | from json)
+  if not ("ZELLIJ" in $env) { return }
+  # 1. Fetch current tab info, muting stderr strings silently
+  let active_tab_info = (try { zellij action current-tab-info --json e> /dev/null | from json } catch { {} })
   let current_name = ($active_tab_info | get name? | default "")
 
   let is_empty = ($current_name | is-empty)
@@ -154,55 +155,26 @@ def zellij-smart-rename [] {
       ($current_name | str starts-with "Tab #")
   )
   if not $is_automated { return }
+  
+  # Safeguard: if active_tab_info was empty due to a slow client startup, skip renaming on this cycle
+  if ($active_tab_info | is-empty) { return }
+
   let tab_num = (($active_tab_info | get position? | default 0) + 1)
   mut target_name = ""
   if $is_git {
-    let git_root = (git rev-parse --show-toplevel | str trim | path basename)
+    let git_root = (try { git rev-parse --show-toplevel e> /dev/null | str trim | path basename } catch { "" })
+    if $git_root == "" { return }
     $target_name = $"($tab_num) | ($git_root)"
   } else {
     $target_name = $"Tab #($tab_num)"
   }
   if $current_name != $target_name {
-    zellij action rename-tab $target_name
+    # Muted rename action just in case of secondary timing errors
+    zellij action rename-tab $target_name e> /dev/null
   }
 }
 
-def zellij-smart-rename-bak [] {
-    if "ZELLIJ" in $env {
-        # 1. Fetch current Git repository name
-        let is_git = (try { git rev-parse --is-inside-work-tree e> /dev/null | str trim } catch { "false" }) == "true"
-        if not $is_git { return }
 
-        let git_root = (git rev-parse --show-toplevel | str trim | path basename)
-
-        # 2. Get target active tab info from Zellij via JSON
-        let active_tab_info = (zellij action current-tab-info --json | from json)
-        let current_name = ($active_tab_info | get name? | default "")
-        
-        # Zellij indices are 0-based; add 1 for user-facing, e.g., "1 | repo"
-        let tab_num = (($active_tab_info | get position? | default 0) + 1)
-        let target_name = $"($tab_num) | ($git_root)"
-
-        # 3. Direct Regex Check using Nushell's built-in =~ operator
-        let is_empty = ($current_name | is-empty)
-        let has_prefix_format = if $is_empty { true } else {
-            $current_name =~ `^\d+\s*\|\s*`
-        }
-
-        # 4. Fallback checks for fresh, un-prefixed default tabs
-        let is_automated = (
-            $has_prefix_format or
-            $current_name == "nu" or 
-            ($current_name | str starts-with "Tab #") or 
-            $current_name == $git_root
-        )
-
-        # 5. Safely update it to the new project name format
-        if $is_automated and $current_name != $target_name {
-            zellij action rename-tab $target_name
-        }
-    }
-}
 
 # The default config record. This is where much of your global configuration is setup.
 $env.config = {
