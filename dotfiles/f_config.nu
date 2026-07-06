@@ -136,9 +136,38 @@ let light_theme = {
     shape_vardecl: purple
 }
 
-
-
 def zellij-smart-rename [] {
+  if not "ZELLIJ" in $env { return }
+  # First get the current tab info
+  let active_tab_info = (zellij action current-tab-info --json | from json)
+  let current_name = ($active_tab_info | get name? | default "")
+
+  let is_empty = ($current_name | is-empty)
+  let has_prefix_format = if $is_empty { true } else {
+      $current_name =~ `^\d+\s*\|\s*`
+  }
+
+  let is_git = (try { git rev-parse --is-inside-work-tree e> /dev/null | str trim } catch { "false" }) == "true"
+  let is_automated = (
+      $has_prefix_format or
+      $current_name == "nu" or 
+      ($current_name | str starts-with "Tab #")
+  )
+  if not $is_automated { return }
+  let tab_num = (($active_tab_info | get position? | default 0) + 1)
+  mut target_name = ""
+  if $is_git {
+    let git_root = (git rev-parse --show-toplevel | str trim | path basename)
+    $target_name = $"($tab_num) | ($git_root)"
+  } else {
+    $target_name = $"Tab #($tab_num)"
+  }
+  if $current_name != $target_name {
+    zellij action rename-tab $target_name
+  }
+}
+
+def zellij-smart-rename-bak [] {
     if "ZELLIJ" in $env {
         # 1. Fetch current Git repository name
         let is_git = (try { git rev-parse --is-inside-work-tree e> /dev/null | str trim } catch { "false" }) == "true"
