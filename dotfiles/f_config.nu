@@ -145,7 +145,7 @@ def zellij-smart-rename [] {
 
   let is_empty = ($current_name | is-empty)
   let has_prefix_format = if $is_empty { true } else {
-      $current_name =~ `^\d+\s*\|\s*`
+      $current_name =~ `^\d+\s*`
   }
 
   let is_git = (try { git rev-parse --is-inside-work-tree e> /dev/null | str trim } catch { "false" }) == "true"
@@ -164,7 +164,7 @@ def zellij-smart-rename [] {
   if $is_git {
     let git_root = (try { git rev-parse --show-toplevel e> /dev/null | str trim | path basename } catch { "" })
     if $git_root == "" { return }
-    $target_name = $"($tab_num) | ($git_root)"
+    $target_name = $"($tab_num) ($git_root)"
   } else {
     $target_name = $"Tab #($tab_num)"
   }
