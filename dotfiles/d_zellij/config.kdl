@@ -42,10 +42,6 @@ keybinds clear-defaults=true {
         bind "l" { GoToNextTab; }
         bind "n" { NewTab; SwitchToMode "locked"; }
         bind "r" {
-            // It sets the tab to manual mode first, then enters rename mode.
-            MessagePlugin "smart-tabs" {
-                name "set_focused_to_manual"
-            }
             SwitchToMode "RenameTab"
             TabNameInput 0
         }
@@ -215,10 +211,6 @@ keybinds clear-defaults=true {
         bind "esc" {
             UndoRenameTab
             SwitchToMode "tab"
-            // It sets the tab to managed mode.
-            MessagePlugin "smart-tabs" {
-                name "set_focused_to_managed"
-            }
         }
     }
     shared_among "renametab" "renamepane" {
@@ -248,24 +240,12 @@ plugins {
     welcome-screen location="zellij:session-manager" {
         welcome_screen true
     }
-    smart-tabs location="https://github.com/YesYouKenSpace/zellij-smart-tabs/releases/download/v0.2.1/zellij-smart-tabs.wasm" {
-      {% raw %}
-      format "{% if short_git_root %}{{ short_git_root }}{% else %}{{ short_dir }}{% endif %}{% if program %} [{{ program }}]{% endif %}{% if status %} | {{ status }}{% endif %}"
-      {% endraw %}
-      sub {
-        program {
-          nu ""
-          git "󰊢"
-        }
-      }  
-    }
 }
 
 // Plugins to load in the background when a new session starts
 // eg. "file:/path/to/my-plugin.wasm"
 // eg. "https://example.com/my-plugin.wasm"
 load_plugins {
-  smart-tabs
 }
 web_client {
     font "monospace"

@@ -136,6 +136,45 @@ let light_theme = {
     shape_vardecl: purple
 }
 
+
+
+def zellij-smart-rename [] {
+    if "ZELLIJ" in $env {
+        # 1. Fetch current Git repository name
+        let is_git = (try { git rev-parse --is-inside-work-tree e> /dev/null | str trim } catch { "false" }) == "true"
+        if not $is_git { return }
+
+        let git_root = (git rev-parse --show-toplevel | str trim | path basename)
+
+        # 2. Get target active tab info from Zellij via JSON
+        let active_tab_info = (zellij action current-tab-info --json | from json)
+        let current_name = ($active_tab_info | get name? | default "")
+        
+        # Zellij indices are 0-based; add 1 for user-facing, e.g., "1 | repo"
+        let tab_num = (($active_tab_info | get position? | default 0) + 1)
+        let target_name = $"($tab_num) | ($git_root)"
+
+        # 3. Direct Regex Check using Nushell's built-in =~ operator
+        let is_empty = ($current_name | is-empty)
+        let has_prefix_format = if $is_empty { true } else {
+            $current_name =~ `^\d+\s*\|\s*`
+        }
+
+        # 4. Fallback checks for fresh, un-prefixed default tabs
+        let is_automated = (
+            $has_prefix_format or
+            $current_name == "nu" or 
+            ($current_name | str starts-with "Tab #") or 
+            $current_name == $git_root
+        )
+
+        # 5. Safely update it to the new project name format
+        if $is_automated and $current_name != $target_name {
+            zellij action rename-tab $target_name
+        }
+    }
+}
+
 # The default config record. This is where much of your global configuration is setup.
 $env.config = {
     show_banner: false # true or false to enable or disable the welcome banner at startup
@@ -239,7 +278,6 @@ $env.config = {
                     if (which direnv | is-empty) {
                         return
                     }
-
                     direnv export json | from json | default {} | load-env
                 },
                 { |before, after|
@@ -247,7 +285,8 @@ $env.config = {
                   if ('FNM_DIR' in $env) and $is_node_dir {
                     fnm use # Personally I prefer to use fnm --log-level=quiet use
                   }
-                }
+                },
+                { || zellij-smart-rename }
       ] # run if the PWD environment is different since the last repl input
         }
         display_output: "if (term size).columns >= 100 { table -e } else { table }" # run to display the output of a pipeline
@@ -1141,3 +1180,5 @@ def "qn" [...inp] {
   let content = $"\n#### (date now | format date "%+")\n($inp | str join ' ')\n"
   run-external obsidian append path=Scratchpad/Jot.md content=($content)
 }
+
+
