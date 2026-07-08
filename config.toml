@@ -1,6 +1,13 @@
-#:schema https://raw.githubusercontent.com/uroybd/DotR/main/schema/config.schema.json
-
 banner = true
+symlink = false
+
+[packages.d_carapace]
+src = "dotfiles/d_carapace"
+dest = "~/.config/carapace"
+pre_actions = ["{{ PACKAGE_INSTALLER }} carapace"]
+
+[packages.d_carapace.targets]
+mac = "~/Library/Application Support/carapace"
 
 [packages.d_yazi]
 src = "dotfiles/d_yazi"
@@ -8,29 +15,30 @@ dest = "~/.config/yazi/"
 dependencies = []
 pre_actions = ["{{ PACKAGE_INSTALLER }} yazi"]
 
+[packages.d_jira]
+src = "dotfiles/d_jira"
+dest = "~/.config/.jira/"
+dependencies = []
+pre_actions = ["{{ PACKAGE_INSTALLER }} jira-cli"]
+
+[packages.d_jira.prompts]
+JIRA_API_TOKEN = "JIRA API TOKEN"
+JIRA_EMAIL = "JIRA EMAIL"
+JIRA_HOST = "JIRA HOST"
+
 [packages.d_zellij]
 src = "dotfiles/d_zellij"
 dest = "~/.config/zellij/"
 dependencies = []
 pre_actions = ["{{ PACKAGE_INSTALLER }} zellij"]
 
-[packages.f_ssh_config]
-src = "dotfiles/f_ssh_config"
-dest = "~/.ssh/config"
+[packages.f_zshrc]
+src = "dotfiles/f_zshrc"
+dest = "~/.zshrc"
 dependencies = []
 
-[packages.f_gitconfig]
-src = "dotfiles/f_gitconfig"
-dest = "~/.gitconfig"
-dependencies = []
-pre_actions = ["{{ PACKAGE_INSTALLER }} git git-delta"]
-
-[packages.d_nvim]
-src = "dotfiles/d_nvim"
-dest = "~/.config/nvim/"
-dependencies = []
-pre_actions = ["{{ PACKAGE_INSTALLER }} neovim"]
-ignore = [".gitignore", ".git", ".git/**"]
+[packages.f_zshrc.targets]
+mac = "~/.zshrc"
 
 [packages.d_bin]
 src = "dotfiles/d_bin"
@@ -40,25 +48,29 @@ dependencies = []
 [packages.d_bin.targets]
 mac = "~/bin"
 
-[packages.d_atuin]
-src = "dotfiles/d_atuin"
-dest = "~/.config/atuin/"
+[packages.d_nvim]
+src = "dotfiles/d_nvim"
+dest = "~/.config/nvim/"
 dependencies = []
-pre_actions = ["{{ PACKAGE_INSTALLER }} atuin"]
+pre_actions = ["{{ PACKAGE_INSTALLER }} neovim"]
+ignore = [".gitignore", ".git", ".git/**"]
 
 [packages.d_aerospace]
 src = "dotfiles/d_aerospace"
 dest = "~/.config/aerospace/"
 dependencies = []
 
+[packages.d_atuin]
+src = "dotfiles/d_atuin"
+dest = "~/.config/atuin/"
+dependencies = []
+pre_actions = ["{{ PACKAGE_INSTALLER }} atuin"]
+
 [packages.d_nushell]
 src = "dotfiles/d_nushell"
 dest = "~/.config/nushell"
-dependencies = ["d_atuin"]
-pre_actions = [
-  "{{ PACKAGE_INSTALLER }} nu direnv carapace zoxide",
-  "cargo install prmt",
-]
+dependencies = ["d_atuin", "d_carapace"]
+pre_actions = ["{{ PACKAGE_INSTALLER }} nu direnv zoxide", "cargo install prmt"]
 ignore = ["history.txt"]
 
 [packages.d_nushell.targets]
@@ -70,24 +82,16 @@ dest = "~/.config/ghostty/"
 dependencies = ["d_nushell", "d_zellij"]
 pre_actions = ["{{ PACKAGE_INSTALLER }} --cask font-maple-mono"]
 
-[packages.f_zshrc]
-src = "dotfiles/f_zshrc"
-dest = "~/.zshrc"
+[packages.f_gitconfig]
+src = "dotfiles/f_gitconfig"
+dest = "~/.gitconfig"
 dependencies = []
+pre_actions = ["{{ PACKAGE_INSTALLER }} git git-delta"]
 
-[packages.f_zshrc.targets]
-mac = "~/.zshrc"
-
-[packages.d_jira]
-src = "dotfiles/d_jira"
-dest = "~/.config/.jira/"
+[packages.f_ssh_config]
+src = "dotfiles/f_ssh_config"
+dest = "~/.ssh/config"
 dependencies = []
-pre_actions = ["{{ PACKAGE_INSTALLER }} jira-cli"]
-
-[packages.d_jira.prompts]
-JIRA_API_TOKEN = "JIRA API TOKEN"
-JIRA_HOST = "JIRA HOST"
-JIRA_EMAIL = "JIRA EMAIL"
 
 [profiles.mac]
 dependencies = [
@@ -103,6 +107,7 @@ dependencies = [
   "f_zshrc",
   "d_bin",
   "d_nushell",
+  "d_carapace",
 ]
 
 [profiles.mac.variables]

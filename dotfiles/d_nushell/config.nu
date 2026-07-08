@@ -814,8 +814,7 @@ alias neovide = ^open -a NeoVide.app
 
 source $"($nu.default-config-dir)/atuin.nu"
 source $"($nu.default-config-dir)/zoxide.nu"
-
-source $"($nu.cache-dir)/carapace.nu"
+source $"($nu.default-config-dir)/carapace.nu"
 
 if not (which fnm | is-empty) {
   ^fnm env --json | from json | load-env
