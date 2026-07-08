@@ -1,5 +1,9 @@
+#:schema https://raw.githubusercontent.com/uroybd/DotR/main/schema/config.schema.json
+
 banner = true
 symlink = false
+prompt_backend = "bitwarden"
+bitwarden_note = "dotr-secrets"
 
 [packages.d_carapace]
 src = "dotfiles/d_carapace"
@@ -112,6 +116,7 @@ dependencies = [
 
 [profiles.mac.variables]
 PACKAGE_INSTALLER = "brew install"
+DOTR_PROFILE = "mac"
 
 [profiles.default]
 dependencies = []
