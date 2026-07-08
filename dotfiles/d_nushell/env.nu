@@ -113,7 +113,7 @@ $env.SSH_AUTH_SOCK = "{{ HOME }}/.bitwarden-ssh-agent.sock"
 $env.EDITOR = "nvim"
 $env.JIRA_API_TOKEN = "{{ JIRA_API_TOKEN }}"
 $env.JIRA_HOST = "{{ JIRA_HOST }}"
-$env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense'
+$env.CARAPACE_BRIDGES = 'clap,zsh,fish,bash,inshellisense'
 
 # To add entries to PATH (on Windows you might use Path), you can use the following pattern:
 $env.PATH = ($env.PATH | split row (char esep) | prepend '/usr/local/bin' | prepend '/opt/homebrew/bin' | prepend

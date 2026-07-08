@@ -1,3 +1,5 @@
+#:schema https://raw.githubusercontent.com/uroybd/DotR/main/schema/config.schema.json
+
 banner = true
 
 [packages.d_yazi]
@@ -28,11 +30,7 @@ src = "dotfiles/d_nvim"
 dest = "~/.config/nvim/"
 dependencies = []
 pre_actions = ["{{ PACKAGE_INSTALLER }} neovim"]
-ignore = [
-    ".gitignore",
-    ".git",
-    ".git/**",
-]
+ignore = [".gitignore", ".git", ".git/**"]
 
 [packages.d_bin]
 src = "dotfiles/d_bin"
@@ -58,8 +56,8 @@ src = "dotfiles/d_nushell"
 dest = "~/.config/nushell"
 dependencies = ["d_atuin"]
 pre_actions = [
-    "{{ PACKAGE_INSTALLER }} nu direnv carapace zoxide",
-    "cargo install prmt",
+  "{{ PACKAGE_INSTALLER }} nu direnv carapace zoxide",
+  "cargo install prmt",
 ]
 ignore = ["history.txt"]
 
@@ -69,10 +67,7 @@ mac = "~/Library/Application Support/nushell"
 [packages.d_ghostty]
 src = "dotfiles/d_ghostty"
 dest = "~/.config/ghostty/"
-dependencies = [
-  "d_nushell",
-  "d_zellij"
-]
+dependencies = ["d_nushell", "d_zellij"]
 pre_actions = ["{{ PACKAGE_INSTALLER }} --cask font-maple-mono"]
 
 [packages.f_zshrc]
@@ -96,18 +91,18 @@ JIRA_EMAIL = "JIRA EMAIL"
 
 [profiles.mac]
 dependencies = [
-    "d_zellij",
-    "d_nvim",
-    "d_aerospace",
-    "f_gitconfig",
-    "d_ghostty",
-    "d_atuin",
-    "d_jira",
-    "f_ssh_config",
-    "d_yazi",
-    "f_zshrc",
-    "d_bin",
-    "d_nushell",
+  "d_zellij",
+  "d_nvim",
+  "d_aerospace",
+  "f_gitconfig",
+  "d_ghostty",
+  "d_atuin",
+  "d_jira",
+  "f_ssh_config",
+  "d_yazi",
+  "f_zshrc",
+  "d_bin",
+  "d_nushell",
 ]
 
 [profiles.mac.variables]
