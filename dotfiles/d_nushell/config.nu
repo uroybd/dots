@@ -812,8 +812,8 @@ alias open = ^open
 alias neovide = ^open -a NeoVide.app
 
 
-source ~/.local/share/atuin/init.nu
-source ~/.config/zoxide.nu
+source $"($nu.default-config-dir)/atuin.nu"
+source $"($nu.default-config-dir)/zoxide.nu"
 
 source $"($nu.cache-dir)/carapace.nu"
 
