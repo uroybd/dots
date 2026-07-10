@@ -1,9 +1,8 @@
 #:schema https://raw.githubusercontent.com/uroybd/DotR/main/schema/config.schema.json
 
-banner = true
+banner = false
 symlink = false
 prompt_backend = "bitwarden"
-bitwarden_note = "dotr-secrets"
 
 [packages.d_carapace]
 src = "dotfiles/d_carapace"
