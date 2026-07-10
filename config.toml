@@ -117,4 +117,3 @@ dependencies = [
 
 [profiles.default.variables]
 PACKAGE_INSTALLER = "brew install"
-DOTR_PROFILE = "mac"
