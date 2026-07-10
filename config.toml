@@ -97,7 +97,8 @@ src = "dotfiles/f_ssh_config"
 dest = "~/.ssh/config"
 dependencies = []
 
-[profiles.mac]
+[profiles.default]
+platform = "mac"
 dependencies = [
   "d_zellij",
   "d_nvim",
@@ -114,9 +115,6 @@ dependencies = [
   "d_carapace",
 ]
 
-[profiles.mac.variables]
+[profiles.default.variables]
 PACKAGE_INSTALLER = "brew install"
 DOTR_PROFILE = "mac"
-
-[profiles.default]
-dependencies = []
