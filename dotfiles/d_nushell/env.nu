@@ -50,7 +50,6 @@ def prmt_prompt [] {
   prmt --code 0 $'(ansi cb){path::i}{git::f:(ansi pb)  :}\n(ansi reset)'
 }
 
-$env.DOTDROP_PROFILE = "mac"
 # Use nushell functions to define your right and left prompt
 $env.PROMPT_COMMAND = {|| prmt_prompt }
 # $env.PROMPT_COMMAND = {||
