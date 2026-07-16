@@ -137,8 +137,8 @@ alt-tab = 'workspace-back-and-forth'
 alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 
 f1 = 'workspace --auto-back-and-forth 9'
-f2 = 'exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace --wrap-around prev'
-f3 = 'exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace --wrap-around next'
+f2 = 'exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace --stdin --wrap-around prev'
+f3 = 'exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace --stdin --wrap-around next'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#mode
 alt-shift-semicolon = 'mode service'
