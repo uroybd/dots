@@ -116,3 +116,15 @@ def 'jira issues branch view' [] {
     print "Current branch is not a FUL- branch, cannot determine Jira ticket."
   }
 }
+
+def 'jira issues branch epic' [] {
+  let ticket = (get-ticket-from-branch)
+  if $ticket != "" {
+    let epics = (^jira epic list --table --plain --columns KEY,SUMMARY,STATUS --status "TO DO" --status "In Progress" --order-by STATUS --reverse --csv | from csv)
+    let selected_epic = ($epics | input list -d {|it| $"($it.KEY) [($it.STATUS)]: ($it.SUMMARY)"} --fuzzy)
+    jira epic add $selected_epic.KEY $ticket
+    print $"Added ticket ($ticket) to epic ($selected_epic.KEY)"
+  } else {
+    print "Current branch is not a FUL- branch, cannot determine Jira ticket."
+  }
+}
