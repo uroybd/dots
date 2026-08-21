@@ -128,3 +128,22 @@ def 'jira issues branch epic' [] {
     print "Current branch is not a FUL- branch, cannot determine Jira ticket."
   }
 }
+
+def 'jira me issues top' [] {
+  let issues = jira me issues -s~Done --columns KEY,SUMMARY,STATUS --paginate 5 --csv | from csv
+  for $issue in $issues {
+    let color = match $issue.STATUS {
+      "TO DO" => "yellow_bold"
+      "In Progress" => "blue_bold"
+      "Code Review" => "green_bold"
+      "Product Review" => "gs"
+      "Done" => "s"
+      _ => "white"
+    }
+    mut title = $issue.SUMMARY
+    if ($title | str length) > 44 {
+       $title = ($title | str substring 0..44) + "..."
+    }
+    print $"  (ansi $color)($issue.KEY): ($title)(ansi reset)"
+  }
+}
