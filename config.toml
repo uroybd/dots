@@ -55,7 +55,7 @@ mac = "~/bin"
 src = "dotfiles/d_nvim"
 dest = "~/.config/nvim/"
 dependencies = []
-pre_actions = ["{{ PACKAGE_INSTALLER }} neovim"]
+pre_actions = ["{{ PACKAGE_INSTALLER }} neovim tectonic mermaid-cli"]
 ignore = [".gitignore", ".git", ".git/**"]
 
 [packages.d_aerospace]
