@@ -114,5 +114,5 @@ dependencies = [
   "d_carapace",
 ]
 
-[profiles.default.variables]
+[platforms.mac.variables]
 PACKAGE_INSTALLER = "brew install"
