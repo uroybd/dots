@@ -44,15 +44,20 @@ def todotxt-render-task [task: record] {
   print $"  (ansi $color)($title)(ansi reset)"
 }
 
-def "tuxedo queue" [] {
+def "tuxedo queue" [count?: int, --pad] {
   let tasks = (tuxedo ls --json | from json | where {|$x| $x.done == false})
-  let sorted_tasks = ($tasks | sort-by {|$x| ($x.priority | default "Z") + ($x.due | default "9999-12-31") + ($x.created | default "9999-12-31")} | take 5)
+  let sorted_tasks = ($tasks | sort-by {|$x| ($x.priority | default "Z") + ($x.due | default "9999-12-31") + ($x.created | default "9999-12-31")})
+  if $count != null {
+    let sorted_tasks = ($sorted_tasks | first $count)
+  }
   for $task in $sorted_tasks {
     todotxt-render-task $task
   }
   # print blank lines to match total 5 lines of output
-  let remaining = 5 - ($sorted_tasks | length)
-  for $i in 0..$remaining {
-    print ""
+  if ($pad and $count != null) {
+    let remaining = $count - ($sorted_tasks | length)
+    for $i in 0..$remaining {
+      print ""
+    }
   }
 }
