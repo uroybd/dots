@@ -119,5 +119,8 @@ $env.DOTR_PROFILE = "{{ DOTR_PROFILE }}"
 $env.PATH = ($env.PATH | split row (char esep) | prepend '/usr/local/bin' | prepend '/opt/homebrew/bin' | prepend
 '/opt/homebrew/sbin' | prepend '{{ HOME }}/.fnm' | prepend '{{ HOME }}/.bun/bin' | prepend '{{ HOME }}/.cargo/bin' | prepend '{{ HOME }}/.local/bin' | prepend '{{ HOME }}/.pyenv/shims' | prepend '{{ HOME }}/go/bin' | prepend "/Applications/Obsidian.app/Contents/MacOS")
 
+
+$env.TODO_DIR = '{{ HOME }}/Documents/The Codex'
+
 mkdir $nu.cache-dir
 carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
