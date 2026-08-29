@@ -75,7 +75,7 @@ dest = "~/.config/nushell"
 dependencies = ["d_atuin", "d_carapace"]
 pre_actions = [
   "{{ PACKAGE_INSTALLER }} nu direnv zoxide tuxedo",
-  "cargo install prmt",
+  "cargo install --locked prmt",
 ]
 ignore = ["history.txt"]
 
