@@ -62,6 +62,8 @@ ignore = [".gitignore", ".git", ".git/**"]
 src = "dotfiles/d_aerospace"
 dest = "~/.config/aerospace/"
 dependencies = []
+post_actions = ["aerospace reload-config"]
+pre_actions = ["{{ PACKAGE_INSTALLER }} aerospace"]
 
 [packages.d_atuin]
 src = "dotfiles/d_atuin"
@@ -87,6 +89,7 @@ src = "dotfiles/d_ghostty"
 dest = "~/.config/ghostty/"
 dependencies = ["d_nushell", "d_zellij"]
 pre_actions = ["{{ PACKAGE_INSTALLER }} --cask font-maple-mono"]
+post_actions = ["pkill -SIGUSR2 ghostty"]
 
 [packages.f_gitconfig]
 src = "dotfiles/f_gitconfig"
