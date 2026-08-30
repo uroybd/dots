@@ -53,7 +53,7 @@ def dotcommit [...msg] {
 
 def dotpull [] {
   git pull --recurse-submodules
-  cd ./dotfiles/nvim/
+  cd ./dotfiles/d_nvim/
   git checkout main
   git pull
   cd ../../
