@@ -45,17 +45,21 @@ def todotxt-render-task [task: record] {
 }
 
 def "tuxedo queue" [count?: int, --pad] {
-  let tasks = (tuxedo ls --json | from json | where {|$x| $x.done == false})
-  let sorted_tasks = ($tasks | sort-by {|$x| ($x.priority | default "Z") + ($x.due | default "9999-12-31") + ($x.created | default "9999-12-31")})
+  let threshold = (date now) + 7day
+  mut tasks = tuxedo ls --json
+                | from json
+                | where {|$x| $x.done == false and ($x.due == null or ($x.due | into datetime --format "%Y-%m-%d") <= $threshold)}
+                | sort-by {|$x| ($x.priority | default "Z") + ($x.due | default "9999-12-31") + ($x.created | default ("9999-12-31" | into datetime --format "%Y-%m-%d"))}
+
   if $count != null {
-    let sorted_tasks = ($sorted_tasks | first $count)
+    $tasks = ($tasks | first $count)
   }
-  for $task in $sorted_tasks {
+  for $task in $tasks {
     todotxt-render-task $task
   }
   # print blank lines to match total 5 lines of output
   if ($pad and $count != null) {
-    let remaining = $count - ($sorted_tasks | length)
+    let remaining = $count - ($tasks | length)
     for $i in 0..$remaining {
       print ""
     }
