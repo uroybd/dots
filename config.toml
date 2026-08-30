@@ -117,5 +117,9 @@ dependencies = [
   "d_carapace",
 ]
 
+
+[platforms.mac]
+pre_actions = ["./scripts/install_homebrew.sh"]
+
 [platforms.mac.variables]
 PACKAGE_INSTALLER = "brew install"
