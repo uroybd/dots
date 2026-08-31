@@ -42,12 +42,15 @@ def "commitart repo" [
     --bg: int = 0
     --bg-with: int = 8
     --offset: int = 0
+    --short           # use the abbreviated commit hash (git rev-parse --short HEAD)
 ] {
 
-    # Return early if not in a git repository (git exits 128 here, so use complete)
-    let check = do { git rev-parse --is-inside-work-tree } | complete
+    # Return early if not in a git repository. git exits 128 and writes to stderr
+    # here, so swallow both with `do -i` + a redirect and inspect `complete`.
+    let check = do -i { ^git rev-parse --is-inside-work-tree } | complete
     if $check.exit_code != 0 or ($check.stdout | str trim) != "true" {
         return
     }
-    git rev-parse HEAD | commitart --cols $cols --block $block --bg $bg --bg-with $bg_with --offset $offset
+    let hash = if $short { ^git rev-parse --short HEAD } else { ^git rev-parse HEAD }
+    $hash | commitart --cols $cols --block $block --bg $bg --bg-with $bg_with --offset $offset
 }

@@ -69,9 +69,7 @@ $env.PROMPT_COMMAND = {|| prmt_prompt }
 
 source $"($nu.default-config-dir)/commitart.nu"
 
-$env.PROMPT_COMMAND_RIGHT = {||
-    git rev-parse --short HEAD | commitart --cols 7 --block "○,◎,◉,●"
-}
+$env.PROMPT_COMMAND_RIGHT = {|| commitart repo --short --block "○,◎,◉,●" }
 
 # The prompt indicators are environmental variables that represent
 # the state of the prompt
