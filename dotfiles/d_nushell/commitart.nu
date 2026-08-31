@@ -6,34 +6,48 @@
 # value (mod list length), just like the color. Since one ANSI color usually
 # matches the terminal background, --bg names that color index and --bg-with the
 # color drawn in its place (default: 0 -> 8). --offset left-pads every row with
-# that many spaces.
+# that many spaces. --half packs two hex chars into one terminal cell (left
+# nibble = foreground, right nibble = background), so a short hash fits in half
+# the width; the split glyph defaults to "▌" but --block overrides it (and a
+# comma list is picked by the left nibble, like colors elsewhere).
 def "commitart" [
     --cols: int = 8
     --block: string = "██"
     --bg: int = 0
     --bg-with: int = 8
     --offset: int = 0
+    --half
 ] {
     let chars = $in | into string | split chars
-    let blocks = $block | split row "," | each { str trim }
+    let default_block = if $half { "▌" } else { "██" }
+    let raw_block = if $block == "██" { $default_block } else { $block }
+    let blocks = $raw_block | split row "," | each { str trim }
     let pad = 0..<$offset | each { " " } | str join
+    let remap = {|n| if $n == $bg { $bg_with } else { $n } }
 
-    mut out = ""
-    mut i = 0
-    for c in $chars {
-        if ($i mod $cols) == 0 {
-            $out = $out + $pad
+    $chars | chunks $cols | each {|row|
+        let cells = if $half {
+            $row | chunks 2 | each {|pair|
+                let lr = $pair | get 0 | into int --radix 16
+                let l = do $remap $lr
+                let glyph = $blocks | get ($lr mod ($blocks | length))
+                if ($pair | length) == 2 {
+                    let r = do $remap ($pair | get 1 | into int --radix 16)
+                    (ansi -e $"38;5;($l);48;5;($r)m") + $glyph + (ansi reset)
+                } else {
+                    (ansi -e $"38;5;($l)m") + $glyph + (ansi reset)
+                }
+            }
+        } else {
+            $row | each {|ch|
+                let raw = $ch | into int --radix 16
+                let v = do $remap $raw
+                let glyph = $blocks | get ($raw mod ($blocks | length))
+                (ansi -e $"38;5;($v)m") + $glyph + (ansi reset)
+            }
         }
-        let raw = $c | into int --radix 16
-        let v = (if $raw == $bg { $bg_with } else { $raw })
-        let glyph = $blocks | get ($raw mod ($blocks | length))
-        $out = $out + (ansi -e $"38;5;($v)m") + $glyph + (ansi reset)
-        $i = $i + 1
-        if ($i mod $cols) == 0 {
-            $out = $out + "\n"
-        }
-    }
-    $out | str trim --right --char "\n"
+        $pad + ($cells | str join)
+    } | str join "\n"
 }
 
 def "commitart repo" [
@@ -43,6 +57,7 @@ def "commitart repo" [
     --bg-with: int = 8
     --offset: int = 0
     --short           # use the abbreviated commit hash (git rev-parse --short HEAD)
+    --half            # pack two hex chars per terminal cell (see `commitart`)
 ] {
 
     # Return early if not in a git repository. git exits 128 and writes to stderr
@@ -52,5 +67,5 @@ def "commitart repo" [
         return
     }
     let hash = if $short { ^git rev-parse --short HEAD } else { ^git rev-parse HEAD }
-    $hash | commitart --cols $cols --block $block --bg $bg --bg-with $bg_with --offset $offset
+    $hash | commitart --cols $cols --block $block --bg $bg --bg-with $bg_with --offset $offset --half=$half
 }
