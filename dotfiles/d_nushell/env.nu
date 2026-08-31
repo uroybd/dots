@@ -3,7 +3,7 @@
 # version = "0.88.1"
 
 def create_left_prompt [] {
-    let home =  $nu.home-path
+    let home = $nu.home-path
 
     # Perform tilde substitution on dir
     # To determine if the prefix of the path matches the home dir, we split the current path into
@@ -29,6 +29,7 @@ def create_left_prompt [] {
 }
 
 def create_right_prompt [] {
+
     # create a right prompt in magenta with green separators and am/pm underlined
     let time_segment = ([
         (ansi reset)
@@ -37,21 +38,27 @@ def create_right_prompt [] {
     ] | str join | str replace --regex --all "([/:])" $"(ansi green)${1}(ansi magenta)" |
         str replace --regex --all "([AP]M)" $"(ansi magenta_underline)${1}")
 
-    let last_exit_code = if ($env.LAST_EXIT_CODE != 0) {([
+    let last_exit_code = if $env.LAST_EXIT_CODE != 0 {
+        ([
         (ansi rb)
         ($env.LAST_EXIT_CODE)
     ] | str join)
     } else { "" }
 
-    ([$last_exit_code, (char space), $time_segment] | str join)
+    ([
+        $last_exit_code
+        (char space)
+        $time_segment
+    ] | str join)
 }
 
 def prmt_prompt [] {
-  prmt --code 0 $'(ansi cb){path::i}{git::f:(ansi pb)  :}\n(ansi reset)'
+    prmt --code 0 $'(ansi cb){path::i}{git::f:(ansi pb)  :}\n(ansi reset)'
 }
 
 # Use nushell functions to define your right and left prompt
 $env.PROMPT_COMMAND = {|| prmt_prompt }
+
 # $env.PROMPT_COMMAND = {||
 #     let left = (prmt '{path:cyan} {git:purple} {rust:red:s: 🦀} {node:green:s: ⬢} {ok:green}{fail:red} ')
 #     # You can add more segments here if you want
@@ -59,7 +66,12 @@ $env.PROMPT_COMMAND = {|| prmt_prompt }
 # }
 # FIXME: This default is not implemented in rust code as of 2023-09-08.
 # $env.PROMPT_COMMAND_RIGHT = {|| create_right_prompt }
-$env.PROMPT_COMMAND_RIGHT = ""
+
+source $"($nu.default-config-dir)/commitart.nu"
+
+$env.PROMPT_COMMAND_RIGHT = {||
+    git rev-parse --short HEAD | commitart --cols 7 --block "○,◎,◉,●"
+}
 
 # The prompt indicators are environmental variables that represent
 # the state of the prompt
@@ -86,12 +98,20 @@ $env.PROMPT_MULTILINE_INDICATOR = {|| "::: " }
 # Note: The conversions happen *after* config.nu is loaded
 $env.ENV_CONVERSIONS = {
     "PATH": {
-        from_string: { |s| $s | split row (char esep) | path expand --no-symlink }
-        to_string: { |v| $v | path expand --no-symlink | str join (char esep) }
+        from_string: {|s|
+            $s | split row (char esep) | path expand --no-symlink
+        }
+        to_string: {|v|
+            $v | path expand --no-symlink | str join (char esep)
+        }
     }
     "Path": {
-        from_string: { |s| $s | split row (char esep) | path expand --no-symlink }
-        to_string: { |v| $v | path expand --no-symlink | str join (char esep) }
+        from_string: {|s|
+            $s | split row (char esep) | path expand --no-symlink
+        }
+        to_string: {|v|
+            $v | path expand --no-symlink | str join (char esep)
+        }
     }
 }
 
@@ -118,7 +138,6 @@ $env.DOTR_PROFILE = "{{ DOTR_PROFILE }}"
 # To add entries to PATH (on Windows you might use Path), you can use the following pattern:
 $env.PATH = ($env.PATH | split row (char esep) | prepend '/usr/local/bin' | prepend '/opt/homebrew/bin' | prepend
 '/opt/homebrew/sbin' | prepend '{{ HOME }}/.fnm' | prepend '{{ HOME }}/.bun/bin' | prepend '{{ HOME }}/.cargo/bin' | prepend '{{ HOME }}/.local/bin' | prepend '{{ HOME }}/.pyenv/shims' | prepend '{{ HOME }}/go/bin' | prepend "/Applications/Obsidian.app/Contents/MacOS")
-
 
 $env.TODO_DIR = '{{ HOME }}/Documents/The Codex/Tasks'
 
