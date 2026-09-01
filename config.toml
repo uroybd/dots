@@ -1,33 +1,14 @@
 #:schema https://raw.githubusercontent.com/uroybd/DotR/main/schema/config.schema.json
-
 banner = false
 symlink = false
 prompt_backend = "bitwarden"
 
-[packages.d_carapace]
-src = "dotfiles/d_carapace"
-dest = "~/.config/carapace"
-pre_actions = ["{{ PACKAGE_INSTALLER }} carapace"]
-
-[packages.d_carapace.targets]
-mac = "~/Library/Application Support/carapace"
-
-[packages.d_yazi]
-src = "dotfiles/d_yazi"
-dest = "~/.config/yazi/"
+[packages.d_aerospace]
+src = "dotfiles/d_aerospace"
+dest = "~/.config/aerospace/"
 dependencies = []
-pre_actions = ["{{ PACKAGE_INSTALLER }} yazi"]
-
-[packages.d_jira]
-src = "dotfiles/d_jira"
-dest = "~/.config/.jira/"
-dependencies = []
-pre_actions = ["{{ PACKAGE_INSTALLER }} jira-cli"]
-
-[packages.d_jira.prompts]
-JIRA_API_TOKEN = "JIRA API TOKEN"
-JIRA_EMAIL = "JIRA EMAIL"
-JIRA_HOST = "JIRA HOST"
+pre_actions = ["{{ PACKAGE_INSTALLER }} aerospace"]
+post_actions = ["aerospace reload-config"]
 
 [packages.d_zellij]
 src = "dotfiles/d_zellij"
@@ -35,35 +16,19 @@ dest = "~/.config/zellij/"
 dependencies = []
 pre_actions = ["{{ PACKAGE_INSTALLER }} zellij"]
 
-[packages.f_zshrc]
-src = "dotfiles/f_zshrc"
-dest = "~/.zshrc"
+[packages.f_ssh_config]
+src = "dotfiles/f_ssh_config"
+dest = "~/.ssh/config"
 dependencies = []
 
-[packages.f_zshrc.targets]
-mac = "~/.zshrc"
-
-[packages.d_bin]
-src = "dotfiles/d_bin"
-dest = "~/bin"
+[packages.d_carapace]
+src = "dotfiles/d_carapace"
+dest = "~/.config/carapace"
 dependencies = []
+pre_actions = ["{{ PACKAGE_INSTALLER }} carapace"]
 
-[packages.d_bin.targets]
-mac = "~/bin"
-
-[packages.d_nvim]
-src = "dotfiles/d_nvim"
-dest = "~/.config/nvim/"
-dependencies = []
-pre_actions = ["{{ PACKAGE_INSTALLER }} neovim tectonic mermaid-cli"]
-ignore = [".gitignore", ".git", ".git/**"]
-
-[packages.d_aerospace]
-src = "dotfiles/d_aerospace"
-dest = "~/.config/aerospace/"
-dependencies = []
-post_actions = ["aerospace reload-config"]
-pre_actions = ["{{ PACKAGE_INSTALLER }} aerospace"]
+[packages.d_carapace.targets]
+mac = "~/Library/Application Support/carapace"
 
 [packages.d_atuin]
 src = "dotfiles/d_atuin"
@@ -84,12 +49,31 @@ ignore = ["history.txt"]
 [packages.d_nushell.targets]
 mac = "~/Library/Application Support/nushell"
 
-[packages.d_ghostty]
-src = "dotfiles/d_ghostty"
-dest = "~/.config/ghostty/"
-dependencies = ["d_nushell", "d_zellij"]
-pre_actions = ["{{ PACKAGE_INSTALLER }} --cask font-maple-mono"]
-post_actions = ["pkill -SIGUSR2 ghostty"]
+[packages.d_bin]
+src = "dotfiles/d_bin"
+dest = "~/bin"
+dependencies = []
+
+[packages.d_bin.targets]
+mac = "~/bin"
+
+[packages.d_nvim]
+src = "dotfiles/d_nvim"
+dest = "~/.config/nvim/"
+dependencies = []
+pre_actions = ["{{ PACKAGE_INSTALLER }} neovim tectonic mermaid-cli"]
+ignore = [".gitignore", ".git", ".git/**"]
+
+[packages.d_jira]
+src = "dotfiles/d_jira"
+dest = "~/.config/.jira/"
+dependencies = []
+pre_actions = ["{{ PACKAGE_INSTALLER }} jira-cli"]
+
+[packages.d_jira.prompts]
+JIRA_EMAIL = "JIRA EMAIL"
+JIRA_API_TOKEN = "JIRA API TOKEN"
+JIRA_HOST = "JIRA HOST"
 
 [packages.f_gitconfig]
 src = "dotfiles/f_gitconfig"
@@ -97,13 +81,39 @@ dest = "~/.gitconfig"
 dependencies = []
 pre_actions = ["{{ PACKAGE_INSTALLER }} git git-delta"]
 
-[packages.f_ssh_config]
-src = "dotfiles/f_ssh_config"
-dest = "~/.ssh/config"
+[packages.d_ghostty]
+src = "dotfiles/d_ghostty"
+dest = "~/.config/ghostty/"
+dependencies = ["d_nushell", "d_zellij"]
+pre_actions = ["{{ PACKAGE_INSTALLER }} --cask font-maple-mono"]
+post_actions = ["pkill -SIGUSR2 ghostty"]
+
+[packages.f_zshrc]
+src = "dotfiles/f_zshrc"
+dest = "~/.zshrc"
 dependencies = []
 
+[packages.f_zshrc.targets]
+mac = "~/.zshrc"
+
+[packages.d_yazi]
+src = "dotfiles/d_yazi"
+dest = "~/.config/yazi/"
+dependencies = []
+pre_actions = ["{{ PACKAGE_INSTALLER }} yazi"]
+
+[packages.d_vi_mongo]
+src = "dotfiles/d_vi_mongo"
+dest = "~/.config/vi-mongo/"
+pre_actions = [
+  'command -v vi-mongo &> /dev/null || echo "[WARN] vi-mongo could not be found, install manually."',
+]
+ignore = ["history.txt"]
+
+[packages.d_vi_mongo.targets]
+mac = "~/Library/Application Support/vi-mongo"
+
 [profiles.default]
-platform = "mac"
 dependencies = [
   "d_zellij",
   "d_nvim",
@@ -118,8 +128,9 @@ dependencies = [
   "d_bin",
   "d_nushell",
   "d_carapace",
+  "d_vi_mongo",
 ]
-
+platform = "mac"
 
 [platforms.mac]
 pre_actions = ["./scripts/install_homebrew.sh"]

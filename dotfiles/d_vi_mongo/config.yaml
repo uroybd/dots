@@ -1,0 +1,28 @@
+version: v0.3.0
+log:
+  path: /tmp/vi-mongo.log
+  level: info
+  prettyPrint: true
+editor:
+  command: nvim
+  env: EDITOR
+ui:
+  databasePanelWidth: 30
+showConnectionPage: true
+showWelcomePage: false
+currentConnection: Local
+connections:
+  - url: mongodb://admin:admin_password@localhost:27017/fulflld?authSource=admin
+    host: localhost
+    port: 27017
+    database: fulflld
+    username: ""
+    password: ""
+    name: Local
+    timeout: 5
+    options: {}
+  - name: Production
+    url: "$MONGO_URI"
+styles:
+  betterSymbols: true
+  currentStyle: default.yaml
