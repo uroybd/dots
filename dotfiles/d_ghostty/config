@@ -32,7 +32,7 @@ copy-on-select=true
 
 # Quick Terminal
 quick-terminal-position = right
-quick-terminal-size = 25%
+quick-terminal-size = 30%
 quick-terminal-screen = mouse
 
 # Keybindings
