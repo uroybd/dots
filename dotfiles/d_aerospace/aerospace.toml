@@ -2,14 +2,13 @@
 # After that, you can edit ~/.aerospace.toml to your liking
 
 # You can use it to add commands that run after login to macOS user session.
-# 'start-at-login' needs to be 'true' for 'after-login-command' to work
-# Available commands: https://nikitabobko.github.io/AeroSpace/commands
-# after-login-command = ['exec-and-forget open -n /Applications/Ghostty.app']
-
 # You can use it to add commands that run after AeroSpace startup.
 # 'after-startup-command' is run after 'after-login-command'
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
-after-startup-command = ['exec-and-forget open -n /Applications/Ghostty.app']
+after-startup-command = [
+  'exec-and-forget open -n /Applications/Ghostty.app',
+  'exec-and-forget open -n /Applications/Obsidian.app',
+]
 
 # Start AeroSpace at login
 start-at-login = true
@@ -51,11 +50,11 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 #                 See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
 [gaps]
 inner.horizontal = 0
-inner.vertical =   0
-outer.left =       0
-outer.bottom =     0
-outer.top =        0
-outer.right =      0
+inner.vertical = 0
+outer.left = 0
+outer.bottom = 0
+outer.top = 0
+outer.right = 0
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -152,7 +151,10 @@ alt-shift-g = 'mode main'
 [mode.service.binding]
 esc = ['reload-config', 'mode main']
 r = ['flatten-workspace-tree', 'mode main'] # reset layout
-f = ['layout floating tiling', 'mode main'] # Toggle between floating and tiling layout
+f = [
+  'layout floating tiling',
+  'mode main',
+] # Toggle between floating and tiling layout
 backspace = ['close-all-windows-but-current', 'mode main']
 
 # sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
@@ -174,10 +176,7 @@ run = ['layout floating']
 
 [[on-window-detected]]
 if.app-id = 'com.mitchellh.ghostty'
-run = [
-"layout floating",
-'move-node-to-workspace 9'
-]
+run = ["layout floating", 'move-node-to-workspace 9']
 
 [[on-window-detected]]
 if.app-id = 'org.mozilla.firefox'
@@ -191,8 +190,7 @@ run = ['move-node-to-workspace 3']
 if.app-id = 'com.tinyspeck.slackmacgap'
 run = ['move-node-to-workspace 2']
 
- 
+
 [[on-window-detected]]
 if.app-id = 'com.spotify.client'
 run = ['move-node-to-workspace 4']
-
