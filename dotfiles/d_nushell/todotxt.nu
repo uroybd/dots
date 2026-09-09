@@ -51,7 +51,7 @@ def "tuxedo queue" [count?: int, --pad] {
     let threshold = (date now) + 7day
     mut tasks = tuxedo ls --json
     | from json
-    | where {|$x| $x.done == false and ($x.due == null or ($x.due | into datetime --format "%Y-%m-%d") <= $threshold)}
+    | where {|$x| $x.done == false and "personal" not-in $x.contexts and "personal" not-in $x.projects and ($x.due == null or ($x.due | into datetime --format "%Y-%m-%d") <= $threshold)}
     | sort-by {|$x| ($x.priority | default "Z") + ($x.due | default "9999-12-31") + ($x.created | default ("9999-12-31" | into datetime --format "%Y-%m-%d"))}
 
     if $count != null {
