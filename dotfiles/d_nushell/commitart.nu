@@ -100,6 +100,7 @@ def "commitart repo" [
     --short           # use the abbreviated commit hash (git rev-parse --short HEAD)
     --half            # pack two hex chars per terminal cell (see `commitart`)
     --even            # size the grid as square as possible (landscape over portrait when not exact); overrides --cols
+    --dirty
     --centered-in: int = 0
 ] {
 
@@ -109,7 +110,14 @@ def "commitart repo" [
     if $check.exit_code != 0 or ($check.stdout | str trim) != "true" {
         return
     }
-    let hash = if $short { ^git rev-parse --short HEAD } else { ^git rev-parse HEAD }
+    mut hash_cmd = ["git", "describe", "--always"]
+    if $short {
+        $hash_cmd = $hash_cmd | append "--abbrev=8"
+    }
+    if $dirty {
+        $hash_cmd = $hash_cmd | append "--dirty"
+    }
+    let hash = (^$hash_cmd.0 ...($hash_cmd | drop nth 0) | str replace -r "-dirty$" "")
     let use_cols = if $even { commitart even-cols ($hash | str length) $half } else { $cols }
     $hash | commitart --cols $use_cols --block $block --bg $bg --bg-with $bg_with --offset $offset --half=$half --centered-in=$centered_in
 }
