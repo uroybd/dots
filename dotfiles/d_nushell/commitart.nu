@@ -113,6 +113,8 @@ def "commitart repo" [
     mut hash_cmd = ["git", "describe", "--always"]
     if $short {
         $hash_cmd = $hash_cmd | append "--abbrev=8"
+    } else {
+        $hash_cmd = $hash_cmd | append "--abbrev=64"
     }
     if $dirty {
         $hash_cmd = $hash_cmd | append "--dirty"
