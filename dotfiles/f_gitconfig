@@ -6,6 +6,7 @@
 [core]
 	editor = nvim
   pager = delta
+	fsmonitor = true
 
 [blame]
   pager = delta
