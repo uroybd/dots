@@ -16,13 +16,9 @@
 [push]
 	followTags = true
 
-[diff]
-  tool = default-difftool
-  colorMoved = default
-[difftool "default-difftool"]
-  cmd = code --wait --diff $LOCAL $REMOTE
 [init]
 	defaultBranch = main
+
 [filter "lfs"]
 	required = true
 	clean = git-lfs clean -- %f
@@ -42,9 +38,24 @@
 [merge]
     tool = diffview
 
+
+[diff]
+  tool = default-difftool
+  colorMoved = default
+[difftool "default-difftool"]
+  cmd = code --wait --diff $LOCAL $REMOTE
 [mergetool]
     prompt = false
     keepBackup = false
 
 [mergetool "diffview"]
     cmd = nvim -n -c "DiffviewOpen" "$MERGE"
+
+[diff]
+    tool = diffview
+
+[difftool]
+    prompt = false
+
+[difftool "diffview"]
+    cmd = nvim -c "DiffviewOpen"
