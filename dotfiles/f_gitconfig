@@ -21,11 +21,6 @@
   colorMoved = default
 [difftool "default-difftool"]
   cmd = code --wait --diff $LOCAL $REMOTE
-[merge]
-	tool = codediff
-  conflictstyle = diff3
-[mergetool "code"]
-  cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
 [init]
 	defaultBranch = main
 [filter "lfs"]
@@ -43,5 +38,13 @@
 
 [commit]
   gpgsign = true
-[mergetool "codediff"]
-	cmd = nvim \"$MERGED\" -c \"CodeDiff merge \\\"$MERGED\\\"\"
+
+[merge]
+    tool = diffview
+
+[mergetool]
+    prompt = false
+    keepBackup = false
+
+[mergetool "diffview"]
+    cmd = nvim -n -c "DiffviewOpen" "$MERGE"
