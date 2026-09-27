@@ -65,3 +65,14 @@ def "qn" [...inp] {
     let content = $"\n#### (date now | format date "%+")\n($inp | str join ' ')\n"
     run-external obsidian append path=Scratchpad/Jot.md content=($content)
 }
+
+def diff_from_now [dateinput] {
+    let target_date = $dateinput | into datetime
+    mut diff = $target_date - (date now) | into record | reject -o second millisecond microsecond | into duration | into string | split row " " | first
+    # If diff ends with sec, then ignore it and return "0min"
+    if $diff == null or $diff == "0sec" {
+        echo "0min"
+    } else {
+        echo $diff
+    }
+}

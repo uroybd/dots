@@ -40,9 +40,9 @@ let priority_colors = {
 }
 
 let status_icons = {
-    "open": "󰄮"
-    "in-progress": "󰡖"
-    "done": "󰄲"
+    "open": ""
+    "in-progress": ""
+    "done": ""
 }
 
 def tasknotes_format_task [task, idx?: int] {
@@ -80,10 +80,10 @@ def tasknotes_format_task_minimal [task, idx?: int] {
     let due = $task | get --optional due
     let scheduled = $task | get --optional scheduled
     if $due != null {
-        $output = $"($output) (ansi red_bold)󰨱 ($due | date humanize)"
+        $output = $"($output) (ansi red_bold)󰨱 (diff_from_now $due)"
     }
     if $scheduled != null {
-        $output = $"($output) (ansi yellow_bold)󰃰 ($scheduled | date humanize)"
+        $output = $"($output) (ansi yellow_bold)󰃰 (diff_from_now $scheduled)"
     }
     $"($output) (ansi reset)"
 }
