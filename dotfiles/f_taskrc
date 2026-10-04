@@ -30,6 +30,10 @@ color=on
 uda.details.type=string
 uda.details.label=Details
 
+journal.time=on
+journal.time.start.annotaion="Start Session"
+journal.time.stop.annotaion="End Session"
+
 sync.server.client_id={{ TW_CLIENT_ID }}
 sync.encryption_secret={{ TW_ENCRYPTION_SECRET }}
 sync.aws.bucket=taskwarrior
