@@ -62,6 +62,10 @@ pre_actions = ["{{ PACKAGE_INSTALLER }} git git-delta"]
 src = "dotfiles/d_task"
 dest = "~/.config/task"
 pre_actions = ["{{ PACKAGE_INSTALLER }} task taskwarrior-tui"]
+post_actions = [
+  "find ~/.config/task/hooks -name '*.dotrbak' -type f -print -delete | sed 's/^/[INFO] Removed backup: /'",
+  "chmod +x ~/.config/task/hooks/* && echo '[INFO] Hooks are now executable.'",
+]
 
 [packages.d_task.prompts]
 TW_CLIENT_ID = "TW_CLIENT_ID"
