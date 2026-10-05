@@ -6,7 +6,7 @@ news.version=3.5.0
 # move this configuration file from ~/.taskrc to ~/.config/task/taskrc and update location config as follows:
 
 #data.location=~/.local/share/task
-#hooks.location=~/.config/task/hooks
+hooks.location=~/.config/task/hooks
 
 # Color theme (uncomment one to use)
 # include default-16.theme
@@ -27,13 +27,21 @@ news.version=3.5.0
 #include no-color.theme
 color=on
 
+# Custom fields
+# Jira
+uda.jira.type=string
+uda.jira.label=Jira
+
+# Details
 uda.details.type=string
 uda.details.label=Details
 
+# Journaling
 journal.time=on
 journal.time.start.annotaion="Start Session"
 journal.time.stop.annotaion="End Session"
 
+# Sync
 sync.server.client_id={{ TW_CLIENT_ID }}
 sync.encryption_secret={{ TW_ENCRYPTION_SECRET }}
 sync.aws.bucket=taskwarrior
