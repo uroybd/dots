@@ -1,3 +1,25 @@
+# Whether `token` can be part of a task filter (id, id range, uuid, +tag/-tag or attribute:value).
+def is-filter-token [token: string] {
+    $token =~ '^(\d+(-\d+)?|[0-9a-f]{8}(-[0-9a-f]{4}){0,4}|[+-]\w+|\w+:\S*)$'
+}
+
+# `task fail <filter>`: mark the matching tasks `outcome:failed`, then delete them.
+# Matches are resolved to uuids first, since deleting a task frees its id.
+def task-fail [filter: list<string>] {
+    if ($filter | is-empty) {
+        error make { msg: "Give a task filter (ids, uuids, tags...); refusing to fail everything." }
+    }
+    let uuids = ^task ...$filter export | from json | get uuid
+    if ($uuids | is-empty) {
+        print -e "No matching tasks."
+        return
+    }
+    for uuid in $uuids {
+        ^task rc.confirmation=off $uuid modify outcome:failed
+        ^task rc.confirmation=off $uuid delete
+    }
+}
+
 # Use the external (carapace) completer; a custom command is otherwise completed from its signature only.
 @complete external
 def --wrapped task [...rest] {
@@ -9,7 +31,14 @@ def --wrapped task [...rest] {
         }
         ^task sync o> /dev/null
         try {
-          ^task ...$rest
+          # `fail` is not a taskwarrior command: accept `task fail <filter>` and `task <filter> fail`.
+          if ($rest | first | default "") == "fail" {
+            task-fail ($rest | skip 1)
+          } else if ($rest | last | default "") == "fail" and ($rest | drop 1 | all { is-filter-token $in }) {
+            task-fail ($rest | drop 1)
+          } else {
+            ^task ...$rest
+          }
         } catch { |err|
           print -e $"(ansi red_bold)Error executing task command:(ansi reset)\n($err)"
         }

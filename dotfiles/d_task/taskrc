@@ -38,6 +38,11 @@ uda.jira.label=Jira
 uda.details.type=string
 uda.details.label=Details
 
+# Outcome
+uda.outcome.type=string
+uda.outcome.label=Outcome
+uda.outcome.values=success,failed
+
 # Journaling
 journal.time=on
 journal.time.start.annotaion="Start Session"
