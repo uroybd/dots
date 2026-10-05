@@ -4,16 +4,15 @@ def --env get-env [name] { $env | get $name }
 def --env set-env [name, value] { load-env { $name: $value } }
 def --env unset-env [name] { hide-env $name }
 
-let carapace_completer = {|spans|
-  # if the current command is an alias, get it's expansion
-  let expanded_alias = (scope aliases | where name == $spans.0 | $in.0?.expansion?)
+let carapace_completer = {|place|
+  # if the current command is an alias, get its expansion
+  let expanded_alias = (scope aliases | where name == $place.command.0 | $in.0?.expansion?)
 
-  # overwrite
-  let spans = (if $expanded_alias != null  {
-    # put the first word of the expanded alias first in the span
-    $spans | skip 1 | prepend ($expanded_alias | split row " " | take 1)
+  # put the first word of the expanded alias first in the span
+  let spans = (if $expanded_alias != null {
+    $place.command | skip 1 | prepend ($expanded_alias | split row " " | take 1)
   } else {
-    $spans | skip 1 | prepend ($spans.0)
+    $place.command
   })
 
   if ($spans | length) == 1 {
@@ -22,8 +21,8 @@ let carapace_completer = {|spans|
     with-env {
       CARAPACE_SHELL: 'nushell'
       CARAPACE_SHELL_ALIASES: (scope aliases | get name | uniq | str join "\n")
-      CARAPACE_SHELL_BUILTINS: (help commands | where category != "" | get name | each { split row " " | first } | uniq  | str join "\n")
-      CARAPACE_SHELL_FUNCTIONS: (help commands | where category == "" | get name | each { split row " " | first } | uniq  | str join "\n")
+      CARAPACE_SHELL_BUILTINS: (help commands | where category != "" | get name | each { split row " " | first } | uniq | str join "\n")
+      CARAPACE_SHELL_FUNCTIONS: (help commands | where category == "" | get name | each { split row " " | first } | uniq | str join "\n")
       CARAPACE_SHELL_VARIABLES: (scope variables | get name | uniq | str join "\n")
     } {
       carapace $spans.0 nushell ...$spans | from json
