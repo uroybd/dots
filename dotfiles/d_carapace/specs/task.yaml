@@ -1,0 +1,455 @@
+# yaml-language-server: $schema=https://carapace.sh/schemas/command.json
+#
+# Carapace spec for Taskwarrior's `task`.
+#
+# carapace ships a native `task` completer for go-task (taskfile.dev) that
+# shadows the CARAPACE_BRIDGES lookup, and taskwarrior's zsh/bash completion
+# can't be reached through the bridges, so complete from taskwarrior itself
+# (`task _ids`, `_projects`, `_tags`, `_udas`, `_config`, `_context`).
+#
+# Taskwarrior's grammar is `task [filter] <command> [modifications]` with the
+# command allowed anywhere, so flag parsing is disabled (`-tag`, `rc.x=y` are
+# plain arguments) and every position offers ids, `attribute:value` pairs and
+# `+tag`/`-tag`.
+#
+# Generated command list: `task _zshcommands`.
+name: task
+description: Taskwarrior, a command-line task manager
+parsing: disabled
+
+x-ids: &ids |-
+  $(task _zshids 2>/dev/null | awk -F: '{v=$1; sub(/^[^:]*:/,""); printf "%s\t%s\n", v, $0}')
+
+# `key:value` pairs, completed as multiparts so `pro<TAB>` gives `project:`
+# and `project:<TAB>` gives the project names.
+x-attributes: &attributes |-
+  $(task _projects 2>/dev/null | sed 's/^/project:/'; task _ids 2>/dev/null | sed 's/^/depends:/'; for p in H M L; do echo "priority:$p"; done; for s in pending completed deleted waiting recurring; do echo "status:$s"; done; for r in daily weekdays weekly biweekly monthly quarterly semiannual annual yearly; do echo "recur:$r"; done; for k in due wait scheduled until start end entry modified; do for d in now today yesterday tomorrow sod eod sow eow soww eoww som eom soq eoq soy eoy later someday monday tuesday wednesday thursday friday saturday sunday; do echo "$k:$d"; done; done; for k in description parent template; do echo "$k:"; done; task _udas 2>/dev/null | grep -v -x priority | sed 's/$/:/') ||| $multiparts([":"])
+
+x-tags: &tags |-
+  $(task _tags 2>/dev/null | sed 's/^/+/'; task _tags 2>/dev/null | grep -v -x '[A-Z]*' | sed 's/^/-/')
+
+x-commands: &commands |-
+  $(task _zshcommands 2>/dev/null | grep -v '^_' | awk -F: '{print $1"\t"$3}')
+
+# `rc.<setting>=<value>` overrides, only offered once `rc` has been typed.
+x-overrides: &overrides |-
+  $(case "${C_VALUE}" in rc*) task _config 2>/dev/null | sed 's/^/rc./;s/$/=/';; esac) ||| $nospace(=)
+
+completion:
+  positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+commands:
+  - name: commands
+    description: "Generates a list of all commands, with behavior details"
+    group: metadata
+
+  - name: count
+    description: "Counts matching tasks"
+    group: metadata
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: ids
+    description: "Shows the IDs of matching tasks, as a range"
+    group: metadata
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: information
+    description: "Shows all data and metadata"
+    group: metadata
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: projects
+    description: "Shows all project names used"
+    group: metadata
+
+  - name: stats
+    description: "Shows task database statistics"
+    group: metadata
+
+  - name: tags
+    description: "Shows a list of all tags used"
+    group: metadata
+
+  - name: uuids
+    description: "Shows the UUIDs of matching tasks, as a space-separated list"
+    group: metadata
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: active
+    description: "Active tasks"
+    group: report
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: all
+    description: "All tasks"
+    group: report
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: blocked
+    description: "Blocked tasks"
+    group: report
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: blocking
+    description: "Blocking tasks"
+    group: report
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: completed
+    description: "Completed tasks"
+    group: report
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: list
+    description: "Most details of tasks"
+    group: report
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: long
+    description: "All details of tasks"
+    group: report
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: ls
+    description: "Few details of tasks"
+    group: report
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: minimal
+    description: "Minimal details of tasks"
+    group: report
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: neovim
+    description: "Tasks"
+    group: report
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: newest
+    description: "Newest tasks"
+    group: report
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: next
+    description: "Most urgent tasks"
+    group: report
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: oldest
+    description: "Oldest tasks"
+    group: report
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: overdue
+    description: "Overdue tasks"
+    group: report
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: ready
+    description: "Most urgent actionable tasks"
+    group: report
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: recurring
+    description: "Recurring Tasks"
+    group: report
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: timesheet
+    description: "Summary of completed and started tasks"
+    group: report
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: unblocked
+    description: "Unblocked tasks"
+    group: report
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: waiting
+    description: "Waiting (hidden) tasks"
+    group: report
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: add
+    description: "Adds a new task"
+    group: operation
+    completion:
+      positionalany: [*commands, *attributes, *tags, *overrides]
+
+  - name: annotate
+    description: "Adds an annotation to an existing task"
+    group: operation
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: append
+    description: "Appends text to an existing task description"
+    group: operation
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: delete
+    description: "Deletes the specified task"
+    group: operation
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: denotate
+    description: "Deletes an annotation"
+    group: operation
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: done
+    description: "Marks the specified task as completed"
+    group: operation
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: duplicate
+    description: "Duplicates the specified tasks"
+    group: operation
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: edit
+    description: "Launches an editor to modify a task directly"
+    group: operation
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: log
+    description: "Adds a new task that is already completed"
+    group: operation
+    completion:
+      positionalany: [*commands, *attributes, *tags, *overrides]
+
+  - name: modify
+    description: "Modifies the existing task with provided arguments."
+    group: operation
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: prepend
+    description: "Prepends text to an existing task description"
+    group: operation
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: purge
+    description: "Removes the specified tasks from the data files. Causes permanent loss of data."
+    group: operation
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: start
+    description: "Marks specified task as started"
+    group: operation
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: stop
+    description: "Removes the 'start' time from a task"
+    group: operation
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: undo
+    description: "Reverts the most recent change to a task"
+    group: operation
+
+  - name: context
+    description: "Set and define contexts (default filters / modifications)"
+    group: context
+    completion:
+      positional:
+        - ["list", "show", "define", "delete", "none", "$(task _context 2>/dev/null)"]
+
+  - name: burndown.annual
+    description: "Shows a graphical burndown chart, by annual"
+    group: graphs
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: burndown.daily
+    description: "Shows a graphical burndown chart, by daily"
+    group: graphs
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: burndown.monthly
+    description: "Shows a graphical burndown chart, by monthly"
+    group: graphs
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: burndown.weekly
+    description: "Shows a graphical burndown chart, by weekly"
+    group: graphs
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: calendar
+    description: "Shows a calendar, with due tasks marked"
+    group: graphs
+    completion:
+      positionalany: [due, y, "$(seq 1 12)"]
+
+  - name: ghistory.annual
+    description: "Shows a graphical report of task history, by year"
+    group: graphs
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: ghistory.daily
+    description: "Shows a graphical report of task history, by day"
+    group: graphs
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: ghistory.monthly
+    description: "Shows a graphical report of task history, by month"
+    group: graphs
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: ghistory.weekly
+    description: "Shows a graphical report of task history, by week"
+    group: graphs
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: history.annual
+    description: "Shows a report of task history, by year"
+    group: graphs
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: history.daily
+    description: "Shows a report of task history, by day"
+    group: graphs
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: history.monthly
+    description: "Shows a report of task history, by month"
+    group: graphs
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: history.weekly
+    description: "Shows a report of task history, by week"
+    group: graphs
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: summary
+    description: "Shows a report of task status by project"
+    group: graphs
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: columns
+    description: "All supported columns and formatting styles"
+    group: config
+
+  - name: config
+    description: "Change settings in the task configuration"
+    group: config
+    completion:
+      positional:
+        - ["$(task _config)"]
+      positionalany: []
+
+  - name: reports
+    description: "Lists all supported reports"
+    group: config
+
+  - name: show
+    description: "Shows all configuration variables or subset"
+    group: config
+    completion:
+      positional:
+        - ["$(task _config)"]
+
+  - name: udas
+    description: "Shows all the defined UDA details"
+    group: config
+
+  - name: export
+    description: "Exports tasks in JSON format"
+    group: migration
+    completion:
+      positionalany: [*commands, *ids, *attributes, *tags, *overrides]
+
+  - name: import
+    description: "Imports JSON files"
+    group: migration
+    completion:
+      positionalany: ["$files"]
+
+  - name: import-v2
+    description: "Imports Taskwarrior v2.x files"
+    group: migration
+    completion:
+      positionalany: ["$files"]
+
+  - name: synchronize
+    description: "Synchronizes data with the Taskserver"
+    group: migration
+
+  - name: calc
+    description: "Calculator"
+    group: misc
+
+  - name: colors
+    description: "All colors, a sample, or a legend"
+    group: misc
+
+  - name: diagnostics
+    description: "Platform, build and environment details"
+    group: misc
+
+  - name: execute
+    description: "Executes external commands and scripts"
+    group: misc
+    completion:
+      positionalany: ["$executables"]
+
+  - name: help
+    description: "Displays this usage help text"
+    group: misc
+
+  - name: logo
+    description: "Displays the Taskwarrior logo"
+    group: misc
+
+  - name: news
+    description: "Displays news about the recent releases"
+    group: misc
+
+  - name: version
+    description: "Shows the Taskwarrior version number"
+    group: misc

@@ -1,3 +1,5 @@
+# Use the external (carapace) completer; a custom command is otherwise completed from its signature only.
+@complete external
 def --wrapped task [...rest] {
     with-env { AWS_ENDPOINT_URL: "{{ TW_BUCKET }}" } {
         # An explicit `task sync` is just run as-is, without the pre/post sync.
