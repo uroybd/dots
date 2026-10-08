@@ -61,7 +61,9 @@ color.footnote=blue
 color.error=bold red
 color.debug=blue
 color.label=bold cyan
-color.summary.bar=cyan
+# The summary bar is drawn with spaces, so a plain foreground color is invisible; `inverse`
+# swaps it onto the cell background, which keeps the rule foreground-only.
+color.summary.bar=inverse cyan
 color.summary.background=
 
 # Command Interface Typography
