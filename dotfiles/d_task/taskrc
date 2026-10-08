@@ -46,5 +46,9 @@ report.neovim.labels=ID,Jira,U,Due,Project,Description
 report.neovim.sort=urgency-
 report.neovim.filter=+PENDING -WAITING limit:5
 
+# Urgency
+urgency.inherit=1
+urgency.user.project.FUL.coefficient=5.0
+
 include ./theme.rc
 include ./sync.rc
