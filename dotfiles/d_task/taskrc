@@ -38,8 +38,6 @@ report.outcomes.columns=end,outcome,jira,project,description
 report.outcomes.labels=Done,Outcome,Jira,Project,Description
 report.outcomes.filter=status:completed
 report.outcomes.sort=end+
-color.uda.outcome.success=green
-color.uda.outcome.failed=red
 
 # Report: Neovim
 report.neovim.description=Tasks
@@ -48,4 +46,5 @@ report.neovim.labels=ID,Jira,U,Due,Project,Description
 report.neovim.sort=urgency-
 report.neovim.filter=+PENDING -WAITING limit:5
 
+include ./theme.rc
 include ./sync.rc

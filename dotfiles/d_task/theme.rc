@@ -1,0 +1,78 @@
+# ====================================================================
+# UNIVERSAL KANSŌ ADAPTIVE PALETTE (Zen / Ink / Mist / Pearl)
+# ====================================================================
+# Uses foreground-only rules so terminal themes dictate the hues.
+# Leaves background fields empty to support true terminal transparency.
+
+# General Task States
+color.active=bold white
+color.scheduled=yellow
+color.until=bold yellow
+color.due=bold red
+color.due.today=bold red
+color.overdue=bold red
+color.recurring=blue
+
+# Task Properties & Structural Organization
+# (taskwarrior has no generic project/keyword rule, only color.project.<name> and
+# color.keyword.<word>; color.tagged colors any task that has a tag)
+color.tagged=green
+
+# Projects. Names are case-sensitive prefixes: `P` colors P and every P.*, `FUL` every FUL.*.
+# FUL: office (umbrella for all work epics)
+color.project.FUL=bright blue
+# P: personal, with its own colors for the two sub-projects
+color.project.P=cyan
+color.project.P.Intus=bright green
+color.project.P.LTerm=bright magenta
+# When several project rules match, the one listed first here wins. Without the sub-project
+# entries the shorter `P` rule would always beat `P.Intus` / `P.LTerm`. This is the default
+# order with the two entries added before `project.`.
+rule.precedence.color=deleted,completed,active,keyword.,tag.,project.P.Intus,project.P.LTerm,project.,overdue,scheduled,due.today,due,blocked,blocking,recurring,tagged,uda.
+
+# Urgency and Importance Scaling
+color.blocked=magenta
+color.blocking=bold magenta
+
+# Priority Mappings (Earthy, Minimalist Spectrum)
+# (priority is a UDA in taskwarrior 3.x, so the rules are color.uda.priority.<value>)
+color.uda.priority.H=bold red
+color.uda.priority.M=yellow
+color.uda.priority.L=cyan
+
+# Outcome (see `task fail` and the `outcomes` report)
+color.uda.outcome.success=green
+color.uda.outcome.failed=red
+
+# Visual Spacing & Breathing Room Adjustments
+color.alternate=
+color.calendar.due=red
+color.calendar.due.today=bold red
+color.calendar.overdue=bold red
+color.calendar.scheduled=yellow
+color.calendar.holiday=bold yellow
+color.calendar.today=bold white
+color.calendar.weekend=blue
+color.calendar.weeknumber=cyan
+
+# Report Header Styles
+color.header=blue
+color.footnote=blue
+color.error=bold red
+color.debug=blue
+color.label=bold cyan
+color.summary.bar=cyan
+color.summary.background=
+
+# Command Interface Typography
+color.history.add=green
+color.history.delete=red
+color.history.done=bright green
+color.undo.before=red
+color.undo.after=green
+color.sync.added=green
+color.sync.changed=yellow
+color.sync.rejected=bold red
+
+# Precedence & Merging Mechanics
+rule.color.merge=yes
