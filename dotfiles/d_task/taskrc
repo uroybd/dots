@@ -48,19 +48,19 @@ journal.time=on
 journal.time.start.annotaion="Start Session"
 journal.time.stop.annotaion="End Session"
 
-# Sync
-sync.server.client_id={{ TW_CLIENT_ID }}
-sync.encryption_secret={{ TW_ENCRYPTION_SECRET }}
-sync.aws.bucket=taskwarrior
-sync.aws.region=auto
-sync.aws.access_key_id={{ TW_ACCESS_KEY }}
-sync.aws.secret_access_key={{ TW_SECRET_ACCESS_KEY }}
-
-
 # Reports
 report.next.columns=id,jira,project,description,urgency,tags,due,priority
 report.next.labels=ID,Jira,Project,Description,Urgency,Tags,Due,Priority
 
+
+# Report: Outcomes (completed tasks with pass/fail result)
+report.outcomes.description=Completed tasks with their outcome
+report.outcomes.columns=end,outcome,jira,project,description
+report.outcomes.labels=Done,Outcome,Jira,Project,Description
+report.outcomes.filter=status:completed
+report.outcomes.sort=end+
+color.uda.outcome.success=green
+color.uda.outcome.failed=red
 
 # Report: Neovim
 report.neovim.description=Tasks
@@ -68,3 +68,5 @@ report.neovim.columns=id,jira,urgency,due.remaining,project.parent,description
 report.neovim.labels=ID,Jira,U,Due,Project,Description
 report.neovim.sort=urgency-
 report.neovim.filter=+PENDING -WAITING limit:5
+
+include ./sync.rc

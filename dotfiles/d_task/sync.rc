@@ -1,0 +1,7 @@
+# Sync
+sync.server.client_id={{ TW_CLIENT_ID }}
+sync.encryption_secret={{ TW_ENCRYPTION_SECRET }}
+sync.aws.bucket=taskwarrior
+sync.aws.region=auto
+sync.aws.access_key_id={{ TW_ACCESS_KEY }}
+sync.aws.secret_access_key={{ TW_SECRET_ACCESS_KEY }}

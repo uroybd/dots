@@ -3,8 +3,8 @@ def is-filter-token [token: string] {
     $token =~ '^(\d+(-\d+)?|[0-9a-f]{8}(-[0-9a-f]{4}){0,4}|[+-]\w+|\w+:\S*)$'
 }
 
-# `task fail <filter>`: mark the matching tasks `outcome:failed`, then delete them.
-# Matches are resolved to uuids first, since deleting a task frees its id.
+# `task fail <filter>`: mark the matching tasks `outcome:failed`, then mark them done.
+# Matches are resolved to uuids first, since completing a task frees its id.
 def task-fail [filter: list<string>] {
     if ($filter | is-empty) {
         error make { msg: "Give a task filter (ids, uuids, tags...); refusing to fail everything." }
@@ -16,7 +16,7 @@ def task-fail [filter: list<string>] {
     }
     for uuid in $uuids {
         ^task rc.confirmation=off $uuid modify outcome:failed
-        ^task rc.confirmation=off $uuid delete
+        ^task rc.confirmation=off $uuid done
     }
 }
 

@@ -29,7 +29,7 @@ x-tags: &tags |-
   $(task _tags 2>/dev/null | sed 's/^/+/'; task _tags 2>/dev/null | grep -v -x '[A-Z]*' | sed 's/^/-/')
 
 x-commands: &commands |-
-  $(task _zshcommands 2>/dev/null | grep -v '^_' | awk -F: '{print $1"\t"$3}'; printf 'fail\tMarks tasks outcome:failed and deletes them\n')
+  $(task _zshcommands 2>/dev/null | grep -v '^_' | awk -F: '{print $1"\t"$3}'; printf 'fail\tMarks tasks outcome:failed and done\n')
 
 # `rc.<setting>=<value>` overrides, only offered once `rc` has been typed.
 x-overrides: &overrides |-
@@ -456,7 +456,7 @@ commands:
 
   # Not a taskwarrior command: provided by the `task` wrapper in nushell (tasks.nu).
   - name: fail
-    description: "Marks tasks outcome:failed and deletes them"
+    description: "Marks tasks outcome:failed and done"
     group: operation
     completion:
       positionalany: [*commands, *ids, *attributes, *tags, *overrides]
