@@ -3,33 +3,16 @@ def is-filter-token [token: string] {
     $token =~ '^(\d+(-\d+)?|[0-9a-f]{8}(-[0-9a-f]{4}){0,4}|[+-]\w+|\w+:\S*)$'
 }
 
-# `task fail <filter>`: mark the matching tasks `outcome:failed`, then mark them done.
-# Matches are resolved to uuids first, since completing a task frees its id.
-def task-fail [filter: list<string>] {
-    if ($filter | is-empty) {
-        error make { msg: "Give a task filter (ids, uuids, tags...); refusing to fail everything." }
-    }
-    let uuids = ^task ...$filter export | from json | get uuid
-    if ($uuids | is-empty) {
-        print -e "No matching tasks."
-        return
-    }
-    for uuid in $uuids {
-        ^task rc.confirmation=off $uuid modify outcome:failed
-        ^task rc.confirmation=off $uuid done
-    }
-}
-
 # `task create-branch <id>`: create and switch to a git branch for a single task, off a fresh main.
 # Named like the jira tooling (`<KEY>_roy_<summary>`, see `create-branch-name` in jira.nu) when the task
 # has a `jira` key; otherwise just the slugified description.
 def task-create-branch [filter: list<string>] {
     if ($filter | length) != 1 {
-        error make { msg: "Give exactly one task id or uuid." }
+        error make {msg: "Give exactly one task id or uuid."}
     }
     let tasks = ^task rc.hooks=off rc.verbose=nothing ...$filter export | from json
     if ($tasks | length) != 1 {
-        error make { msg: $"Expected exactly one matching task, found ($tasks | length)." }
+        error make {msg: $"Expected exactly one matching task, found ($tasks | length)."}
     }
     let t = $tasks | first
     let key = $t | get -o jira | default ""
@@ -60,12 +43,7 @@ def --wrapped task [...rest] {
         }
         ^task sync o> /dev/null
         try {
-          # `fail` is not a taskwarrior command: accept `task fail <filter>` and `task <filter> fail`.
-          if ($rest | first | default "") == "fail" {
-            task-fail ($rest | skip 1)
-          } else if ($rest | last | default "") == "fail" and ($rest | drop 1 | all { is-filter-token $in }) {
-            task-fail ($rest | drop 1)
-          } else if ($rest | first | default "") == "create-branch" {
+          if ($rest | first | default "") == "create-branch" {
             task-create-branch ($rest | skip 1)
           } else if ($rest | last | default "") == "create-branch" and ($rest | drop 1 | all { is-filter-token $in }) {
             task-create-branch ($rest | drop 1)
@@ -86,7 +64,7 @@ def --wrapped task [...rest] {
 # Tasks that already have a jira key (or are completed/deleted) are skipped.
 def "jira tw import" [--epic(-e): string, ...filter: string] {
     if ($filter | is-empty) {
-        error make { msg: "Give a task filter (ids, uuids, tags...); refusing to import everything." }
+        error make {msg: "Give a task filter (ids, uuids, tags...); refusing to import everything."}
     }
 
     with-env { AWS_ENDPOINT_URL: "{{ TW_BUCKET }}" } {
