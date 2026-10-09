@@ -8,6 +8,9 @@ rc.debug.hooks=2
 
 color=on
 
+
+weekstart=Monday
+
 # Custom fields
 # Jira
 uda.jira.type=string
@@ -24,8 +27,8 @@ uda.outcome.values=success,failed
 
 # Journaling
 journal.time=on
-journal.time.start.annotaion="Start Session"
-journal.time.stop.annotaion="End Session"
+journal.time.start.annotation="Start Session"
+journal.time.stop.annotation="End Session"
 
 # Reports
 report.next.columns=id,jira,project,description,urgency,tags,due,priority
