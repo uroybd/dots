@@ -28,7 +28,7 @@ color.project.P.LTerm=bright magenta
 # When several project rules match, the one listed first here wins. Without the sub-project
 # entries the shorter `P` rule would always beat `P.Intus` / `P.LTerm`. This is the default
 # order with the two entries added before `project.`.
-rule.precedence.color=deleted,completed,active,keyword.,tag.,project.P.Intus,project.P.LTerm,project.,overdue,scheduled,due.today,due,blocked,blocking,recurring,tagged,uda.
+rule.precedence.color=deleted,completed,active,keyword.,tag.,uda.outcome.failed,project.P.Intus,project.P.LTerm,project.,overdue,scheduled,due.today,due,blocked,blocking,recurring,tagged,uda.
 
 # Urgency and Importance Scaling
 color.blocked=magenta

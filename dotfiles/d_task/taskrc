@@ -49,6 +49,12 @@ report.neovim.labels=ID,Jira,U,Due,Project,Description
 report.neovim.sort=urgency-
 report.neovim.filter=+PENDING -WAITING limit:5
 
+
+# Report: Completed
+report.completed.columns=id,uuid.short,entry,end,outcome,entry.age,depends,priority,project,tags,recur.indicator,due,description
+report.completed.labels=ID,UUID,Created,Completed,Outcome,Age,Deps,P,Project,Tags,R,Due,Description
+report.completed.sort=outcome+/,end+
+
 # Urgency
 urgency.inherit=1
 urgency.user.project.FUL.coefficient=5.0
