@@ -1,11 +1,3 @@
-data.location=/Users/meghnaad/.task
-news.version=3.5.0
-
-
-hooks.location=~/.config/task/hooks
-rc.hooks=on
-rc.debug.hooks=2
-
 color=on
 
 
@@ -35,13 +27,6 @@ report.next.columns=id,jira,project,description,urgency,tags,due,priority
 report.next.labels=ID,Jira,Project,Description,Urgency,Tags,Due,Priority
 
 
-# Report: Outcomes (completed tasks with pass/fail result)
-report.outcomes.description=Completed tasks with their outcome
-report.outcomes.columns=end,outcome,jira,project,description
-report.outcomes.labels=Done,Outcome,Jira,Project,Description
-report.outcomes.filter=status:completed
-report.outcomes.sort=end+
-
 # Report: Neovim
 report.neovim.description=Tasks
 report.neovim.columns=id,jira,urgency,due.remaining,project.parent,description
@@ -53,11 +38,12 @@ report.neovim.filter=+PENDING -WAITING limit:5
 # Report: Completed
 report.completed.columns=id,uuid.short,entry,end,outcome,entry.age,depends,priority,project,tags,recur.indicator,due,description
 report.completed.labels=ID,UUID,Created,Completed,Outcome,Age,Deps,P,Project,Tags,R,Due,Description
-report.completed.sort=outcome+/,end+
+report.completed.sort=project+/,outcome+,end+
 
 # Urgency
 urgency.inherit=1
 urgency.user.project.FUL.coefficient=5.0
 
+include ./unix.rc
 include ./theme.rc
 include ./sync.rc

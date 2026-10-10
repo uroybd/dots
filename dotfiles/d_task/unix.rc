@@ -1,0 +1,8 @@
+data.location={{ HOME }}/.task
+news.version=3.5.0
+
+
+hooks.location=~/.config/task/hooks
+rc.hooks=on
+rc.debug.hooks=2
+
