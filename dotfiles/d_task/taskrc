@@ -1,6 +1,5 @@
 color=on
 
-
 weekstart=Monday
 
 # Custom fields
@@ -46,4 +45,5 @@ urgency.user.project.FUL.coefficient=5.0
 
 include ./unix.rc
 include ./theme.rc
+include ./customcolors.rc
 include ./sync.rc

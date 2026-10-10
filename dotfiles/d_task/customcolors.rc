@@ -1,0 +1,10 @@
+color.project.FUL=bright blue
+color.project.P=cyan
+color.project.P.Intus=bright green
+color.project.P.LTerm=bright magenta
+rule.precedence.color=deleted,completed,active,keyword.,tag.,uda.outcome.failed,project.P.Intus,project.P.LTerm,project.,overdue,scheduled,due.today,due,blocked,blocking,recurring,tagged,uda.
+color.uda.priority.H=bold red
+color.uda.priority.M=yellow
+color.uda.priority.L=cyan
+color.uda.outcome.success=green
+color.uda.outcome.failed=red

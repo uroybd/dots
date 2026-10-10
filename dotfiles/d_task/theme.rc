@@ -18,31 +18,9 @@ color.recurring=blue
 # color.keyword.<word>; color.tagged colors any task that has a tag)
 color.tagged=green
 
-# Projects. Names are case-sensitive prefixes: `P` colors P and every P.*, `FUL` every FUL.*.
-# FUL: office (umbrella for all work epics)
-color.project.FUL=bright blue
-# P: personal, with its own colors for the two sub-projects
-color.project.P=cyan
-color.project.P.Intus=bright green
-color.project.P.LTerm=bright magenta
-# When several project rules match, the one listed first here wins. Without the sub-project
-# entries the shorter `P` rule would always beat `P.Intus` / `P.LTerm`. This is the default
-# order with the two entries added before `project.`.
-rule.precedence.color=deleted,completed,active,keyword.,tag.,uda.outcome.failed,project.P.Intus,project.P.LTerm,project.,overdue,scheduled,due.today,due,blocked,blocking,recurring,tagged,uda.
-
 # Urgency and Importance Scaling
 color.blocked=magenta
 color.blocking=bold magenta
-
-# Priority Mappings (Earthy, Minimalist Spectrum)
-# (priority is a UDA in taskwarrior 3.x, so the rules are color.uda.priority.<value>)
-color.uda.priority.H=bold red
-color.uda.priority.M=yellow
-color.uda.priority.L=cyan
-
-# Outcome (see `task fail` and the `outcomes` report)
-color.uda.outcome.success=green
-color.uda.outcome.failed=red
 
 # Visual Spacing & Breathing Room Adjustments
 color.alternate=
