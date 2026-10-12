@@ -1,3 +1,7 @@
+include ./unix.rc
+include ./theme.rc
+include ./sync.rc
+
 color=on
 
 weekstart=Monday
@@ -51,7 +55,13 @@ report._reviewed.columns=uuid
 report._reviewed.sort=reviewed+,modified+
 report._reviewed.filter=( reviewed.none: or reviewed.before:now-6days ) and ( +PENDING or +WAITING )
 
-include ./unix.rc
-include ./theme.rc
-include ./customcolors.rc
-include ./sync.rc
+color.project.FUL=bright blue
+color.project.P=cyan
+color.project.P.Intus=bright green
+color.project.P.LTerm=bright magenta
+rule.precedence.color=deleted,completed,active,keyword.,tag.,uda.outcome.failed,project.P.Intus,project.P.LTerm,project.,overdue,scheduled,due.today,due,blocked,blocking,recurring,tagged,uda.
+color.uda.priority.H=bold red
+color.uda.priority.M=yellow
+color.uda.priority.L=cyan
+color.uda.outcome.success=green
+color.uda.outcome.failed=red
