@@ -110,7 +110,7 @@ def "commitart repo" [
     if $check.exit_code != 0 or ($check.stdout | str trim) != "true" {
         return
     }
-    mut hash_cmd = ["git", "describe", "--always"]
+    mut hash_cmd = ["git", "describe", "--always", "--exclude=*"]
     if $short {
         $hash_cmd = $hash_cmd | append "--abbrev=8"
     } else {
