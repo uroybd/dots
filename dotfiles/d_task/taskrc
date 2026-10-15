@@ -20,14 +20,18 @@ uda.outcome.type=string
 uda.outcome.label=Outcome
 uda.outcome.values=success,failed
 
+# TODO
+uda.todo.type=string
+uda.todo.label=TODO
+
 # Journaling
 journal.time=on
 journal.time.start.annotation="Start Session"
 journal.time.stop.annotation="End Session"
 
 # Reports
-report.next.columns=id,jira,project,description,urgency,tags,due,priority
-report.next.labels=ID,Jira,Project,Description,Urgency,Tags,Due,Priority
+report.next.columns=id,jira,project,description,todo,urgency,tags,due,priority
+report.next.labels=ID,Jira,Project,Description,TODO,Urgency,Tags,Due,Priority
 
 
 # Report: Neovim
