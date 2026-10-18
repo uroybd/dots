@@ -69,3 +69,7 @@ color.uda.priority.M=yellow
 color.uda.priority.L=cyan
 color.uda.outcome.success=green
 color.uda.outcome.failed=red
+
+# Contexts
+context.this_month.read=+MONTH or (end.after:som and end.before:eom) or (scheduled.after:som and scheduled.before:eom)
+context.this_week.read=+WEEK or (end.after:sow and end.before:eow) or (scheduled.after:sow and scheduled.before:eow)
