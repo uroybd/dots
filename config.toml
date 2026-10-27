@@ -61,11 +61,16 @@ pre_actions = ["{{ PACKAGE_INSTALLER }} git git-delta"]
 [packages.d_task]
 src = "dotfiles/d_task"
 dest = "~/.config/task"
-pre_actions = ["{{ PACKAGE_INSTALLER }} task tasksh taskwarrior-tui"]
+pre_actions = [
+  "{{ PACKAGE_INSTALLER }} task tasksh taskwarrior-tui",
+  "mkdir -p ~/.config/task/hooks",
+]
 post_actions = [
   "find ~/.config/task/hooks -name '*.dotrbak' -type f -print -delete | sed 's/^/[INFO] Removed backup: /'",
+  "./scripts/setup_tw_hook.sh",
   "chmod +x ~/.config/task/hooks/* && echo '[INFO] Hooks are now executable.'",
 ]
+ignore = ["hooks/*.meghnaad", "hooks/meghnaad-hook"]
 
 [packages.d_task.prompts]
 TW_CLIENT_ID = "TW_CLIENT_ID"
