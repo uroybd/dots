@@ -105,3 +105,10 @@ function on_add(task)
 		end
 	end
 end
+
+-- A task that is done without an outcome (task 1 done) succeeded; one finished with outcome:failed stays failed.
+function on_modify(old, new)
+	if old.status ~= "completed" and new.status == "completed" and is_unset(new.outcome) then
+		new.outcome = "success"
+	end
+end
