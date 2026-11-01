@@ -7,22 +7,27 @@ color=on
 weekstart=Monday
 
 # Custom fields
-# Jira
+## Jira
 uda.jira.type=string
 uda.jira.label=Jira
 
-# Details
+## Details
 uda.details.type=string
 uda.details.label=Details
 
-# Outcome
+## Outcome
 uda.outcome.type=string
 uda.outcome.label=Outcome
 uda.outcome.values=success,failed
 
-# TODO
+## TODO
 uda.todo.type=string
 uda.todo.label=TODO
+
+## Progress
+uda.progress.type=numeric
+uda.progress.label=Progress
+uda.progress.default=0
 
 # Journaling
 journal.time=on

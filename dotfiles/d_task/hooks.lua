@@ -98,17 +98,58 @@ local function apply_metadata(task, metadata)
 	end
 end
 
+-- The percent (rounded) of the markdown checkboxes in text that are ticked: "- [x] a" and "- [ ] b" make 50. Nil if
+-- there are none.
+local function checklist_percent(text)
+	local ticked, total = 0, 0
+	for line in text:gmatch("[^\n]+") do
+		local mark = line:match("^%s*[-*+]%s+%[([ xX])%]")
+		if mark ~= nil then
+			total = total + 1
+			if mark ~= " " then
+				ticked = ticked + 1
+			end
+		end
+	end
+	if total == 0 then
+		return nil
+	end
+	return math.floor(ticked * 100 / total + 0.5)
+end
+
+-- Sets progress from the todo checklist. A task with no todo (or one without checkboxes) is left to be set by hand.
+local function progress_from_todo(task)
+	if is_unset(task.todo) then
+		return
+	end
+	local percent = checklist_percent(task.todo)
+	if percent ~= nil then
+		task.progress = percent
+	end
+end
+
 function on_add(task)
 	for _, entry in ipairs(on_add_autometa) do
 		if entry.match(task) then
 			apply_metadata(task, entry.metadata)
 		end
 	end
+	if task.status ~= "completed" then
+		progress_from_todo(task)
+	end
 end
 
--- A task that is done without an outcome (task 1 done) succeeded; one finished with outcome:failed stays failed.
+-- Done: progress is 100, and an outcome nobody gave is success (outcome:failed stays failed). Otherwise a changed todo
+-- recounts progress.
 function on_modify(old, new)
-	if old.status ~= "completed" and new.status == "completed" and is_unset(new.outcome) then
-		new.outcome = "success"
+	if new.status == "completed" then
+		if old.status ~= "completed" then
+			new.progress = 100
+			if is_unset(new.outcome) then
+				new.outcome = "success"
+			end
+		end
+	elseif old.todo ~= new.todo then
+		progress_from_todo(new)
 	end
 end

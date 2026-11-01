@@ -627,6 +627,12 @@ $env.config = {
     ]
 }
 
+def --env claude-fulflld [...args: string] {
+    with-env { CLAUDE_CONFIG_DIR: $"($env.HOME)/.claude-fulflld" } {
+        claude ...$args
+    }
+}
+
 source $"($nu.default-config-dir)/fnm.nu"
 source $"($nu.default-config-dir)/atuin.nu"
 source $"($nu.default-config-dir)/zoxide.nu"
