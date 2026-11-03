@@ -5,6 +5,7 @@ include ./sync.rc
 color=on
 
 weekstart=Monday
+dateformat.report=D b y H:N
 
 # Custom fields
 ## Jira
@@ -35,13 +36,13 @@ journal.time.start.annotation="Start Session"
 journal.time.stop.annotation="End Session"
 
 # Reports
-report.next.columns=id,jira,project,description,todo,urgency,tags,due,priority
-report.next.labels=ID,Jira,Project,Description,TODO,Urgency,Tags,Due,Priority
+report.next.columns=id,jira,project,description,urgency,todo,progress,tags,due.countdown
+report.next.labels=ID,Jira,Project,Description,Urgency,TODO,Progress,Tags,Due
 
 
 # Report: Neovim
 report.neovim.description=Tasks
-report.neovim.columns=id,jira,urgency,due.remaining,project.parent,description
+report.neovim.columns=id,jira,urgency,due.countdown,project.parent,description
 report.neovim.labels=ID,Jira,U,Due,Project,Description
 report.neovim.sort=urgency-
 report.neovim.filter=+PENDING -WAITING limit:5
