@@ -6,6 +6,7 @@ color=on
 
 weekstart=Monday
 dateformat.report=D b y H:N
+dateformat.info=D b y H:N
 
 # Custom fields
 ## Jira
