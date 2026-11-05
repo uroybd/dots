@@ -28,9 +28,19 @@ def "jira me queue" --wrapped [...rest] {
     ^jira issue list -s~Done --assignee $me ...$rest
 }
 
-# Markdown list of my tickets whose status changed recently, e.g. for posting to Slack.
-# Format: "- https://<host>/browse/FUL-123 - To Do -> In Progress" (bare URL so Slack unfurls it as a Jira chip). Multiple transitions in the window collapse
-# into first-from -> last-to.
+# Workflow order, used to tell forward moves from backward ones.
+# Statuses not listed here are treated as forward moves and sorted last.
+const JIRA_STATUS_ORDER = ["to do", "in progress", "code review", "product review", "done"]
+
+def jira-status-rank [status: string] {
+    let idx = ($JIRA_STATUS_ORDER | enumerate | where item == ($status | str lowercase))
+    if ($idx | is-empty) { 99 } else { $idx | first | get index }
+}
+
+# Markdown list of my tickets that moved forward in status recently, grouped by the
+# status they moved to (bold Slack-style *header*), e.g. for posting to Slack. Backward moves are ignored.
+# Bare URLs so Slack unfurls them as Jira chips. Multiple transitions in the window
+# collapse into first-from -> last-to.
 # Usage: jira me changed [--since 3day]
 def 'jira me changed' [--since(-S): duration = 1day] {
     let me = (jira me)
@@ -44,7 +54,7 @@ def 'jira me changed' [--since(-S): duration = 1day] {
             --data-urlencode "expand=changelog"
         | from json
     )
-    let lines = (
+    let forward = (
         $resp.issues
         | each {|issue|
             let moves = (
@@ -57,17 +67,31 @@ def 'jira me changed' [--since(-S): duration = 1day] {
             if ($moves | is-empty) { null } else {
                 let from = ($moves | first | get fromString)
                 let to = ($moves | last | get toString)
-                # skip tickets that bounced back to where they started
-                if $from == $to { null } else { $"- (jira-ticket-to-url $issue.key) - ($from) -> ($to)" }
+                # skip tickets that bounced back or moved backward
+                if (jira-status-rank $from) != 99 and (jira-status-rank $to) != 99 and (jira-status-rank $to) <= (jira-status-rank $from) {
+                    null
+                } else {
+                    {key: $issue.key, to: $to, rank: (jira-status-rank $to)}
+                }
             }
         }
         | compact
     )
-    if ($lines | is-empty) {
-        print $"No status changes in the last ($since)."
-    } else {
-        print ($lines | str join "\n")
+    if ($forward | is-empty) {
+        print $"No forward status changes in the last ($since)."
+        return
     }
+    let out = (
+        $forward
+        | sort-by rank
+        | group-by --to-table to
+        | each {|g|
+            let items = ($g.items | each {|i| $"- (jira-ticket-to-url $i.key)" } | str join "\n")
+            $"*($g.to)*\n($items)"
+        }
+        | str join "\n\n"
+    )
+    print $out
 }
 
 def 'jira sprint current' [] {
