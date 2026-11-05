@@ -28,6 +28,48 @@ def "jira me queue" --wrapped [...rest] {
     ^jira issue list -s~Done --assignee $me ...$rest
 }
 
+# Markdown list of my tickets whose status changed recently, e.g. for posting to Slack.
+# Format: "- https://<host>/browse/FUL-123 - To Do -> In Progress" (bare URL so Slack unfurls it as a Jira chip). Multiple transitions in the window collapse
+# into first-from -> last-to.
+# Usage: jira me changed [--since 3day]
+def 'jira me changed' [--since(-S): duration = 1day] {
+    let me = (jira me)
+    let cutoff = (date now) - $since
+    let jql = $"assignee = \"($me)\" AND status CHANGED AFTER \"($cutoff | format date '%Y/%m/%d %H:%M')\""
+    let auth = $"($me):($env.JIRA_API_TOKEN)"
+    let resp = (
+        ^curl -s -G -u $auth $"($env.JIRA_HOST)/rest/api/3/search/jql"
+            --data-urlencode $"jql=($jql)"
+            --data-urlencode "fields=summary"
+            --data-urlencode "expand=changelog"
+        | from json
+    )
+    let lines = (
+        $resp.issues
+        | each {|issue|
+            let moves = (
+                $issue.changelog.histories
+                | where {|h| ($h.created | into datetime) > $cutoff }
+                | sort-by created
+                | each {|h| $h.items | where field == "status" }
+                | flatten
+            )
+            if ($moves | is-empty) { null } else {
+                let from = ($moves | first | get fromString)
+                let to = ($moves | last | get toString)
+                # skip tickets that bounced back to where they started
+                if $from == $to { null } else { $"- (jira-ticket-to-url $issue.key) - ($from) -> ($to)" }
+            }
+        }
+        | compact
+    )
+    if ($lines | is-empty) {
+        print $"No status changes in the last ($since)."
+    } else {
+        print ($lines | str join "\n")
+    }
+}
+
 def 'jira sprint current' [] {
     return (
         jira sprint list --state=active --columns=ID --table --plain
