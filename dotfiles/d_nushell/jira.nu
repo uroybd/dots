@@ -28,6 +28,31 @@ def "jira me queue" --wrapped [...rest] {
     ^jira issue list -s~Done --assignee $me ...$rest
 }
 
+# Search issues over the Jira REST API (v2, so descriptions come back as plain text), following pagination.
+# jira-cli can't expose the changelog or most fields, hence the direct call.
+def jira-rest-search [jql: string, fields: string, --expand: string = ""] {
+    let auth = $"((jira me)):($env.JIRA_API_TOKEN)"
+    mut issues = []
+    mut token = ""
+    loop {
+        let params = [
+            --data-urlencode $"jql=($jql)"
+            --data-urlencode $"fields=($fields)"
+            --data-urlencode "maxResults=100"
+        ]
+        | append (if ($expand | is-empty) { [] } else { [--data-urlencode $"expand=($expand)"] })
+        | append (if ($token | is-empty) { [] } else { [--data-urlencode $"nextPageToken=($token)"] })
+        let resp = ^curl -s -G -u $auth $"($env.JIRA_HOST)/rest/api/2/search/jql" ...$params | from json
+        if ($resp | get -o issues) == null {
+            error make {msg: $"Jira search failed: ($resp | to json -r)"}
+        }
+        $issues = ($issues | append $resp.issues)
+        if ($resp | get -o isLast | default true) { break }
+        $token = $resp.nextPageToken
+    }
+    $issues
+}
+
 # Workflow order, used to tell forward moves from backward ones.
 # Statuses not listed here are treated as forward moves and sorted last.
 const JIRA_STATUS_ORDER = ["to do", "in progress", "code review", "product review", "done"]
@@ -46,16 +71,9 @@ def 'jira me changed' [--since(-S): duration = 1day] {
     let me = (jira me)
     let cutoff = (date now) - $since
     let jql = $"assignee = \"($me)\" AND status CHANGED AFTER \"($cutoff | format date '%Y/%m/%d %H:%M')\""
-    let auth = $"($me):($env.JIRA_API_TOKEN)"
-    let resp = (
-        ^curl -s -G -u $auth $"($env.JIRA_HOST)/rest/api/3/search/jql"
-            --data-urlencode $"jql=($jql)"
-            --data-urlencode "fields=summary"
-            --data-urlencode "expand=changelog"
-        | from json
-    )
+    let issues = (jira-rest-search $jql "summary" --expand changelog)
     let forward = (
-        $resp.issues
+        $issues
         | each {|issue|
             let moves = (
                 $issue.changelog.histories

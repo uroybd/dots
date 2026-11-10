@@ -110,3 +110,108 @@ def "jira tw import" [--epic(-e): string, ...filter: string] {
         $imported
     }
 }
+
+# Taskwarrior tag for a Jira issue type; unlisted types get their slugified name.
+const JIRA_TYPE_TAGS = {
+    "bug": "bugfix"
+    "story": "feature"
+    "feature request": "feature"
+    "task": "task"
+    "epic": "epic"
+    "sub-task": "subtask"
+}
+
+def jira-type-tag [type: string] {
+    let name = $type | str lowercase
+    $JIRA_TYPE_TAGS | get -o $name | default ($name | str replace -a -r '\W+' "-" | str trim -c "-")
+}
+
+# Create taskwarrior tasks from Jira issues. The reverse of `jira tw import`.
+# Usage: jira tw pull [--dry-run] <KEY>...
+#        jira tw pull [--dry-run] --mine [--sprint]
+#   e.g. `jira tw pull FUL-3560 FUL-3569`, `jira tw pull --mine -s`
+# Each task gets: description = summary, `jira` UDA = key, `details` UDA = Jira description,
+# project = key prefix (FUL), due = Jira due date, and the tags +jira plus one for the issue type
+# (Bug -> +bugfix, Story/Feature Request -> +feature, Task -> +task, Epic -> +epic, Sub-task -> +subtask).
+# --mine pulls my issues that are not done; --sprint limits that to open sprints.
+# Issues that already have a task (any status except deleted) are skipped, as are done issues.
+def "jira tw pull" [--mine(-m), --sprint(-s), --dry-run(-n), ...keys: string] {
+    if ($keys | is-empty) and not $mine {
+        error make {msg: "Give issue keys, or --mine."}
+    }
+    if (not ($keys | is-empty)) and $mine {
+        error make {msg: "Give issue keys or --mine, not both."}
+    }
+    if $sprint and not $mine {
+        error make {msg: "--sprint only applies together with --mine."}
+    }
+    let keys = $keys | each { str uppercase }
+    let bad = $keys | where {|k| $k !~ '^[A-Z][A-Z0-9]*-\d+$' }
+    if not ($bad | is-empty) {
+        error make {msg: $"Not Jira issue keys: ($bad | str join ', ')"}
+    }
+
+    let jql = if $mine {
+        let base = $"assignee = \"((^jira me | str trim))\" AND statusCategory != Done"
+        if $sprint { $"($base) AND sprint in openSprints\(\)" } else { $base }
+    } else {
+        $"key in \(($keys | str join ',')\)"
+    }
+
+    with-env { AWS_ENDPOINT_URL: "{{ TW_BUCKET }}" } {
+        if not $dry_run { ^task sync o> /dev/null }
+
+        # Hooks are off while reading so only real tasks are listed.
+        let existing = (
+            ^task rc.hooks=off rc.verbose=nothing jira.any: export
+            | from json
+            | where status != deleted
+            | get jira
+        )
+
+        let issues = jira-rest-search $jql "summary,issuetype,status,duedate,description"
+        let found = $issues | get key
+        for k in ($keys | where {|k| $k not-in $found }) {
+            print -e $"(ansi red_bold)($k) not found in Jira.(ansi reset)"
+        }
+
+        let added = $issues | each {|issue|
+            let f = $issue.fields
+            if $issue.key in $existing {
+                print $"Skipping ($issue.key): already has a task."
+                return null
+            }
+            if ($f.status.statusCategory.key == "done") {
+                print $"Skipping ($issue.key): already done in Jira."
+                return null
+            }
+            let type_tag = jira-type-tag $f.issuetype.name
+            let details = $f.description? | default "" | str trim
+            let attrs = [
+                $"jira:($issue.key)"
+                $"project:($issue.key | split row '-' | first)"
+                "+jira"
+                $"+($type_tag)"
+            ]
+            | append (if $f.duedate? == null { [] } else { [$"due:($f.duedate)"] })
+            | append (if ($details | is-empty) { [] } else { [$"details:($details)"] })
+
+            if $dry_run {
+                print $"Would add ($issue.key) [+($type_tag)]: ($f.summary)"
+            } else {
+                # Hooks stay on so the usual auto-tagging applies; the on-add jira hook ignores
+                # tasks that already have a key. `--` keeps the summary from being parsed as filters.
+                let res = ^task rc.verbose=nothing rc.confirmation=no add ...$attrs -- $f.summary | complete
+                if $res.exit_code != 0 {
+                    print -e $"(ansi red_bold)Failed to add ($issue.key):(ansi reset) ($res.stderr | str trim)"
+                    return null
+                }
+                print $"Added ($issue.key) [+($type_tag)]: ($f.summary)"
+            }
+            { jira: $issue.key, type: $type_tag, description: $f.summary }
+        } | compact
+
+        if not $dry_run { ^task sync o> /dev/null }
+        $added
+    }
+}
