@@ -1,5 +1,6 @@
 # Appearnce
 font-family = "Maple Mono"
+font-family = "OpenMoji"
 font-size = 13
 cursor-style = block
 cursor-style-blink = true
