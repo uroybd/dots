@@ -215,3 +215,10 @@ def "jira tw pull" [--mine(-m), --sprint(-s), --dry-run(-n), ...keys: string] {
         $added
     }
 }
+
+
+def mt [...rest] {
+  with-env { AWS_ENDPOINT_URL: "{{ TW_BUCKET }}" } {
+    ^meghnaad-tui ...$rest
+  }
+}

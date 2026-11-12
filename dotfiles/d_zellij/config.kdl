@@ -145,7 +145,6 @@ keybinds clear-defaults=true {
         }
         bind "left" { GoToPreviousSession; SwitchToMode "locked"; }
         bind "right" { GoToNextSession; SwitchToMode "locked"; }
-        bind "i" { ToggleSessionCard; SwitchToMode "locked"; }
         bind "n" { GoToNextAttention; SwitchToMode "locked"; }
         bind "r" { SwitchToMode "renamesession"; SessionNameInput 0; }
         bind "u" { MuteSession; SwitchToMode "locked"; }
@@ -215,6 +214,9 @@ keybinds clear-defaults=true {
         bind "7" { GoToTab 7; SwitchToMode "locked"; }
         bind "8" { GoToTab 8; SwitchToMode "locked"; }
         bind "9" { GoToTab 9; SwitchToMode "locked"; }
+    }
+    shared_among "normal" "session" {
+        bind "i" { ToggleSessionCard; SwitchToMode "locked"; }
     }
     shared_except "locked" "resize" "pane" "tab" "entersearch" "renametab" "renamepane" {
         bind "r" { SwitchToMode "resize"; }

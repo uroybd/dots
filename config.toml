@@ -62,7 +62,7 @@ pre_actions = ["{{ PACKAGE_INSTALLER }} git git-delta"]
 src = "dotfiles/d_task"
 dest = "~/.config/task"
 pre_actions = [
-  "{{ PACKAGE_INSTALLER }} task tasksh taskwarrior-tui uroybd/tap/meghnaad-hook",
+  "{{ PACKAGE_INSTALLER }} task tasksh taskwarrior-tui uroybd/tap/meghnaad-hook uroybd/tap/meghnaad-tui",
   "mkdir -p ~/.config/task/hooks",
 ]
 post_actions = [
