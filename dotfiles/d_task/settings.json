@@ -1,0 +1,8 @@
+{
+  "taskCommands": [
+    {
+      "name": "fail",
+      "command": "done outcome:failed"
+    }
+  ]
+}
