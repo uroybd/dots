@@ -1,229 +1,238 @@
 {
-  "boards": [
-    {
-      "filter": "(due.after:$daterange.start and due.before:$daterange.end) or (end.after:$daterange.start and end.before:$daterange.end) or (scheduled.after:$daterange.start and scheduled.before:$daterange.end)",
-      "id": "ataglance",
-      "name": "At a Glance",
-      "ranges": [
-        {
-          "end": "eow",
-          "name": "daterange",
-          "start": "sow-7d"
-        }
-      ],
-      "sections": [
-        {
-          "h": 6,
-          "id": "table",
-          "ignoreBoardFilter": true,
-          "report": "neovim",
-          "title": "TODO",
-          "type": "table",
-          "w": 12,
-          "x": 0,
-          "y": 2
-        },
-        {
-          "by": {
-            "time": {
-              "field": "due",
-              "range": "daterange",
-              "step": "day"
-            }
-          },
-          "h": 4,
-          "id": "bar",
-          "limit": "$daterange.day_count",
-          "series": [
-            {
-              "color": "bright green",
-              "filter": "status:completed ( outcome:success or outcome: )",
-              "label": "Succeeded",
-              "span": {
-                "from": "end"
-              }
-            },
-            {
-              "color": "bright red",
-              "filter": "status:completed outcome:failed",
-              "label": "Failed",
-              "span": {
-                "from": "end"
-              }
-            },
-            {
-              "color": "bright blue",
-              "filter": "status:pending",
-              "label": "Pending",
-              "span": {
-                "from": "entry",
-                "to": "end",
-                "unless": "start"
-              }
-            }
-          ],
-          "stacked": true,
-          "title": "Burndown",
-          "type": "bar",
-          "w": 6,
-          "x": 0,
-          "y": 8
-        },
-        {
-          "by": {
-            "field": "project"
-          },
-          "h": 4,
-          "id": "pie",
-          "title": "By Projects",
-          "type": "pie",
-          "w": 6,
-          "x": 6,
-          "y": 8
-        },
-        {
-          "filter": "+DUETODAY",
-          "h": 2,
-          "id": "number",
-          "ignoreBoardFilter": true,
-          "title": "Due Today",
-          "type": "number",
-          "w": 6,
-          "x": 0,
-          "y": 0
-        },
-        {
-          "filter": "project:FUL +DUETODAY",
-          "h": 2,
-          "id": "number-2",
-          "ignoreBoardFilter": true,
-          "title": "Today @ Work",
-          "type": "number",
-          "w": 6,
-          "x": 6,
-          "y": 0
-        }
-      ]
-    },
-    {
-      "filter": "+habit status:completed (due.after:$range.start and due.before:$range.end)",
-      "id": "habits",
-      "name": "Habits",
-      "ranges": [
-        {
-          "end": "eoq",
-          "name": "range",
-          "start": "soq"
-        }
-      ],
-      "sections": [
-        {
-          "by": {
-            "time": {
-              "field": "due",
-              "range": "range",
-              "step": "week"
-            }
-          },
-          "h": 4,
-          "id": "bar-3",
-          "rows": {
-            "time": {
-              "field": "due",
-              "part": "weekday"
-            }
-          },
-          "series": [
-            {
-              "color": "cyan",
-              "filter": "( outcome:success or outcome: )",
-              "label": "Success"
-            },
-            {
-              "color": "bright red",
-              "filter": "outcome:failed ",
-              "label": "Failed"
-            }
-          ],
-          "stacked": true,
-          "title": "Overall",
-          "type": "heatmap",
-          "w": 6,
-          "x": 0,
-          "y": 0
-        },
-        {
-          "by": {
-            "field": "outcome"
-          },
-          "h": 4,
-          "id": "pie",
-          "title": "Overall Ratio",
-          "type": "pie",
-          "w": 6,
-          "x": 0,
-          "y": 4
-        },
-        {
-          "by": {
-            "time": {
-              "field": "due",
-              "range": "range",
-              "step": "week"
-            }
-          },
-          "filter": "+reading",
-          "h": 4,
-          "id": "bar-4",
-          "rows": {
-            "time": {
-              "field": "due",
-              "part": "weekday"
-            }
-          },
-          "series": [
-            {
-              "color": "cyan",
-              "filter": "( outcome:success or outcome: )",
-              "label": "Success"
-            },
-            {
-              "color": "bright red",
-              "filter": "outcome:failed ",
-              "label": "Failed"
-            }
-          ],
-          "stacked": true,
-          "title": "Reading",
-          "type": "heatmap",
-          "w": 6,
-          "x": 6,
-          "y": 0
-        },
-        {
-          "by": {
-            "field": "outcome"
-          },
-          "filter": "+reading",
-          "h": 4,
-          "id": "pie-2",
-          "title": "Reading Ratio",
-          "type": "pie",
-          "w": 6,
-          "x": 6,
-          "y": 4
-        }
-      ]
+  "appearance": {
+    "progress": {
+      "progress": {
+        "min": 0,
+        "max": 100
+      }
     }
-  ],
-  "tui": {
-    "sync": "startAndClose",
-    "theme": "auto"
+  }
+},
+"boards": [
+  {
+    "filter": "(due.after:$daterange.start and due.before:$daterange.end) or (end.after:$daterange.start and end.before:$daterange.end) or (scheduled.after:$daterange.start and scheduled.before:$daterange.end)",
+    "id": "ataglance",
+    "name": "At a Glance",
+    "ranges": [
+      {
+        "end": "eow",
+        "name": "daterange",
+        "start": "sow-7d"
+      }
+    ],
+    "sections": [
+      {
+        "h": 6,
+        "id": "table",
+        "ignoreBoardFilter": true,
+        "report": "neovim",
+        "title": "TODO",
+        "type": "table",
+        "w": 12,
+        "x": 0,
+        "y": 2
+      },
+      {
+        "by": {
+          "time": {
+            "field": "due",
+            "range": "daterange",
+            "step": "day"
+          }
+        },
+        "h": 4,
+        "id": "bar",
+        "limit": "$daterange.day_count",
+        "series": [
+          {
+            "color": "bright green",
+            "filter": "status:completed ( outcome:success or outcome: )",
+            "label": "Succeeded",
+            "span": {
+              "from": "end"
+            }
+          },
+          {
+            "color": "bright red",
+            "filter": "status:completed outcome:failed",
+            "label": "Failed",
+            "span": {
+              "from": "end"
+            }
+          },
+          {
+            "color": "bright blue",
+            "filter": "status:pending",
+            "label": "Pending",
+            "span": {
+              "from": "entry",
+              "to": "end",
+              "unless": "start"
+            }
+          }
+        ],
+        "stacked": true,
+        "title": "Burndown",
+        "type": "bar",
+        "w": 6,
+        "x": 0,
+        "y": 8
+      },
+      {
+        "by": {
+          "field": "project"
+        },
+        "h": 4,
+        "id": "pie",
+        "title": "By Projects",
+        "type": "pie",
+        "w": 6,
+        "x": 6,
+        "y": 8
+      },
+      {
+        "filter": "+DUETODAY",
+        "h": 2,
+        "id": "number",
+        "ignoreBoardFilter": true,
+        "title": "Due Today",
+        "type": "number",
+        "w": 6,
+        "x": 0,
+        "y": 0
+      },
+      {
+        "filter": "project:FUL +DUETODAY",
+        "h": 2,
+        "id": "number-2",
+        "ignoreBoardFilter": true,
+        "title": "Today @ Work",
+        "type": "number",
+        "w": 6,
+        "x": 6,
+        "y": 0
+      }
+    ]
   },
-  "taskCommands": [
-    {
-      "name": "fail",
-      "command": "done outcome:failed"
-    }
-  ]
+  {
+    "filter": "+habit status:completed (due.after:$range.start and due.before:$range.end)",
+    "id": "habits",
+    "name": "Habits",
+    "ranges": [
+      {
+        "end": "eoq",
+        "name": "range",
+        "start": "soq"
+      }
+    ],
+    "sections": [
+      {
+        "by": {
+          "time": {
+            "field": "due",
+            "range": "range",
+            "step": "week"
+          }
+        },
+        "h": 4,
+        "id": "bar-3",
+        "rows": {
+          "time": {
+            "field": "due",
+            "part": "weekday"
+          }
+        },
+        "series": [
+          {
+            "color": "cyan",
+            "filter": "( outcome:success or outcome: )",
+            "label": "Success"
+          },
+          {
+            "color": "bright red",
+            "filter": "outcome:failed ",
+            "label": "Failed"
+          }
+        ],
+        "stacked": true,
+        "title": "Overall",
+        "type": "heatmap",
+        "w": 6,
+        "x": 0,
+        "y": 0
+      },
+      {
+        "by": {
+          "field": "outcome"
+        },
+        "h": 4,
+        "id": "pie",
+        "title": "Overall Ratio",
+        "type": "pie",
+        "w": 6,
+        "x": 0,
+        "y": 4
+      },
+      {
+        "by": {
+          "time": {
+            "field": "due",
+            "range": "range",
+            "step": "week"
+          }
+        },
+        "filter": "+reading",
+        "h": 4,
+        "id": "bar-4",
+        "rows": {
+          "time": {
+            "field": "due",
+            "part": "weekday"
+          }
+        },
+        "series": [
+          {
+            "color": "cyan",
+            "filter": "( outcome:success or outcome: )",
+            "label": "Success"
+          },
+          {
+            "color": "bright red",
+            "filter": "outcome:failed ",
+            "label": "Failed"
+          }
+        ],
+        "stacked": true,
+        "title": "Reading",
+        "type": "heatmap",
+        "w": 6,
+        "x": 6,
+        "y": 0
+      },
+      {
+        "by": {
+          "field": "outcome"
+        },
+        "filter": "+reading",
+        "h": 4,
+        "id": "pie-2",
+        "title": "Reading Ratio",
+        "type": "pie",
+        "w": 6,
+        "x": 6,
+        "y": 4
+      }
+    ]
+  }
+],
+"tui": {
+  "sync": "startAndClose",
+  "theme": "auto"
+},
+"taskCommands": [
+  {
+    "name": "fail",
+    "command": "done outcome:failed"
+  }
+]
 }
