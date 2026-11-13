@@ -49,6 +49,13 @@ report.neovim.sort=urgency-
 report.neovim.filter=+PENDING -WAITING limit:5
 
 
+# Report: Work
+report.work.columns=id,jira,project.indented,description,urgency,todo,progress,tags,due.countdown
+report.work.labels=ID,Jira,Project,Description,Urgency,TODO,Progress,Tags,Due
+report.work.sort=urgency-
+report.work.filter=+PENDING project:FUL
+
+
 # Report: Completed
 report.completed.columns=id,uuid.short,entry,end,outcome,entry.age,depends,priority,project,tags,recur.indicator,due,description
 report.completed.labels=ID,UUID,Created,Completed,Outcome,Age,Deps,P,Project,Tags,R,Due,Description
