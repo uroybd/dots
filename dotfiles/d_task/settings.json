@@ -277,7 +277,8 @@
       "name": "FULFLLD",
       "sections": [
         {
-          "h": 8,
+          "filter": "-review",
+          "h": 5,
           "id": "table",
           "measure": {
             "fn": "count"
@@ -322,8 +323,17 @@
             },
             {
               "color": "bright blue",
-              "filter": "status:pending",
+              "filter": "status:pending -review",
               "label": "Pending",
+              "span": {
+                "from": "entry",
+                "to": "end",
+                "unless": "start"
+              }
+            },
+            {
+              "filter": "status:pending +review",
+              "label": "Review",
               "span": {
                 "from": "entry",
                 "to": "end",
@@ -336,7 +346,7 @@
           "type": "bar",
           "w": 6,
           "x": 0,
-          "y": 8
+          "y": 9
         },
         {
           "by": {
@@ -369,7 +379,7 @@
           "type": "pie",
           "w": 3,
           "x": 6,
-          "y": 8
+          "y": 9
         },
         {
           "by": {
@@ -386,8 +396,12 @@
               },
               {
                 "color": "blue",
-                "filter": "status:pending",
+                "filter": "status:pending -review",
                 "label": "Pending"
+              },
+              {
+                "filter": "status:pending +review",
+                "label": "Review"
               }
             ]
           },
@@ -400,7 +414,35 @@
           "type": "pie",
           "w": 3,
           "x": 9,
-          "y": 8
+          "y": 9
+        },
+        {
+          "filter": "+review",
+          "h": 4,
+          "id": "table-2",
+          "measure": {
+            "fn": "count"
+          },
+          "report": "workmini",
+          "title": "In Review",
+          "type": "table",
+          "w": 6,
+          "x": 0,
+          "y": 5
+        },
+        {
+          "filter": "status:completed",
+          "h": 4,
+          "id": "table-3",
+          "measure": {
+            "fn": "count"
+          },
+          "report": "workmini",
+          "title": "Done",
+          "type": "table",
+          "w": 6,
+          "x": 6,
+          "y": 5
         }
       ]
     }

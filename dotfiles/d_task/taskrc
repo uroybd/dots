@@ -56,6 +56,13 @@ report.work.sort=urgency-
 report.work.filter=+PENDING project:FUL
 
 
+# Report: WorkMini
+report.workmini.columns=id,jira,project.indented,description
+report.workmini.labels=ID,Jira,Project,Description
+report.workmini.sort=urgency-
+report.workmini.filter=+PENDING project:FUL
+
+
 # Report: Completed
 report.completed.columns=id,uuid.short,entry,end,outcome,entry.age,depends,priority,project,tags,recur.indicator,due,description
 report.completed.labels=ID,UUID,Created,Completed,Outcome,Age,Deps,P,Project,Tags,R,Due,Description
