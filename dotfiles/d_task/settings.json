@@ -7,23 +7,28 @@
       }
     }
   },
+  "boardsVersion": 1,
   "boards": [
     {
-      "filter": "(due.after:$daterange.start and due.before:$daterange.end) or (end.after:$daterange.start and end.before:$daterange.end) or (scheduled.after:$daterange.start and scheduled.before:$daterange.end)",
-      "id": "ataglance",
-      "name": "At a Glance",
-      "ranges": [
+      "controls": [
         {
           "end": "eow",
           "name": "daterange",
-          "start": "sow-7d"
+          "start": "sow-7d",
+          "type": "daterange"
         }
       ],
+      "filter": "(due.after:$daterange.start and due.before:$daterange.end) or (end.after:$daterange.start and end.before:$daterange.end) or (scheduled.after:$daterange.start and scheduled.before:$daterange.end)",
+      "id": "ataglance",
+      "name": "At a Glance",
       "sections": [
         {
           "h": 6,
           "id": "table",
           "ignoreBoardFilter": true,
+          "measure": {
+            "fn": "count"
+          },
           "report": "neovim",
           "title": "TODO",
           "type": "table",
@@ -42,6 +47,9 @@
           "h": 4,
           "id": "bar",
           "limit": "$daterange.day_count",
+          "measure": {
+            "fn": "count"
+          },
           "series": [
             {
               "color": "bright green",
@@ -83,6 +91,9 @@
           },
           "h": 4,
           "id": "pie",
+          "measure": {
+            "fn": "count"
+          },
           "title": "By Projects",
           "type": "pie",
           "w": 6,
@@ -94,6 +105,9 @@
           "h": 2,
           "id": "number",
           "ignoreBoardFilter": true,
+          "measure": {
+            "fn": "count"
+          },
           "title": "Due Today",
           "type": "number",
           "w": 6,
@@ -105,6 +119,9 @@
           "h": 2,
           "id": "number-2",
           "ignoreBoardFilter": true,
+          "measure": {
+            "fn": "count"
+          },
           "title": "Today @ Work",
           "type": "number",
           "w": 6,
@@ -114,16 +131,17 @@
       ]
     },
     {
-      "filter": "+habit status:completed (due.after:$range.start and due.before:$range.end)",
-      "id": "habits",
-      "name": "Habits",
-      "ranges": [
+      "controls": [
         {
           "end": "eoq",
           "name": "range",
-          "start": "soq"
+          "start": "soq",
+          "type": "daterange"
         }
       ],
+      "filter": "+habit status:completed (due.after:$range.start and due.before:$range.end)",
+      "id": "habits",
+      "name": "Habits",
       "sections": [
         {
           "by": {
@@ -135,6 +153,9 @@
           },
           "h": 4,
           "id": "bar-3",
+          "measure": {
+            "fn": "count"
+          },
           "rows": {
             "time": {
               "field": "due",
@@ -166,6 +187,9 @@
           },
           "h": 4,
           "id": "pie",
+          "measure": {
+            "fn": "count"
+          },
           "title": "Overall Ratio",
           "type": "pie",
           "w": 6,
@@ -183,6 +207,9 @@
           "filter": "+reading",
           "h": 4,
           "id": "bar-4",
+          "measure": {
+            "fn": "count"
+          },
           "rows": {
             "time": {
               "field": "due",
@@ -215,6 +242,9 @@
           "filter": "+reading",
           "h": 4,
           "id": "pie-2",
+          "measure": {
+            "fn": "count"
+          },
           "title": "Reading Ratio",
           "type": "pie",
           "w": 6,
@@ -222,16 +252,174 @@
           "y": 4
         }
       ]
+    },
+    {
+      "controls": [
+        {
+          "end": "eow+14d",
+          "label": "Date Range",
+          "name": "daterange",
+          "start": "sow-7d",
+          "type": "daterange"
+        },
+        {
+          "multiple": true,
+          "name": "project",
+          "source": "project",
+          "type": "select",
+          "values": [
+            "FUL.WME"
+          ]
+        }
+      ],
+      "filter": "$project.asNative  and ((due.after:$daterange.start and due.before:$daterange.end) or (end.after:$daterange.start and end.before:$daterange.end) or (scheduled.after:$daterange.start and scheduled.before:$daterange.end))",
+      "id": "fulflld",
+      "name": "FULFLLD",
+      "sections": [
+        {
+          "h": 8,
+          "id": "table",
+          "measure": {
+            "fn": "count"
+          },
+          "report": "work",
+          "title": "TODO",
+          "type": "table",
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "by": {
+            "time": {
+              "field": "due",
+              "range": "daterange",
+              "step": "day"
+            }
+          },
+          "h": 4,
+          "id": "bar",
+          "limit": "$daterange.day_count",
+          "measure": {
+            "fn": "count"
+          },
+          "series": [
+            {
+              "color": "bright green",
+              "filter": "status:completed ( outcome:success or outcome: )",
+              "label": "Succeeded",
+              "span": {
+                "from": "end"
+              }
+            },
+            {
+              "color": "bright red",
+              "filter": "status:completed outcome:failed",
+              "label": "Failed",
+              "span": {
+                "from": "end"
+              }
+            },
+            {
+              "color": "bright blue",
+              "filter": "status:pending",
+              "label": "Pending",
+              "span": {
+                "from": "entry",
+                "to": "end",
+                "unless": "start"
+              }
+            }
+          ],
+          "stacked": true,
+          "title": "Burndown",
+          "type": "bar",
+          "w": 6,
+          "x": 0,
+          "y": 8
+        },
+        {
+          "by": {
+            "groups": [
+              {
+                "filter": "+feature",
+                "label": "Features"
+              },
+              {
+                "filter": "+bugfix",
+                "label": "Bug Fix"
+              },
+              {
+                "filter": "+performance",
+                "label": "Performance"
+              }
+            ]
+          },
+          "except": [
+            "jira",
+            "work"
+          ],
+          "filter": "(+bugfix or +feature or +wontfix)",
+          "h": 4,
+          "id": "pie",
+          "measure": {
+            "fn": "count"
+          },
+          "title": "By Type",
+          "type": "pie",
+          "w": 3,
+          "x": 6,
+          "y": 8
+        },
+        {
+          "by": {
+            "groups": [
+              {
+                "color": "green",
+                "filter": "status:completed outcome:success",
+                "label": "Succeed"
+              },
+              {
+                "color": "bright red",
+                "filter": "status:completed outcome:failed",
+                "label": "Failed"
+              },
+              {
+                "color": "blue",
+                "filter": "status:pending",
+                "label": "Pending"
+              }
+            ]
+          },
+          "h": 4,
+          "id": "pie-2",
+          "measure": {
+            "fn": "count"
+          },
+          "title": "Status",
+          "type": "pie",
+          "w": 3,
+          "x": 9,
+          "y": 8
+        }
+      ]
     }
   ],
-  "tui": {
-    "sync": "startAndClose",
-    "theme": "auto"
-  },
   "taskCommands": [
     {
       "name": "fail",
-      "command": "done outcome:failed"
+      "command": "done outcome:failed -review",
+      "icon": "circle-x"
+    },
+    {
+      "name": "finish",
+      "command": "done outcome:success -review",
+      "icon": "circle-check"
+    },
+    {
+      "name": "review",
+      "command": "modify +review",
+      "icon": "circle-dashed-check"
     }
   ]
 }
