@@ -148,6 +148,7 @@ function on_modify(old, new)
 			if is_unset(new.outcome) then
 				new.outcome = "success"
 			end
+			new.tags:remove("review")
 		end
 	elseif old.todo ~= new.todo then
 		progress_from_todo(new)
