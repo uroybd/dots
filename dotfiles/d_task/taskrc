@@ -52,20 +52,17 @@ report.neovim.labels=ID,Jira,U,Due,Project,Description
 report.neovim.sort=urgency-
 report.neovim.filter=+PENDING -WAITING limit:5
 
-
 # Report: Work
 report.work.columns=id,jira,project.indented,description,urgency,todo,progress,tags,due.countdown
 report.work.labels=ID,Jira,Project,Description,Urgency,TODO,Progress,Tags,Due
-report.work.sort=urgency-
-report.work.filter=+PENDING project:FUL
-
+report.work.sort=status-/,urgency-
+report.work.filter=project:FUL
 
 # Report: WorkMini
 report.workmini.columns=id,jira,project.indented,description
 report.workmini.labels=ID,Jira,Project,Description
-report.workmini.sort=urgency-
-report.workmini.filter=+PENDING project:FUL
-
+report.work.sort=status-/,urgency-
+report.workmini.filter=project:FUL
 
 # Report: Completed
 report.completed.columns=id,uuid.short,entry,end,outcome,entry.age,depends,priority,project,tags,recur.indicator,due,description

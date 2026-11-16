@@ -98,8 +98,8 @@ local function apply_metadata(task, metadata)
 	end
 end
 
--- The percent (rounded) of the markdown checkboxes in text that are ticked: "- [x] a" and "- [ ] b" make 50. Nil if
--- there are none.
+-- The percent, rounded to two decimal places, of the markdown checkboxes in text that are ticked: "- [x] a" and
+-- "- [ ] b" make 50, one of three makes 33.33. Nil if there are none.
 local function checklist_percent(text)
 	local ticked, total = 0, 0
 	for line in text:gmatch("[^\n]+") do
@@ -114,7 +114,11 @@ local function checklist_percent(text)
 	if total == 0 then
 		return nil
 	end
-	return math.floor(ticked * 100 / total + 0.5)
+	local hundredths = math.floor(ticked * 10000 / total + 0.5)
+	if hundredths % 100 == 0 then
+		return math.floor(hundredths / 100) -- whole percent stays an integer: 50, not 50.0
+	end
+	return hundredths / 100
 end
 
 -- Sets progress from the todo checklist. A task with no todo (or one without checkboxes) is left to be set by hand.
