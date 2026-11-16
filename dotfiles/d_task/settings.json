@@ -2,24 +2,23 @@
   "appearance": {
     "progress": {
       "progress": {
-        "min": 0,
-        "max": 100
+        "max": 100,
+        "min": 0
       }
     },
     "transformations": [
       {
-        "match": "\\b(FUL-\\d+)\\b",
-        "replace": "[$1](https://dlivrdio.atlassian.net/browse/$1)",
         "fields": [
           "description",
           "jira",
           "todo",
           "annotations"
-        ]
+        ],
+        "match": "\\b(FUL-\\d+)\\b",
+        "replace": "[$1](https://dlivrdio.atlassian.net/browse/$1)"
       }
     ]
   },
-  "boardsVersion": 1,
   "boards": [
     {
       "controls": [
@@ -438,6 +437,10 @@
       ]
     }
   ],
+  "boardsVersion": 1,
+  "tui": {
+    "sync": "startAndClose"
+  },
   "taskCommands": [
     {
       "name": "fail",
