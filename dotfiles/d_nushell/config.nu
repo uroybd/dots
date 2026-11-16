@@ -637,6 +637,7 @@ source $"($nu.default-config-dir)/fnm.nu"
 source $"($nu.default-config-dir)/atuin.nu"
 source $"($nu.default-config-dir)/zoxide.nu"
 source $"($nu.default-config-dir)/carapace.nu"
+source $"($nu.default-config-dir)/ai.nu" # before jira.nu, which uses it
 source $"($nu.default-config-dir)/jira.nu"
 source $"($nu.default-config-dir)/gh.nu"
 source $"($nu.default-config-dir)/misc.nu"

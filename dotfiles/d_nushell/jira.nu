@@ -128,6 +128,181 @@ def 'jira me changed' [--since(-S): duration = 1day] {
     print $out
 }
 
+# The skill whose "Story points" section is the estimating convention (scale, headroom), in the work Claude setup.
+const STORY_POINT_SKILL = "~/.claude-fulflld/skills/jira-ticket/SKILL.md"
+
+# A ticket's Story Points (customfield_10035, the field the board uses), or null when unset.
+def jira-story-points [ticket: string] {
+    let auth = $"((jira me)):($env.JIRA_API_TOKEN)"
+    ^curl -s -u $auth $"($env.JIRA_HOST)/rest/api/2/issue/($ticket)?fields=customfield_10035"
+    | from json
+    | get -o fields.customfield_10035
+    | if $in == null { null } else { $in | into int }
+}
+
+# The "Story points" section of the jira-ticket skill: the scale and headroom estimates follow.
+def story-point-rules [] {
+    let skill = (^cat ($STORY_POINT_SKILL | path expand) | split row "## 2. Story points")
+    if ($skill | length) < 2 {
+        error make {msg: $"No \"## 2. Story points\" section in ($STORY_POINT_SKILL)"}
+    }
+    $skill | get 1 | split row "\n## " | first
+}
+
+# Estimates for tickets from one Claude call (work setup), one row per ticket in the order given:
+# {ticket, points, raw_days, padded_days, split, reason}. One call for the batch saves the per-call startup and, with
+# --codebase, lets Claude read the code once for all of them (read-only, in the current directory). A ticket the answer
+# misses is retried on its own; one that still gets no estimate is warned about on stderr and left out.
+def story-point-estimates [tickets: list<string>, rules: string, --codebase(-c)] {
+    let ticket_text = (
+        $tickets | par-each --threads 4 {|t| $"=== ($t) ===\n(^jira issue view $t --plain --comments 5)" }
+        | str join "\n\n"
+    )
+    let codebase_rules = if $codebase {
+        "\nThe current directory is the codebase these tickets change. Before estimating, find and read the code each ticket would touch, using only Read, Grep and Glob, and change nothing. Size the work from what you find: how many places change, existing patterns to reuse, tests to add or update. Mention what you found in reason."
+    } else { "" }
+    let instructions = $"You estimate story points for Jira tickets, given on stdin, each under a === KEY === header. Estimate every ticket on its own merits, with the same scale for all. Follow these rules exactly, including the 20% headroom:
+
+## Story points
+($rules)
+Answer only through the structured output, with one estimate per ticket. raw_days is the work before headroom, padded_days after it. If the padded work is bigger than 5 points, set split to true and points to 5.($codebase_rules)"
+
+    let schema = {
+        type: object
+        properties: {
+            estimates: {
+                type: array
+                items: {
+                    type: object
+                    properties: {
+                        ticket: {type: string, enum: $tickets}
+                        points: {type: integer, enum: [1 2 3 5]}
+                        raw_days: {type: number}
+                        padded_days: {type: number}
+                        split: {type: boolean}
+                        reason: {type: string, description: "One or two sentences on what drives the size."}
+                    }
+                    required: [ticket points raw_days padded_days split reason]
+                }
+            }
+        }
+        required: [estimates]
+    }
+    let tools = if $codebase { [Read Grep Glob] } else { [] }
+
+    let got = try {
+        $ticket_text
+        | ai ask $"Estimate story points for ($tickets | str join ', ')." --setup fulflld --system $instructions --schema $schema --tools $tools --here=$codebase
+        | get estimates
+    } catch {|err|
+        let msg = $"No estimate for ($tickets | str join ', '): ($err.msg)"
+        if ($tickets | length) == 1 { error make {msg: $msg} }
+        print -e $"[WARN] ($msg)"
+        []
+    }
+
+    $tickets | each {|t|
+        let found = ($got | where ticket == $t)
+        if ($found | is-not-empty) {
+            $found | first
+        } else if ($tickets | length) > 1 {
+            # missed by the batch: one more try on its own
+            try { story-point-estimates [$t] $rules --codebase=$codebase | first } catch {|err|
+                print -e $"[WARN] ($err.msg)"
+                null
+            }
+        }
+    } | compact
+}
+
+# Story points for tickets, guessed by Claude (work setup) by the jira-ticket skill's convention: 1, 2, 3 or 5.
+# Tickets come as arguments, comma-separated lists, or piped in (one per line, or a list), in any mix, and are all
+# estimated in one Claude call. One ticket prints only its number; several give a table of ticket and points, in the
+# order given. A ticket that should be split instead says 5 and warns on stderr; one that can't be estimated warns and
+# is left out of the table (a lone ticket errors instead).
+# --codebase: run from the repo the tickets target; Claude reads the code they would touch (read-only) to size them.
+# --explain: the whole estimate (raw and padded days, split, reason) instead of only the points.
+# --epic: also estimate the epic's child tickets that aren't done (several epics: comma-separated). With it, giving
+#         tickets is optional.
+# --update: also set each ticket's Story Points to its guess, asking for each (on stderr); --yes skips the questions.
+# --json: a JSON object keyed by ticket, however many there are: {"FUL-1": 3}, or with --explain
+#         {"FUL-1": {points, raw_days, padded_days, split, reason}}.
+# Usage: fulbot guess story-point FUL-1 FUL-2,FUL-3 [--epic FUL-100] [--codebase] [--explain] [--json] [--update [--yes]]
+#        "FUL-1\nFUL-2" | fulbot guess story-point
+def 'fulbot guess story-point' [
+    ...tickets: string, --epic(-E): string, --codebase(-c), --explain(-e), --json(-j), --update(-u), --yes(-y)
+] {
+    let piped = $in
+    let piped = if $piped == null { [] } else if ($piped | describe) == "string" { [$piped] } else { $piped }
+    let from_epic = if $epic == null { [] } else {
+        let epics = ($epic | split row -r '[,\s]+' | where {|e| $e != "" } | str uppercase)
+        let children = (
+            jira-rest-search $"parent in \(($epics | str join ', ')\) AND statusCategory != Done ORDER BY key" "summary"
+            | get key
+        )
+        if ($children | is-empty) {
+            print -e $"[WARN] No open tickets under ($epics | str join ', ')."
+        }
+        $children
+    }
+    let tickets = (
+        $tickets | append $piped | append $from_epic
+        | each {|t| $t | into string | split row -r '[,\s]+' } | flatten
+        | where {|t| $t != "" } | str uppercase | uniq
+    )
+    if ($tickets | is-empty) {
+        error make {msg: "No tickets given. Pass them as arguments (FUL-1 FUL-2 or FUL-1,FUL-2), pipe them in, or give --epic."}
+    }
+    let estimates = (story-point-estimates $tickets (story-point-rules) --codebase=$codebase)
+
+    for e in ($estimates | where split) {
+        print -e $"[WARN] ($e.ticket) is bigger than 5 points \(($e.padded_days)d padded\); consider splitting it."
+    }
+    if $update {
+        for e in $estimates { jira-story-points-set $e.ticket $e --yes=$yes }
+    }
+
+    if $json {
+        return (
+            $estimates
+            | reduce --fold {} {|e, acc| $acc | insert $e.ticket (if $explain { $e | reject ticket } else { $e.points }) }
+            | to json
+        )
+    }
+    let out = if $explain { $estimates } else { $estimates | select ticket points }
+    if ($tickets | length) == 1 {
+        if $explain { $out | first | reject ticket } else { $out | first | get points }
+    } else { $out }
+}
+
+# Sets a ticket's Story Points to an estimate from `fulbot guess story-point`, asking first unless --yes, then checks it
+# took (a wrong custom-field name fails silently).
+def jira-story-points-set [ticket: string, estimate: record, --yes(-y)] {
+    let current = (jira-story-points $ticket)
+    if $current == $estimate.points {
+        print -e $"[INFO] ($ticket) already has ($current) story points."
+        return
+    }
+    if not $yes {
+        print -e $"($ticket): ($current | default 'unset') -> ($estimate.points) story points \(($estimate.raw_days)d → ($estimate.padded_days)d\)"
+        print -e $"  ($estimate.reason)"
+        let answer = (try { input "Update the ticket? [y/N] " } catch {
+            print -e "[WARN] No terminal to ask on; pass --yes to update without asking."
+            "n"
+        })
+        if ($answer | str lowercase) not-in [y yes] {
+            print -e $"[INFO] ($ticket) left at ($current | default 'unset')."
+            return
+        }
+    }
+    ^jira issue edit $ticket --no-input --custom $"story-points=($estimate.points)" | ignore
+    let after = (jira-story-points $ticket)
+    if $after != $estimate.points {
+        error make {msg: $"($ticket) Story Points are ($after | default 'unset') after the update, not ($estimate.points)."}
+    }
+    print -e $"[INFO] ($ticket) story points: ($current | default 'unset') -> ($after)."
+}
+
 def 'jira sprint current' [] {
     return (
         jira sprint list --state=active --columns=ID --table --plain
