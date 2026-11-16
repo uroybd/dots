@@ -140,7 +140,34 @@ def jira-story-points [ticket: string] {
     | if $in == null { null } else { $in | into int }
 }
 
-# The "Story points" section of the jira-ticket skill: the scale and headroom estimates follow.
+# Story point sizes by the most working days each holds (a week is 5), as in the jira-ticket skill's table:
+# 1 is up to 1 day, 2 is 1-2 days, 3 is 2-5 days, 5 is 1-2 weeks. Keep the two in step.
+const STORY_POINT_SIZES = [[points max_days]; [1 1] [2 2] [3 5] [5 10]]
+
+# Sizes work of `days` working days: adds `offset` percent of headroom, then takes the smallest size the padded work
+# fits. Past the largest size it says 5 with split true, since the ticket should be split.
+def story-point-size [days: number, offset: number] {
+    let padded = ($days * (1 + $offset / 100) | math round --precision 2)
+    let fits = ($STORY_POINT_SIZES | where max_days >= $padded)
+    {
+        points: (if ($fits | is-empty) { $STORY_POINT_SIZES | last | get points } else { $fits | first | get points })
+        raw_days: $days
+        offset: $offset
+        padded_days: $padded
+        split: ($fits | is-empty)
+    }
+}
+
+# Story points for work of DAYS working days, after adding --offset percent of headroom (20 by default, the
+# jira-ticket skill's convention). Prints the points; --explain gives the padded days and whether to split too.
+# Usage: fulbot story-point calc 1.8            # 1.8d -> 2.16d -> 3
+#        fulbot story-point calc 4 --offset 30 --explain
+def 'fulbot story-point calc' [days: number, --offset(-o): number = 20, --explain(-e)] {
+    let size = (story-point-size $days $offset)
+    if $explain { $size } else { $size.points }
+}
+
+# The "Story points" section of the jira-ticket skill: what the scale means, for Claude to judge the work by.
 def story-point-rules [] {
     let skill = (^cat ($STORY_POINT_SKILL | path expand) | split row "## 2. Story points")
     if ($skill | length) < 2 {
@@ -149,8 +176,8 @@ def story-point-rules [] {
     $skill | get 1 | split row "\n## " | first
 }
 
-# Estimates for tickets from one Claude call (work setup), one row per ticket in the order given:
-# {ticket, points, raw_days, padded_days, split, reason}. One call for the batch saves the per-call startup and, with
+# Work estimates for tickets from one Claude call (work setup), one row per ticket in the order given:
+# {ticket, raw_days, reason}, raw_days being the work without headroom (story-point-size adds that and sizes it). One call for the batch saves the per-call startup and, with
 # --codebase, lets Claude read the code once for all of them (read-only, in the current directory). A ticket the answer
 # misses is retried on its own; one that still gets no estimate is warned about on stderr and left out.
 def story-point-estimates [tickets: list<string>, rules: string, --codebase(-c)] {
@@ -161,11 +188,11 @@ def story-point-estimates [tickets: list<string>, rules: string, --codebase(-c)]
     let codebase_rules = if $codebase {
         "\nThe current directory is the codebase these tickets change. Before estimating, find and read the code each ticket would touch, using only Read, Grep and Glob, and change nothing. Size the work from what you find: how many places change, existing patterns to reuse, tests to add or update. Mention what you found in reason."
     } else { "" }
-    let instructions = $"You estimate story points for Jira tickets, given on stdin, each under a === KEY === header. Estimate every ticket on its own merits, with the same scale for all. Follow these rules exactly, including the 20% headroom:
+    let instructions = $"You estimate the work in Jira tickets, given on stdin, each under a === KEY === header. Estimate every ticket on its own merits, on the same footing for all. The team's story point rules are below for what the sizes mean, but you only give raw_days: the working days the work itself takes \(a week is 5\), with no headroom, buffer or padding. Headroom is added and points are worked out afterwards, from your raw_days.
 
 ## Story points
 ($rules)
-Answer only through the structured output, with one estimate per ticket. raw_days is the work before headroom, padded_days after it. If the padded work is bigger than 5 points, set split to true and points to 5.($codebase_rules)"
+Answer only through the structured output, with one estimate per ticket.($codebase_rules)"
 
     let schema = {
         type: object
@@ -176,13 +203,10 @@ Answer only through the structured output, with one estimate per ticket. raw_day
                     type: object
                     properties: {
                         ticket: {type: string, enum: $tickets}
-                        points: {type: integer, enum: [1 2 3 5]}
-                        raw_days: {type: number}
-                        padded_days: {type: number}
-                        split: {type: boolean}
+                        raw_days: {type: number, exclusiveMinimum: 0, description: "Working days of work, without headroom."}
                         reason: {type: string, description: "One or two sentences on what drives the size."}
                     }
-                    required: [ticket points raw_days padded_days split reason]
+                    required: [ticket raw_days reason]
                 }
             }
         }
@@ -215,22 +239,26 @@ Answer only through the structured output, with one estimate per ticket. raw_day
     } | compact
 }
 
-# Story points for tickets, guessed by Claude (work setup) by the jira-ticket skill's convention: 1, 2, 3 or 5.
+# Story points for tickets by the jira-ticket skill's convention: 1, 2, 3 or 5. Claude (work setup) estimates the work
+# in days; --offset percent of headroom (20 by default) is added to that, and the padded days give the points.
 # Tickets come as arguments, comma-separated lists, or piped in (one per line, or a list), in any mix, and are all
 # estimated in one Claude call. One ticket prints only its number; several give a table of ticket and points, in the
 # order given. A ticket that should be split instead says 5 and warns on stderr; one that can't be estimated warns and
 # is left out of the table (a lone ticket errors instead).
 # --codebase: run from the repo the tickets target; Claude reads the code they would touch (read-only) to size them.
-# --explain: the whole estimate (raw and padded days, split, reason) instead of only the points.
+# --offset: headroom in percent added to Claude's raw days before sizing (default 20, the skill's convention).
+# --explain: the whole estimate (raw days, offset, padded days, split, reason) instead of only the points.
 # --epic: also estimate the epic's child tickets that aren't done (several epics: comma-separated). With it, giving
 #         tickets is optional.
 # --update: also set each ticket's Story Points to its guess, asking for each (on stderr); --yes skips the questions.
 # --json: a JSON object keyed by ticket, however many there are: {"FUL-1": 3}, or with --explain
-#         {"FUL-1": {points, raw_days, padded_days, split, reason}}.
-# Usage: fulbot guess story-point FUL-1 FUL-2,FUL-3 [--epic FUL-100] [--codebase] [--explain] [--json] [--update [--yes]]
+#         {"FUL-1": {points, raw_days, offset, padded_days, split, reason}}.
+# Usage: fulbot guess story-point FUL-1 FUL-2,FUL-3 [--epic FUL-100] [--offset 20] [--codebase] [--explain] [--json]
+#                                 [--update [--yes]]
 #        "FUL-1\nFUL-2" | fulbot guess story-point
 def 'fulbot guess story-point' [
-    ...tickets: string, --epic(-E): string, --codebase(-c), --explain(-e), --json(-j), --update(-u), --yes(-y)
+    ...tickets: string, --epic(-E): string, --offset(-o): number = 20, --codebase(-c), --explain(-e), --json(-j)
+    --update(-u), --yes(-y)
 ] {
     let piped = $in
     let piped = if $piped == null { [] } else if ($piped | describe) == "string" { [$piped] } else { $piped }
@@ -253,7 +281,10 @@ def 'fulbot guess story-point' [
     if ($tickets | is-empty) {
         error make {msg: "No tickets given. Pass them as arguments (FUL-1 FUL-2 or FUL-1,FUL-2), pipe them in, or give --epic."}
     }
-    let estimates = (story-point-estimates $tickets (story-point-rules) --codebase=$codebase)
+    let estimates = (
+        story-point-estimates $tickets (story-point-rules) --codebase=$codebase
+        | each {|e| {ticket: $e.ticket} | merge (story-point-size $e.raw_days $offset) | insert reason $e.reason }
+    )
 
     for e in ($estimates | where split) {
         print -e $"[WARN] ($e.ticket) is bigger than 5 points \(($e.padded_days)d padded\); consider splitting it."
