@@ -62,16 +62,18 @@ def jira-status-rank [status: string] {
     if ($idx | is-empty) { 99 } else { $idx | first | get index }
 }
 
-# Markdown list of my tickets that moved forward in status recently, grouped by the
-# status they moved to (bold Slack-style *header*), e.g. for posting to Slack. Backward moves are ignored.
-# Bare URLs so Slack unfurls them as Jira chips. Multiple transitions in the window
-# collapse into first-from -> last-to.
+# Markdown list of my tickets that moved forward in status recently, e.g. for posting to Slack.
+# Grouped by epic, one line per ticket:
+#   - EPIC-KEY: Epic Name
+#       - Ticket summary, Old Status -> New Status, <link>
+# Backward moves are ignored. Bare URLs so Slack unfurls them as Jira chips. Multiple transitions
+# in the window collapse into first-from -> last-to.
 # Usage: jira me changed [--since 3day]
 def 'jira me changed' [--since(-S): duration = 1day] {
     let me = (jira me)
     let cutoff = (date now) - $since
     let jql = $"assignee = \"($me)\" AND status CHANGED AFTER \"($cutoff | format date '%Y/%m/%d %H:%M')\""
-    let issues = (jira-rest-search $jql "summary" --expand changelog)
+    let issues = (jira-rest-search $jql "summary,parent" --expand changelog)
     let forward = (
         $issues
         | each {|issue|
@@ -89,7 +91,16 @@ def 'jira me changed' [--since(-S): duration = 1day] {
                 if (jira-status-rank $from) != 99 and (jira-status-rank $to) != 99 and (jira-status-rank $to) <= (jira-status-rank $from) {
                     null
                 } else {
-                    {key: $issue.key, to: $to, rank: (jira-status-rank $to)}
+                    let parent = ($issue.fields | get -o parent)
+                    let epic = if ($parent | get -o fields.issuetype.name) == "Epic" { $"($parent.key): ($parent.fields.summary)" } else { "No epic" }
+                    {
+                        key: $issue.key
+                        summary: $issue.fields.summary
+                        epic: $epic
+                        from: $from
+                        to: $to
+                        rank: (jira-status-rank $to)
+                    }
                 }
             }
         }
@@ -101,13 +112,18 @@ def 'jira me changed' [--since(-S): duration = 1day] {
     }
     let out = (
         $forward
-        | sort-by rank
-        | group-by --to-table to
+        | sort-by rank key
+        | group-by --to-table epic
+        | sort-by {|g| if $g.epic == "No epic" { "~" } else { $g.epic } }
         | each {|g|
-            let items = ($g.items | each {|i| $"- (jira-ticket-to-url $i.key)" } | str join "\n")
-            $"*($g.to)*\n($items)"
+            let items = (
+                $g.items
+                | each {|i| $"    - ($i.summary), ($i.from) -> ($i.to), (jira-ticket-to-url $i.key)" }
+                | str join "\n"
+            )
+            $"- ($g.epic)\n($items)"
         }
-        | str join "\n\n"
+        | str join "\n"
     )
     print $out
 }

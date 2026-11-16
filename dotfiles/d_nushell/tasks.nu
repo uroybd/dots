@@ -77,7 +77,7 @@ def "jira tw import" [--epic(-e): string, ...filter: string] {
             ($t.status in [pending waiting]) and (($t | get -o jira | default "") | is-empty)
         }
 
-        let skipped = $tasks | length) - ($todo | length
+        let skipped = ($tasks | length) - ($todo | length)
         if $skipped > 0 {
             print $"Skipping ($skipped) task\(s\) that are already linked or not open."
         }
@@ -137,13 +137,7 @@ def jira-type-tag [type: string] {
 # --epic pulls the epic's child issues that are not done; --mine limits to my issues (alone: all my
 # issues that are not done); --sprint limits either to open sprints. Keys can't be combined with these.
 # Issues that already have a task (any status except deleted) are skipped, as are done issues.
-def "jira tw pull" [
-    --epic(-e): string
-    --mine(-m)
-    --sprint(-s)
-    --dry-run(-n)
-    ...keys: string
-] {
+def "jira tw pull" [--epic(-e): string, --mine(-m), --sprint(-s), --dry-run(-n), ...keys: string] {
     if ($keys | is-empty) and $epic == null and not $mine {
         error make {msg: "Give issue keys, --epic, or --mine."}
     }
@@ -227,8 +221,10 @@ def "jira tw pull" [
 }
 
 @complete external
-def --wrapped mt [...rest] {
-    with-env { AWS_ENDPOINT_URL: "{{ TW_BUCKET }}" } {
-    ^meghnaad-tui ...$rest
+def --wrapped meghnaad [...rest] {
+  with-env { AWS_ENDPOINT_URL: "{{ TW_BUCKET }}" } {
+    ^meghnaad ...$rest
   }
 }
+
+alias mt = meghnaad
