@@ -227,8 +227,8 @@ def "jira tw pull" [
 }
 
 @complete external
-def --wrapped meghnaad [...rest] {
+def --wrapped mt [...rest] {
     with-env { AWS_ENDPOINT_URL: "{{ TW_BUCKET }}" } {
-    ^meghnaad ...$rest
+    ^meghnaad-tui ...$rest
   }
 }
