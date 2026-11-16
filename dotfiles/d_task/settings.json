@@ -275,6 +275,7 @@
           "type": "daterange"
         },
         {
+          "completed": true,
           "multiple": true,
           "name": "project",
           "source": "project",
@@ -284,13 +285,13 @@
           ]
         }
       ],
-      "filter": "$project.asNative  and ((due.after:$daterange.start and due.before:$daterange.end) or (end.after:$daterange.start and end.before:$daterange.end) or (scheduled.after:$daterange.start and scheduled.before:$daterange.end))",
+      "filter": "$project.asNative and ((due.after:$daterange.start and due.before:$daterange.end) or (end.after:$daterange.start and end.before:$daterange.end) or (scheduled.after:$daterange.start and scheduled.before:$daterange.end))",
       "id": "fulflld",
       "name": "FULFLLD",
       "sections": [
         {
           "filter": "-review",
-          "h": 5,
+          "h": 9,
           "id": "table",
           "measure": {
             "fn": "count"
@@ -300,7 +301,7 @@
           "type": "table",
           "w": 12,
           "x": 0,
-          "y": 0
+          "y": 3
         },
         {
           "by": {
@@ -356,9 +357,9 @@
           "stacked": true,
           "title": "Burndown",
           "type": "bar",
-          "w": 6,
+          "w": 7,
           "x": 0,
-          "y": 9
+          "y": 12
         },
         {
           "by": {
@@ -389,72 +390,50 @@
           },
           "title": "By Type",
           "type": "pie",
-          "w": 3,
-          "x": 6,
-          "y": 9
+          "w": 5,
+          "x": 7,
+          "y": 12
         },
         {
           "by": {
             "groups": [
               {
                 "color": "green",
-                "filter": "status:completed outcome:success",
                 "label": "Succeed"
-              },
-              {
-                "color": "bright red",
-                "filter": "status:completed outcome:failed",
-                "label": "Failed"
-              },
-              {
-                "color": "blue",
-                "filter": "status:pending -review",
-                "label": "Pending"
-              },
-              {
-                "filter": "status:pending +review",
-                "label": "Review"
               }
             ]
           },
-          "h": 4,
+          "h": 3,
           "id": "pie-2",
           "measure": {
             "fn": "count"
           },
+          "series": [
+            {
+              "color": "bright green",
+              "filter": "status:completed outcome:success",
+              "label": "Succeed"
+            },
+            {
+              "filter": "status:completed outcome:failed",
+              "label": "Failed"
+            },
+            {
+              "color": "bright blue",
+              "filter": "status:pending -review",
+              "label": "Pending"
+            },
+            {
+              "filter": "status:pending +review",
+              "label": "Review"
+            }
+          ],
+          "stacked": true,
           "title": "Status",
-          "type": "pie",
-          "w": 3,
-          "x": 9,
-          "y": 9
-        },
-        {
-          "filter": "+review",
-          "h": 4,
-          "id": "table-2",
-          "measure": {
-            "fn": "count"
-          },
-          "report": "workmini",
-          "title": "In Review",
-          "type": "table",
-          "w": 6,
+          "type": "bar",
+          "w": 12,
           "x": 0,
-          "y": 5
-        },
-        {
-          "filter": "status:completed",
-          "h": 4,
-          "id": "table-3",
-          "measure": {
-            "fn": "count"
-          },
-          "report": "workmini",
-          "title": "Done",
-          "type": "table",
-          "w": 6,
-          "x": 6,
-          "y": 5
+          "y": 0
         }
       ]
     }
@@ -472,7 +451,7 @@
     },
     {
       "name": "review",
-      "command": "modify +review",
+      "command": "modify +review progress:90",
       "icon": "circle-dashed-check"
     }
   ]
