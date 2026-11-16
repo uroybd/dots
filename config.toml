@@ -62,7 +62,7 @@ pre_actions = ["{{ PACKAGE_INSTALLER }} git git-delta"]
 src = "dotfiles/d_task"
 dest = "~/.config/task"
 pre_actions = [
-  "{{ PACKAGE_INSTALLER }} task tasksh taskwarrior-tui uroybd/tap/meghnaad-hook uroybd/tap/meghnaad-tui",
+  "{{ PACKAGE_INSTALLER }} task tasksh uroybd/tap/meghnaad-hook uroybd/tap/meghnaad",
   "mkdir -p ~/.config/task/hooks",
 ]
 post_actions = [
@@ -165,3 +165,37 @@ pre_actions = ["./scripts/install_homebrew.sh"]
 
 [platforms.mac.variables]
 PACKAGE_INSTALLER = "brew install"
+
+# Claude Code: instructions and plugins only. Settings are deliberately not tracked; Claude Code manages them.
+# Instructions both Claude setups follow; each setup's CLAUDE.md imports this file with an @ line.
+[packages.f_claude_shared_md]
+src = "dotfiles/f_claude_shared.md"
+dest = "~/.config/claude-shared/CLAUDE.md"
+pre_actions = ["mkdir -p ~/.config/claude-shared"]
+
+[packages.f_claude_md]
+src = "dotfiles/f_claude.md"
+dest = "~/.claude/CLAUDE.md"
+dependencies = ["f_claude_shared_md"]
+pre_actions = ["{{ PACKAGE_INSTALLER }} jq", "mkdir -p ~/.claude"]
+post_actions = ["./scripts/setup_claude_plugins.sh personal"]
+
+[packages.f_claude_fulflld_md]
+src = "dotfiles/f_claude_fulflld.md"
+dest = "~/.claude-fulflld/CLAUDE.md"
+dependencies = ["f_claude_shared_md"]
+pre_actions = ["{{ PACKAGE_INSTALLER }} jq", "mkdir -p ~/.claude-fulflld"]
+post_actions = ["./scripts/setup_claude_plugins.sh fulflld"]
+
+[packages.d_claude_fulflld_jira_ticket]
+src = "dotfiles/d_claude_fulflld_jira_ticket"
+dest = "~/.claude-fulflld/skills/jira-ticket"
+
+[profiles.claude]
+dependencies = [
+  "f_claude_shared_md",
+  "f_claude_md",
+  "f_claude_fulflld_md",
+  "d_claude_fulflld_jira_ticket",
+]
+platform = "mac"
