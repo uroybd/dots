@@ -39,6 +39,9 @@ dependencies = []
 [packages.f_zshrc.targets]
 mac = "~/.zshrc"
 
+[packages.f_zshrc.prompts]
+TW_BUCKET = "TW_BUCKET"
+
 [packages.d_zellij]
 src = "dotfiles/d_zellij"
 dest = "~/.config/zellij/"
