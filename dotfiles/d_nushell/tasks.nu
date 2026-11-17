@@ -6,7 +6,7 @@ def is-filter-token [token: string] {
 # `task create-branch <id>`: create and switch to a git branch for a single task, off a fresh main.
 # Named like the jira tooling (`<KEY>_roy_<summary>`, see `create-branch-name` in jira.nu) when the task
 # has a `jira` key; otherwise just the slugified description.
-def task-create-branch [filter: list<string>] {
+def "task create-branch" [filter: list<string>] {
     if ($filter | length) != 1 {
         error make {msg: "Give exactly one task id or uuid."}
     }
@@ -32,30 +32,6 @@ def task-create-branch [filter: list<string>] {
     ^git switch -c $branch_name
 }
 
-# Use the external (carapace) completer; a custom command is otherwise completed from its signature only.
-@complete external
-def --wrapped task [...rest] {
-    with-env { AWS_ENDPOINT_URL: "{{ TW_BUCKET }}" } {
-        # An explicit `task sync` is just run as-is, without the pre/post sync.
-        if $rest == ["sync"] {
-            ^task sync
-            return
-        }
-        ^task sync o> /dev/null
-        try {
-          if ($rest | first | default "") == "create-branch" {
-            task-create-branch ($rest | skip 1)
-          } else if ($rest | last | default "") == "create-branch" and ($rest | drop 1 | all { is-filter-token $in }) {
-            task-create-branch ($rest | drop 1)
-          } else {
-            ^task ...$rest
-          }
-        } catch { |err|
-          print -e $"(ansi red_bold)Error executing task command:(ansi reset)\n($err)"
-        }
-        ^task sync o> /dev/null
-    }
-}
 
 # Create Jira issues for existing taskwarrior tasks, store the key in their `jira` UDA and tag them +jira.
 # Usage: jira tw import [--epic <EPIC-KEY>] <taskid>...
@@ -67,7 +43,6 @@ def "jira tw import" [--epic(-e): string, ...filter: string] {
         error make {msg: "Give a task filter (ids, uuids, tags...); refusing to import everything."}
     }
 
-    with-env { AWS_ENDPOINT_URL: "{{ TW_BUCKET }}" } {
         ^task sync o> /dev/null
 
         # Hooks are off so the on-add/on-modify jira hooks don't interfere.
@@ -108,7 +83,6 @@ def "jira tw import" [--epic(-e): string, ...filter: string] {
 
         ^task sync o> /dev/null
         $imported
-    }
 }
 
 # Taskwarrior tag for a Jira issue type; unlisted types get their slugified name.
@@ -162,7 +136,6 @@ def "jira tw pull" [--epic(-e): string, --mine(-m), --sprint(-s), --dry-run(-n),
         $"key in \(($keys | str join ',')\)"
     }
 
-    with-env { AWS_ENDPOINT_URL: "{{ TW_BUCKET }}" } {
         if not $dry_run { ^task sync o> /dev/null }
 
         # Hooks are off while reading so only real tasks are listed.
@@ -217,14 +190,6 @@ def "jira tw pull" [--epic(-e): string, --mine(-m), --sprint(-s), --dry-run(-n),
 
         if not $dry_run { ^task sync o> /dev/null }
         $added
-    }
-}
-
-@complete external
-def --wrapped meghnaad [...rest] {
-  with-env { AWS_ENDPOINT_URL: "{{ TW_BUCKET }}" } {
-    ^meghnaad ...$rest
-  }
 }
 
 alias mt = meghnaad
