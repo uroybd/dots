@@ -32,7 +32,6 @@ def "task create-branch" [filter: list<string>] {
     ^git switch -c $branch_name
 }
 
-
 # Create Jira issues for existing taskwarrior tasks, store the key in their `jira` UDA and tag them +jira.
 # Usage: jira tw import [--epic <EPIC-KEY>] <taskid>...
 #   e.g. `jira tw import 5`, `jira tw import -e FUL-12 5 7` or `jira tw import +work` (any task filter)
@@ -40,25 +39,27 @@ def "task create-branch" [filter: list<string>] {
 # Tasks that already have a jira key (or are completed/deleted) are skipped.
 def "jira tw import" [--epic(-e): string, ...filter: string] {
     if ($filter | is-empty) {
-        error make {msg: "Give a task filter (ids, uuids, tags...); refusing to import everything."}
+        error make {
+            msg: "Give a task filter (ids, uuids, tags...); refusing to import everything."
+        }
     }
 
-        ^task sync o> /dev/null
+    ^task sync o> /dev/null
 
-        # Hooks are off so the on-add/on-modify jira hooks don't interfere.
-        let tw = [rc.hooks=off rc.verbose=nothing rc.confirmation=no]
-        let tasks = ^task ...$tw ...$filter export | from json
-        let todo = $tasks | where {|t|
+    # Hooks are off so the on-add/on-modify jira hooks don't interfere.
+    let tw = [rc.hooks=off rc.verbose=nothing rc.confirmation=no]
+    let tasks = ^task ...$tw ...$filter export | from json
+    let todo = $tasks | where {|t|
             ($t.status in [pending waiting]) and (($t | get -o jira | default "") | is-empty)
         }
 
-        let skipped = ($tasks | length) - ($todo | length)
-        if $skipped > 0 {
-            print $"Skipping ($skipped) task\(s\) that are already linked or not open."
-        }
+    let skipped = ($tasks | length) - ($todo | length)
+    if $skipped > 0 {
+        print $"Skipping ($skipped) task\(s\) that are already linked or not open."
+    }
 
-        let me = ^jira me | str trim
-        let imported = $todo | each {|t|
+    let me = ^jira me | str trim
+    let imported = $todo | each {|t|
             let body = $t | get -o details | default ""
             let args = [issue create --raw --no-input --assignee $me -t Task -s $t.description]
                 | append (if ($body | is-empty) { [] } else { [-b $body] })
@@ -81,8 +82,8 @@ def "jira tw import" [--epic(-e): string, ...filter: string] {
             { id: $t.id, jira: $key, description: $t.description }
         } | compact
 
-        ^task sync o> /dev/null
-        $imported
+    ^task sync o> /dev/null
+    $imported
 }
 
 # Taskwarrior tag for a Jira issue type; unlisted types get their slugified name.
@@ -111,7 +112,13 @@ def jira-type-tag [type: string] {
 # --epic pulls the epic's child issues that are not done; --mine limits to my issues (alone: all my
 # issues that are not done); --sprint limits either to open sprints. Keys can't be combined with these.
 # Issues that already have a task (any status except deleted) are skipped, as are done issues.
-def "jira tw pull" [--epic(-e): string, --mine(-m), --sprint(-s), --dry-run(-n), ...keys: string] {
+def "jira tw pull" [
+    --epic(-e): string
+    --mine(-m)
+    --sprint(-s)
+    --dry-run(-n)
+    ...keys: string
+] {
     if ($keys | is-empty) and $epic == null and not $mine {
         error make {msg: "Give issue keys, --epic, or --mine."}
     }
@@ -136,23 +143,23 @@ def "jira tw pull" [--epic(-e): string, --mine(-m), --sprint(-s), --dry-run(-n),
         $"key in \(($keys | str join ',')\)"
     }
 
-        if not $dry_run { ^task sync o> /dev/null }
+    if not $dry_run { ^task sync o> /dev/null }
 
-        # Hooks are off while reading so only real tasks are listed.
-        let existing = (
+    # Hooks are off while reading so only real tasks are listed.
+    let existing = (
             ^task rc.hooks=off rc.verbose=nothing jira.any: export
             | from json
             | where status != deleted
             | get jira
         )
 
-        let issues = jira-rest-search $jql "summary,issuetype,status,duedate,description"
-        let found = $issues | get key
-        for k in ($keys | where {|k| $k not-in $found }) {
-            print -e $"(ansi red_bold)($k) not found in Jira.(ansi reset)"
-        }
+    let issues = jira-rest-search $jql "summary,issuetype,status,duedate,description"
+    let found = $issues | get key
+    for k in ($keys | where {|k| $k not-in $found }) {
+        print -e $"(ansi red_bold)($k) not found in Jira.(ansi reset)"
+    }
 
-        let added = $issues | each {|issue|
+    let added = $issues | each {|issue|
             let f = $issue.fields
             if $issue.key in $existing {
                 print $"Skipping ($issue.key): already has a task."
@@ -188,8 +195,8 @@ def "jira tw pull" [--epic(-e): string, --mine(-m), --sprint(-s), --dry-run(-n),
             { jira: $issue.key, type: $type_tag, description: $f.summary }
         } | compact
 
-        if not $dry_run { ^task sync o> /dev/null }
-        $added
+    if not $dry_run { ^task sync o> /dev/null }
+    $added
 }
 
 alias mt = meghnaad

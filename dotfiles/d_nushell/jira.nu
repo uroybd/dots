@@ -36,12 +36,19 @@ def jira-rest-search [jql: string, fields: string, --expand: string = ""] {
     mut token = ""
     loop {
         let params = [
-            --data-urlencode $"jql=($jql)"
-            --data-urlencode $"fields=($fields)"
-            --data-urlencode "maxResults=100"
+            --data-urlencode
+            $"jql=($jql)"
+            --data-urlencode
+            $"fields=($fields)"
+            --data-urlencode
+            "maxResults=100"
         ]
-        | append (if ($expand | is-empty) { [] } else { [--data-urlencode $"expand=($expand)"] })
-        | append (if ($token | is-empty) { [] } else { [--data-urlencode $"nextPageToken=($token)"] })
+        | append (
+            if ($expand | is-empty) { [] } else { [--data-urlencode $"expand=($expand)"] }
+        )
+        | append (
+            if ($token | is-empty) { [] } else { [--data-urlencode $"nextPageToken=($token)"] }
+        )
         let resp = ^curl -s -G -u $auth $"($env.JIRA_HOST)/rest/api/2/search/jql" ...$params | from json
         if ($resp | get -o issues) == null {
             error make {msg: $"Jira search failed: ($resp | to json -r)"}
@@ -58,8 +65,12 @@ def jira-rest-search [jql: string, fields: string, --expand: string = ""] {
 const JIRA_STATUS_ORDER = ["to do", "in progress", "code review", "product review", "done"]
 
 def jira-status-rank [status: string] {
-    let idx = ($JIRA_STATUS_ORDER | enumerate | where item == ($status | str lowercase))
-    if ($idx | is-empty) { 99 } else { $idx | first | get index }
+    let idx = $JIRA_STATUS_ORDER | enumerate | where item == ($status | str lowercase)
+    if ($idx | is-empty) {
+        99
+    } else {
+        $idx | first | get index
+    }
 }
 
 # Markdown list of my tickets that moved forward in status recently, e.g. for posting to Slack.
@@ -85,13 +96,13 @@ def 'jira me changed' [--since(-S): duration = 1day] {
                 | flatten
             )
             if ($moves | is-empty) { null } else {
-                let from = ($moves | first | get fromString)
-                let to = ($moves | last | get toString)
+                let from = $moves | first | get fromString
+                let to = $moves | last | get toString
                 # skip tickets that bounced back or moved backward
                 if (jira-status-rank $from) != 99 and (jira-status-rank $to) != 99 and (jira-status-rank $to) <= (jira-status-rank $from) {
                     null
                 } else {
-                    let parent = ($issue.fields | get -o parent)
+                    let parent = $issue.fields | get -o parent
                     let epic = if ($parent | get -o fields.issuetype.name) == "Epic" { $"($parent.key): ($parent.fields.summary)" } else { "No epic" }
                     {
                         key: $issue.key
@@ -142,15 +153,21 @@ def jira-story-points [ticket: string] {
 
 # Story point sizes by the most working days each holds (a week is 5), as in the jira-ticket skill's table:
 # 1 is up to 1 day, 2 is 1-2 days, 3 is 2-5 days, 5 is 1-2 weeks. Keep the two in step.
-const STORY_POINT_SIZES = [[points max_days]; [1 1] [2 2] [3 5] [5 10]]
+const STORY_POINT_SIZES = [[points, max_days]; [1, 1] [2, 2] [3, 5] [5, 10]]
 
 # Sizes work of `days` working days: adds `offset` percent of headroom, then takes the smallest size the padded work
 # fits. Past the largest size it says 5 with split true, since the ticket should be split.
 def story-point-size [days: number, offset: number] {
-    let padded = ($days * (1 + $offset / 100) | math round --precision 2)
-    let fits = ($STORY_POINT_SIZES | where max_days >= $padded)
+    let padded = $days * (1 + $offset / 100) | math round --precision 2
+    let fits = $STORY_POINT_SIZES | where max_days >= $padded
     {
-        points: (if ($fits | is-empty) { $STORY_POINT_SIZES | last | get points } else { $fits | first | get points })
+        points: (
+            if ($fits | is-empty) {
+                $STORY_POINT_SIZES | last | get points
+            } else {
+                $fits | first | get points
+            }
+        )
         raw_days: $days
         offset: $offset
         padded_days: $padded
@@ -203,8 +220,15 @@ Answer only through the structured output, with one estimate per ticket.($codeba
                     type: object
                     properties: {
                         ticket: {type: string, enum: $tickets}
-                        raw_days: {type: number, exclusiveMinimum: 0, description: "Working days of work, without headroom."}
-                        reason: {type: string, description: "One or two sentences on what drives the size."}
+                        raw_days: {
+                            type: number
+                            exclusiveMinimum: 0
+                            description: "Working days of work, without headroom."
+                        }
+                        reason: {
+                            type: string
+                            description: "One or two sentences on what drives the size."
+                        }
                     }
                     required: [ticket raw_days reason]
                 }
@@ -226,7 +250,7 @@ Answer only through the structured output, with one estimate per ticket.($codeba
     }
 
     $tickets | each {|t|
-        let found = ($got | where ticket == $t)
+        let found = $got | where ticket == $t
         if ($found | is-not-empty) {
             $found | first
         } else if ($tickets | length) > 1 {
@@ -257,13 +281,24 @@ Answer only through the structured output, with one estimate per ticket.($codeba
 #                                 [--update [--yes]]
 #        "FUL-1\nFUL-2" | fulbot guess story-point
 def 'fulbot guess story-point' [
-    ...tickets: string, --epic(-E): string, --offset(-o): number = 20, --codebase(-c), --explain(-e), --json(-j)
-    --update(-u), --yes(-y)
+    --epic(-E): string
+    --offset(-o): number = 20
+    --codebase(-c)
+    --explain(-e)
+    --json(-j)
+    --update(-u)
+    --yes(-y)
+    ...tickets: string
 ] {
     let piped = $in
     let piped = if $piped == null { [] } else if ($piped | describe) == "string" { [$piped] } else { $piped }
     let from_epic = if $epic == null { [] } else {
-        let epics = ($epic | split row -r '[,\s]+' | where {|e| $e != "" } | str uppercase)
+        let epics = (
+            $epic
+            | split row -r '[,\s]+'
+            | where {|e| $e != "" }
+            | str uppercase
+        )
         let children = (
             jira-rest-search $"parent in \(($epics | str join ', ')\) AND statusCategory != Done ORDER BY key" "summary"
             | get key
@@ -279,7 +314,9 @@ def 'fulbot guess story-point' [
         | where {|t| $t != "" } | str uppercase | uniq
     )
     if ($tickets | is-empty) {
-        error make {msg: "No tickets given. Pass them as arguments (FUL-1 FUL-2 or FUL-1,FUL-2), pipe them in, or give --epic."}
+        error make {
+            msg: "No tickets given. Pass them as arguments (FUL-1 FUL-2 or FUL-1,FUL-2), pipe them in, or give --epic."
+        }
     }
     let estimates = (
         story-point-estimates $tickets (story-point-rules) --codebase=$codebase
@@ -300,9 +337,17 @@ def 'fulbot guess story-point' [
             | to json
         )
     }
-    let out = if $explain { $estimates } else { $estimates | select ticket points }
+    let out = if $explain {
+        $estimates
+    } else {
+        $estimates | select ticket points
+    }
     if ($tickets | length) == 1 {
-        if $explain { $out | first | reject ticket } else { $out | first | get points }
+        if $explain {
+            $out | first | reject ticket
+        } else {
+            $out | first | get points
+        }
     } else { $out }
 }
 
@@ -329,7 +374,9 @@ def jira-story-points-set [ticket: string, estimate: record, --yes(-y)] {
     ^jira issue edit $ticket --no-input --custom $"story-points=($estimate.points)" | ignore
     let after = (jira-story-points $ticket)
     if $after != $estimate.points {
-        error make {msg: $"($ticket) Story Points are ($after | default 'unset') after the update, not ($estimate.points)."}
+        error make {
+            msg: $"($ticket) Story Points are ($after | default 'unset') after the update, not ($estimate.points)."
+        }
     }
     print -e $"[INFO] ($ticket) story points: ($current | default 'unset') -> ($after)."
 }

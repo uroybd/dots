@@ -305,14 +305,22 @@ $env.config = {
                 col_width: 20 # Optional value. If missing all the screen width is used to calculate column width
                 col_padding: 2
             }
-            style: {text: green, selected_text: green_reverse, description_text: yellow}
+            style: {
+                text: green
+                selected_text: green_reverse
+                description_text: yellow
+            }
         }
         {
             name: history_menu
             only_buffer_difference: true
             marker: "? "
             type: {layout: list, page_size: 10}
-            style: {text: green, selected_text: green_reverse, description_text: yellow}
+            style: {
+                text: green
+                selected_text: green_reverse
+                description_text: yellow
+            }
         }
         {
             name: help_menu
@@ -326,7 +334,11 @@ $env.config = {
                 selection_rows: 4
                 description_rows: 10
             }
-            style: {text: green, selected_text: green_reverse, description_text: yellow}
+            style: {
+                text: green
+                selected_text: green_reverse
+                description_text: yellow
+            }
         }
     ]
     keybindings: [
