@@ -22,18 +22,7 @@ Apply the user's edits, then create every approved ticket.
 
 ## 2. Story points
 
-The board estimates with **Story Points** (`customfield_10035`, jira-cli name `story-points`). Do not use "Story point estimate" (`customfield_10016`). The value must be numeric, one of:
-
-| Points | Size | Work |
-|---|---|---|
-| 1 | small | ≤ 1 day |
-| 2 | medium | 1–2 days |
-| 3 | large | 2–5 days |
-| 5 | xlarge | 1–2 weeks |
-
-**Keep 20% headroom.** Estimate the work first, add 20% for review, testing and the unexpected, then pick the size that fits the padded figure. For example, 1.8 days of work becomes about 2.2 days, which is 3 points, not 2. Work that only fits a size without the headroom goes to the next size up. In the draft, give the raw and padded estimates beside the points (`1.8d → 2.2d`), so the user can see why the size was chosen.
-
-Anything bigger than 5 after the headroom should be split into several tickets, or made an epic with child tickets. Suggest the split in the draft.
+Size every ticket by the [jira-story-points skill](../jira-story-points/SKILL.md): the board's field, the 1/2/3/5 scale, 20% headroom, and the `1.8d → 2.2d` sizing shown in the draft. Suggest a split in the draft for anything bigger than 5.
 
 ## 3. Create
 
@@ -70,7 +59,7 @@ Use the same `jira issue create` call without `--assignee`, and don't add the ti
 
 ## 4. Verify and report
 
-After creating, check that the points were set, because a wrong custom-field name fails silently:
+After creating, check that the points were set, as the jira-story-points skill says, because a wrong custom-field name fails silently:
 
 ```bash
 curl -s -u "$(jira me):$JIRA_API_TOKEN" "$JIRA_HOST/rest/api/2/issue/$key?fields=customfield_10035,assignee,summary"

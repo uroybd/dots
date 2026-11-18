@@ -5,6 +5,15 @@
 # ~/.claude/.claude.json instead.
 const AI_SETUPS = {personal: null, fulflld: "~/.claude-fulflld"}
 
+# The environment a Claude setup (AI_SETUPS) runs under: its CLAUDE_CONFIG_DIR, or nothing for personal.
+def ai-setup-env [setup: string] {
+    if $setup not-in $AI_SETUPS {
+        error make {msg: $"Unknown Claude setup '($setup)'; known: ($AI_SETUPS | columns | str join ', ')"}
+    }
+    let config_dir = ($AI_SETUPS | get $setup)
+    if $config_dir == null { {} } else { {CLAUDE_CONFIG_DIR: ($config_dir | path expand)} }
+}
+
 # Asks Claude once, without a session, and returns its answer: the text, or with --schema the structured output as
 # data (always that shape). Piped input is passed on stdin. Errors when there is no answer, with Claude's message.
 #   --setup     which Claude setup (AI_SETUPS) to run under; its CLAUDE.md, plugins and login apply
@@ -27,9 +36,7 @@ def 'ai ask' [
     --effort: string
 ] {
     let input = $in
-    if $setup not-in $AI_SETUPS {
-        error make {msg: $"Unknown Claude setup '($setup)'; known: ($AI_SETUPS | columns | str join ', ')"}
-    }
+    ai-setup-env $setup | ignore
     let config_dir = ($AI_SETUPS | get $setup)
     let args = (
         [-p $prompt --no-session-persistence --output-format json]
@@ -40,10 +47,9 @@ def 'ai ask' [
         | append (if $effort == null { [] } else { [--effort $effort] })
     )
     let workdir = if $here { $env.PWD } else { $env.TMPDIR? | default "/tmp" }
-    let env_vars = if $config_dir == null { {} } else { {CLAUDE_CONFIG_DIR: ($config_dir | path expand)} }
 
     let run = (
-        with-env $env_vars {
+        with-env (ai-setup-env $setup) {
             # personal must not inherit a CLAUDE_CONFIG_DIR from the calling shell either
             if $config_dir == null { hide-env -i CLAUDE_CONFIG_DIR }
             cd $workdir
@@ -56,4 +62,30 @@ def 'ai ask' [
         error make {msg: $"Claude gave no answer: ($resp | get -o result | default 'no result')"}
     }
     $answer
+}
+
+# Starts an interactive Claude session in the current directory, opening with `prompt`, and returns when it ends. For
+# work that needs a conversation, such as approving changes before they are made.
+#   --setup     which Claude setup (AI_SETUPS) to run under
+#   --system    instructions appended to Claude's system prompt
+#   --model, --effort   passed on to claude
+# Usage: ai session "Review FUL-1 with me" --setup fulflld --system "You review Jira tickets."
+def 'ai session' [
+    prompt: string
+    --setup(-s): string = "personal"
+    --system: string
+    --model: string
+    --effort: string
+] {
+    let env_vars = (ai-setup-env $setup)
+    let args = (
+        [$prompt]
+        | append (if $system == null { [] } else { [--append-system-prompt $system] })
+        | append (if $model == null { [] } else { [--model $model] })
+        | append (if $effort == null { [] } else { [--effort $effort] })
+    )
+    with-env $env_vars {
+        if ($AI_SETUPS | get $setup) == null { hide-env -i CLAUDE_CONFIG_DIR }
+        ^claude ...$args
+    }
 }

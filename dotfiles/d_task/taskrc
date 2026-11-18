@@ -47,10 +47,10 @@ report.next.labels=ID,Jira,Project,Description,Urgency,TODO,Progress,Tags,Due
 
 # Report: Neovim
 report.neovim.description=Tasks
-report.neovim.columns=id,jira,urgency,due.countdown,project.parent,description
+report.neovim.columns=id,jira,urgency,due.countdown,project.indented,description
 report.neovim.labels=ID,Jira,U,Due,Project,Description
 report.neovim.sort=urgency-
-report.neovim.filter=+PENDING -WAITING limit:5
+report.neovim.filter=+PENDING -WAITING
 
 # Report: Work
 report.work.columns=id,jira,project.indented,description,urgency,todo,progress,tags,due.countdown

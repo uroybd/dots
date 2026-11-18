@@ -187,11 +187,26 @@ post_actions = ["./scripts/setup_claude_plugins.sh fulflld"]
 src = "dotfiles/d_claude_fulflld_jira_ticket"
 dest = "~/.claude-fulflld/skills/jira-ticket"
 
+[packages.d_claude_fulflld_jira_story_points]
+src = "dotfiles/d_claude_fulflld_jira_story_points"
+dest = "~/.claude-fulflld/skills/jira-story-points"
+
+[packages.d_claude_fulflld_jira_enrich]
+src = "dotfiles/d_claude_fulflld_jira_enrich"
+dest = "~/.claude-fulflld/skills/jira-enrich"
+
+[packages.d_claude_fulflld_jira_ticktify]
+src = "dotfiles/d_claude_fulflld_jira_ticktify"
+dest = "~/.claude-fulflld/skills/jira-ticktify"
+
 [profiles.claude]
 dependencies = [
   "f_claude_shared_md",
   "f_claude_md",
   "f_claude_fulflld_md",
   "d_claude_fulflld_jira_ticket",
+  "d_claude_fulflld_jira_story_points",
+  "d_claude_fulflld_jira_enrich",
+  "d_claude_fulflld_jira_ticktify",
 ]
 platform = "mac"

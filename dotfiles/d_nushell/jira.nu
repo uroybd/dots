@@ -139,9 +139,6 @@ def 'jira me changed' [--since(-S): duration = 1day] {
     print $out
 }
 
-# The skill whose "Story points" section is the estimating convention (scale, headroom), in the work Claude setup.
-const STORY_POINT_SKILL = "~/.claude-fulflld/skills/jira-ticket/SKILL.md"
-
 # A ticket's Story Points (customfield_10035, the field the board uses), or null when unset.
 def jira-story-points [ticket: string] {
     let auth = $"((jira me)):($env.JIRA_API_TOKEN)"
@@ -151,7 +148,7 @@ def jira-story-points [ticket: string] {
     | if $in == null { null } else { $in | into int }
 }
 
-# Story point sizes by the most working days each holds (a week is 5), as in the jira-ticket skill's table:
+# Story point sizes by the most working days each holds (a week is 5), as in the jira-story-points skill's table:
 # 1 is up to 1 day, 2 is 1-2 days, 3 is 2-5 days, 5 is 1-2 weeks. Keep the two in step.
 const STORY_POINT_SIZES = [[points, max_days]; [1, 1] [2, 2] [3, 5] [5, 10]]
 
@@ -176,7 +173,7 @@ def story-point-size [days: number, offset: number] {
 }
 
 # Story points for work of DAYS working days, after adding --offset percent of headroom (20 by default, the
-# jira-ticket skill's convention). Prints the points; --explain gives the padded days and whether to split too.
+# jira-story-points skill's convention). Prints the points; --explain gives the padded days and whether to split too.
 # Usage: fulbot story-point calc 1.8            # 1.8d -> 2.16d -> 3
 #        fulbot story-point calc 4 --offset 30 --explain
 def 'fulbot story-point calc' [days: number, --offset(-o): number = 20, --explain(-e)] {
@@ -184,33 +181,15 @@ def 'fulbot story-point calc' [days: number, --offset(-o): number = 20, --explai
     if $explain { $size } else { $size.points }
 }
 
-# The "Story points" section of the jira-ticket skill: what the scale means, for Claude to judge the work by.
-def story-point-rules [] {
-    let skill = (^cat ($STORY_POINT_SKILL | path expand) | split row "## 2. Story points")
-    if ($skill | length) < 2 {
-        error make {msg: $"No \"## 2. Story points\" section in ($STORY_POINT_SKILL)"}
-    }
-    $skill | get 1 | split row "\n## " | first
-}
-
 # Work estimates for tickets from one Claude call (work setup), one row per ticket in the order given:
-# {ticket, raw_days, reason}, raw_days being the work without headroom (story-point-size adds that and sizes it). One call for the batch saves the per-call startup and, with
-# --codebase, lets Claude read the code once for all of them (read-only, in the current directory). A ticket the answer
+# {ticket, raw_days, reason}, raw_days being the work without headroom (story-point-size adds that and sizes it). Claude
+# estimates by the jira-story-points skill. One call for the batch saves the per-call startup and, with --codebase, lets Claude read the code once for all of them (read-only, in the current directory). A ticket the answer
 # misses is retried on its own; one that still gets no estimate is warned about on stderr and left out.
-def story-point-estimates [tickets: list<string>, rules: string, --codebase(-c)] {
+def story-point-estimates [tickets: list<string>, --codebase(-c)] {
     let ticket_text = (
-        $tickets | par-each --threads 4 {|t| $"=== ($t) ===\n(^jira issue view $t --plain --comments 5)" }
+        $tickets | par-each --threads 4 {|t| $"=== ($t) ===\n(^jira issue view $t --plain --comments 5 | ansi strip)" }
         | str join "\n\n"
     )
-    let codebase_rules = if $codebase {
-        "\nThe current directory is the codebase these tickets change. Before estimating, find and read the code each ticket would touch, using only Read, Grep and Glob, and change nothing. Size the work from what you find: how many places change, existing patterns to reuse, tests to add or update. Mention what you found in reason."
-    } else { "" }
-    let instructions = $"You estimate the work in Jira tickets, given on stdin, each under a === KEY === header. Estimate every ticket on its own merits, on the same footing for all. The team's story point rules are below for what the sizes mean, but you only give raw_days: the working days the work itself takes \(a week is 5\), with no headroom, buffer or padding. Headroom is added and points are worked out afterwards, from your raw_days.
-
-## Story points
-($rules)
-Answer only through the structured output, with one estimate per ticket.($codebase_rules)"
-
     let schema = {
         type: object
         properties: {
@@ -237,10 +216,11 @@ Answer only through the structured output, with one estimate per ticket.($codeba
         required: [estimates]
     }
     let tools = if $codebase { [Read Grep Glob] } else { [] }
+    let codebase_note = if $codebase { " Use the codebase in the current directory." } else { "" }
 
     let got = try {
         $ticket_text
-        | ai ask $"Estimate story points for ($tickets | str join ', ')." --setup fulflld --system $instructions --schema $schema --tools $tools --here=$codebase
+        | ai ask $"/jira-story-points raw only, for ($tickets | str join ', ').($codebase_note)" --setup fulflld --schema $schema --tools $tools --here=$codebase
         | get estimates
     } catch {|err|
         let msg = $"No estimate for ($tickets | str join ', '): ($err.msg)"
@@ -255,7 +235,7 @@ Answer only through the structured output, with one estimate per ticket.($codeba
             $found | first
         } else if ($tickets | length) > 1 {
             # missed by the batch: one more try on its own
-            try { story-point-estimates [$t] $rules --codebase=$codebase | first } catch {|err|
+            try { story-point-estimates [$t] --codebase=$codebase | first } catch {|err|
                 print -e $"[WARN] ($err.msg)"
                 null
             }
@@ -263,34 +243,10 @@ Answer only through the structured output, with one estimate per ticket.($codeba
     } | compact
 }
 
-# Story points for tickets by the jira-ticket skill's convention: 1, 2, 3 or 5. Claude (work setup) estimates the work
-# in days; --offset percent of headroom (20 by default) is added to that, and the padded days give the points.
-# Tickets come as arguments, comma-separated lists, or piped in (one per line, or a list), in any mix, and are all
-# estimated in one Claude call. One ticket prints only its number; several give a table of ticket and points, in the
-# order given. A ticket that should be split instead says 5 and warns on stderr; one that can't be estimated warns and
-# is left out of the table (a lone ticket errors instead).
-# --codebase: run from the repo the tickets target; Claude reads the code they would touch (read-only) to size them.
-# --offset: headroom in percent added to Claude's raw days before sizing (default 20, the skill's convention).
-# --explain: the whole estimate (raw days, offset, padded days, split, reason) instead of only the points.
-# --epic: also estimate the epic's child tickets that aren't done (several epics: comma-separated). With it, giving
-#         tickets is optional.
-# --update: also set each ticket's Story Points to its guess, asking for each (on stderr); --yes skips the questions.
-# --json: a JSON object keyed by ticket, however many there are: {"FUL-1": 3}, or with --explain
-#         {"FUL-1": {points, raw_days, offset, padded_days, split, reason}}.
-# Usage: fulbot guess story-point FUL-1 FUL-2,FUL-3 [--epic FUL-100] [--offset 20] [--codebase] [--explain] [--json]
-#                                 [--update [--yes]]
-#        "FUL-1\nFUL-2" | fulbot guess story-point
-def 'fulbot guess story-point' [
-    --epic(-E): string
-    --offset(-o): number = 20
-    --codebase(-c)
-    --explain(-e)
-    --json(-j)
-    --update(-u)
-    --yes(-y)
-    ...tickets: string
-] {
-    let piped = $in
+# Tickets for the fulbot commands, from arguments, piped input (one per line, or a list) and --epic (the open child
+# tickets of each comma-separated epic), in any mix: split on commas and spaces, uppercased, deduplicated, in order.
+# Errors when none are left.
+def fulbot-tickets [tickets: list<string>, piped: any, --epic: string] {
     let piped = if $piped == null { [] } else if ($piped | describe) == "string" { [$piped] } else { $piped }
     let from_epic = if $epic == null { [] } else {
         let epics = (
@@ -318,8 +274,39 @@ def 'fulbot guess story-point' [
             msg: "No tickets given. Pass them as arguments (FUL-1 FUL-2 or FUL-1,FUL-2), pipe them in, or give --epic."
         }
     }
+    $tickets
+}
+
+# Story points for tickets by the jira-story-points skill's convention: 1, 2, 3 or 5. Claude (work setup) estimates the work
+# in days; --offset percent of headroom (20 by default) is added to that, and the padded days give the points.
+# Tickets come as arguments, comma-separated lists, or piped in (one per line, or a list), in any mix, and are all
+# estimated in one Claude call. One ticket prints only its number; several give a table of ticket and points, in the
+# order given. A ticket that should be split instead says 5 and warns on stderr; one that can't be estimated warns and
+# is left out of the table (a lone ticket errors instead).
+# --codebase: run from the repo the tickets target; Claude reads the code they would touch (read-only) to size them.
+# --offset: headroom in percent added to Claude's raw days before sizing (default 20, the skill's convention).
+# --explain: the whole estimate (raw days, offset, padded days, split, reason) instead of only the points.
+# --epic: also estimate the epic's child tickets that aren't done (several epics: comma-separated). With it, giving
+#         tickets is optional.
+# --update: also set each ticket's Story Points to its guess, asking for each (on stderr); --yes skips the questions.
+# --json: a JSON object keyed by ticket, however many there are: {"FUL-1": 3}, or with --explain
+#         {"FUL-1": {points, raw_days, offset, padded_days, split, reason}}.
+# Usage: fulbot guess story-point FUL-1 FUL-2,FUL-3 [--epic FUL-100] [--offset 20] [--codebase] [--explain] [--json]
+#                                 [--update [--yes]]
+#        "FUL-1\nFUL-2" | fulbot guess story-point
+def 'fulbot guess story-point' [
+    --epic(-E): string
+    --offset(-o): number = 20
+    --codebase(-c)
+    --explain(-e)
+    --json(-j)
+    --update(-u)
+    --yes(-y)
+    ...tickets: string
+] {
+    let tickets = (fulbot-tickets $tickets $in --epic $epic)
     let estimates = (
-        story-point-estimates $tickets (story-point-rules) --codebase=$codebase
+        story-point-estimates $tickets --codebase=$codebase
         | each {|e| {ticket: $e.ticket} | merge (story-point-size $e.raw_days $offset) | insert reason $e.reason }
     )
 
@@ -379,6 +366,79 @@ def jira-story-points-set [ticket: string, estimate: record, --yes(-y)] {
         }
     }
     print -e $"[INFO] ($ticket) story points: ($current | default 'unset') -> ($after)."
+}
+
+# What a fulbot session starts from: each ticket under a === KEY === header with its Story Points, jira-cli view
+# (description and the last 5 comments) and child tickets, then the user's instructions.
+def fulbot-session-prompt [tickets: list<string>, message?: string] {
+    let children = (
+        jira-rest-search $"parent in \(($tickets | str join ', ')\) ORDER BY key" "summary,status,issuetype,parent,customfield_10035"
+        | each {|c|
+            {
+                parent: $c.fields.parent.key
+                line: $"- ($c.key) [($c.fields.issuetype.name), ($c.fields.status.name), ($c.fields.customfield_10035? | default 'unset') pts]: ($c.fields.summary)"
+            }
+        }
+    )
+    let ticket_text = (
+        $tickets
+        | par-each --keep-order --threads 4 {|t|
+            let kids = $children | where parent == $t | get line
+            let kids = if ($kids | is-empty) { "none" } else { "\n" + ($kids | str join "\n") }
+            $"=== ($t) ===\nStory Points: ((jira-story-points $t) | default 'unset')\nChild tickets: ($kids)\n(^jira issue view $t --plain --comments 5 | ansi strip)"
+        }
+        | str join "\n\n"
+    )
+    let message = if ($message | is-empty) { "None." } else { $message }
+    $"Tickets: ($tickets | str join ', ')\n\n($ticket_text)\n\n## Instructions\n($message)"
+}
+
+# Rewrites tickets into well-formed ones in an interactive Claude session (work setup): a clear summary, a full
+# description and story points, from the tickets themselves plus whatever --message points at (a work brief, a doc, a
+# file path, extra instructions). Claude shows what changes on which ticket and updates Jira only after you approve,
+# so the session stays open for edits and questions. What Claude does is the jira-enrich skill
+# (dotfiles/d_claude_fulflld_jira_enrich); this command gathers the tickets and starts it.
+# Tickets come as in `fulbot guess story-point`: arguments, comma-separated lists, piped in, or --epic.
+# --message: extra instructions for Claude, passed on verbatim (e.g. "Use the brief in ~/work/brief.md").
+# --codebase: run from the repo the tickets target; Claude reads the code they touch.
+# --offset: headroom in percent added to the raw days before sizing (default 20).
+# Usage: fulbot enrich FUL-1 FUL-2,FUL-3 [--epic FUL-100] [-m "See ~/work/brief.md"] [--codebase] [--offset 20]
+def 'fulbot enrich' [
+    --epic(-E): string
+    --message(-m): string
+    --offset(-o): number = 20
+    --codebase(-c)
+    ...tickets: string
+] {
+    let tickets = (fulbot-tickets $tickets $in --epic $epic)
+    let settings = $"offset=($offset), codebase=(if $codebase { 'yes' } else { 'no' })"
+    ai session $"/jira-enrich Settings: ($settings)\n\n(fulbot-session-prompt $tickets $message)" --setup fulflld
+}
+
+# Breaks tickets into child tickets in an interactive Claude session (work setup), for a process that wants work
+# tracked in smaller pieces. The pieces are kept meaningful, not micro: each is at least --min-days of real work with
+# its own acceptance criteria, there are as few as the work allows, and a ticket too small to split gets none. Claude
+# shows the draft and creates tickets only after you approve. What Claude does is the jira-ticktify skill
+# (dotfiles/d_claude_fulflld_jira_ticktify); this command gathers the tickets and starts it.
+# An epic gets regular tickets under it; any other ticket gets sub-tasks. Children take the parent's assignee.
+# Tickets come as in `fulbot guess story-point`: arguments, comma-separated lists, piped in, or --epic (whose open
+# children are then each split; to split the epic itself, pass its key as a ticket).
+# --message: extra instructions for Claude, passed on verbatim (e.g. "Split by the phases in ~/work/brief.md").
+# --min-days: the least working days of work one child may hold, before headroom (default 1).
+# --codebase: run from the repo the tickets target; Claude reads the code to slice along it.
+# --offset: headroom in percent added to the raw days before sizing (default 20).
+# Usage: fulbot ticktify FUL-1 FUL-2,FUL-3 [--epic FUL-100] [-m "..."] [--min-days 1] [--codebase] [--offset 20]
+def 'fulbot ticktify' [
+    --epic(-E): string
+    --message(-m): string
+    --min-days(-d): number = 1
+    --offset(-o): number = 20
+    --codebase(-c)
+    ...tickets: string
+] {
+    let tickets = (fulbot-tickets $tickets $in --epic $epic)
+    let settings = $"offset=($offset), min-days=($min_days), codebase=(if $codebase { 'yes' } else { 'no' })"
+    ai session $"/jira-ticktify Settings: ($settings)\n\n(fulbot-session-prompt $tickets $message)" --setup fulflld
 }
 
 def 'jira sprint current' [] {
