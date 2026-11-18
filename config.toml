@@ -162,41 +162,41 @@ pre_actions = ["./scripts/install_homebrew.sh"]
 [platforms.mac.variables]
 PACKAGE_INSTALLER = "brew install"
 
-# Claude Code: instructions and plugins only. Settings are deliberately not tracked; Claude Code manages them.
+# Claude Code: instructions, skills and plugins live in the private d_claude submodule. Settings are deliberately not tracked; Claude Code manages them.
 # Instructions both Claude setups follow; each setup's CLAUDE.md imports this file with an @ line.
 [packages.f_claude_shared_md]
-src = "dotfiles/f_claude_shared.md"
+src = "dotfiles/d_claude/instructions/shared.md"
 dest = "~/.config/claude-shared/CLAUDE.md"
 pre_actions = ["mkdir -p ~/.config/claude-shared"]
 
 [packages.f_claude_md]
-src = "dotfiles/f_claude.md"
+src = "dotfiles/d_claude/instructions/personal.md"
 dest = "~/.claude/CLAUDE.md"
 dependencies = ["f_claude_shared_md"]
 pre_actions = ["{{ PACKAGE_INSTALLER }} jq", "mkdir -p ~/.claude"]
-post_actions = ["./scripts/setup_claude_plugins.sh personal"]
+post_actions = ["./dotfiles/d_claude/setup_plugins.sh personal"]
 
 [packages.f_claude_fulflld_md]
-src = "dotfiles/f_claude_fulflld.md"
+src = "dotfiles/d_claude/instructions/fulflld.md"
 dest = "~/.claude-fulflld/CLAUDE.md"
 dependencies = ["f_claude_shared_md"]
 pre_actions = ["{{ PACKAGE_INSTALLER }} jq", "mkdir -p ~/.claude-fulflld"]
-post_actions = ["./scripts/setup_claude_plugins.sh fulflld"]
+post_actions = ["./dotfiles/d_claude/setup_plugins.sh fulflld"]
 
 [packages.d_claude_fulflld_jira_ticket]
-src = "dotfiles/d_claude_fulflld_jira_ticket"
+src = "dotfiles/d_claude/skills/fulflld/jira-ticket"
 dest = "~/.claude-fulflld/skills/jira-ticket"
 
 [packages.d_claude_fulflld_jira_story_points]
-src = "dotfiles/d_claude_fulflld_jira_story_points"
+src = "dotfiles/d_claude/skills/fulflld/jira-story-points"
 dest = "~/.claude-fulflld/skills/jira-story-points"
 
 [packages.d_claude_fulflld_jira_enrich]
-src = "dotfiles/d_claude_fulflld_jira_enrich"
+src = "dotfiles/d_claude/skills/fulflld/jira-enrich"
 dest = "~/.claude-fulflld/skills/jira-enrich"
 
 [packages.d_claude_fulflld_jira_ticktify]
-src = "dotfiles/d_claude_fulflld_jira_ticktify"
+src = "dotfiles/d_claude/skills/fulflld/jira-ticktify"
 dest = "~/.claude-fulflld/skills/jira-ticktify"
 
 [profiles.claude]

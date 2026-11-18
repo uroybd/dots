@@ -1,3 +1,6 @@
 [submodule "dotfiles/d_nvim"]
 	path = dotfiles/d_nvim
 	url = git@github.com:uroybd/neovim-config.git
+[submodule "dotfiles/d_claude"]
+	path = dotfiles/d_claude
+	url = git@github.com:uroybd/personal-claude-skill.git
