@@ -32,33 +32,45 @@ def tnvim [arg] {
     zellij action new-tab -l tnvim -c $p
 }
 
-# This function will take the argument as commit message and commit it first to the sub repositories, push them, and then commit it to the main repository
-def dotcommit [...msg] {
-    # concat args to create commit message
-    let commit_message = $msg | str join " "
-    print "Commiting in neovim submodule..."
-    cd ./dotfiles/d_nvim/
-    ./readme-gen.nu and echo "Generated README.md for nvim submodule"
+const DOT_SUBMODULES = ["d_nvim" "d_claude"]
+
+# Stage everything in the current repo, then commit and push if anything changed
+def dot-commit-push [message: string] {
     git add .
-    if (git status --porcelain | length) > 0 {
-        git commit -m $commit_message
-        git push
-    }
-    cd ../../
-    print "Commiting in dotfiles..."
-    git add .
-    if (git status --porcelain | length) > 0 {
-        git commit -m $commit_message
+    if (git status --porcelain | is-not-empty) {
+        git commit -m $message
         git push
     }
 }
 
+# Commit with the arguments as the message in each submodule and push, then do the same in the main repository
+def dotcommit [...msg] {
+    let commit_message = $msg | str join " "
+    for sub in $DOT_SUBMODULES {
+        print $"Committing in ($sub) submodule..."
+        do {
+            cd $"./dotfiles/($sub)/"
+            if $sub == "d_nvim" {
+                ./readme-gen.nu
+                print "Generated README.md for nvim submodule"
+            }
+            dot-commit-push $commit_message
+        }
+    }
+    print "Committing in dotfiles..."
+    dot-commit-push $commit_message
+}
+
 def dotpull [] {
     git pull --recurse-submodules
-    cd ./dotfiles/d_nvim/
-    git checkout main
-    git pull
-    cd ../../
+    git submodule update --init
+    for sub in $DOT_SUBMODULES {
+        do {
+            cd $"./dotfiles/($sub)/"
+            git checkout main
+            git pull
+        }
+    }
 }
 
 def "qn" [...inp] {
