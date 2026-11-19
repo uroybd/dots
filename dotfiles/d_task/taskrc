@@ -101,4 +101,5 @@ context.this_week.read=+WEEK or (end.after:sow and end.before:eow) or (scheduled
 
 # Holidays
 include holidays/nager-BD.rc
+include holidays/en-US.rc
 calendar.holidays=full
