@@ -71,7 +71,9 @@ report.completed.sort=project+/,outcome+,end+
 
 # Urgency
 urgency.inherit=1
-urgency.user.project.FUL.coefficient=5.0
+urgency.user.project.FUL.coefficient=1.5
+urgency.user.project.J.coefficient=1.3
+urgency.user.project.Meghnaad.coefficient=1.2
 
 # Review
 uda.reviewed.type=date
