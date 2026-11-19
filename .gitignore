@@ -1,1 +1,4 @@
 .uservariables.toml
+
+# Stray dirs from an unexpanded ~ in a path
+/~/

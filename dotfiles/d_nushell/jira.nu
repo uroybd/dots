@@ -119,7 +119,7 @@ def 'jira me changed' [--since(-S): duration = 1day] {
         | compact
     )
     if ($forward | is-empty) {
-        print $"No forward status changes in the last ($since)."
+        print -e $"No forward status changes in the last ($since)."
         return
     }
     let out = (
@@ -143,7 +143,7 @@ def 'jira me changed' [--since(-S): duration = 1day] {
         }
         | str join "\n"
     )
-    print $out
+    $out
 }
 
 # A ticket's Story Points (customfield_10035, the field the board uses), or null when unset.
@@ -588,21 +588,24 @@ def 'jira me issues top' [] {
     }
 }
 
-# Drafts piped text in a Slack channel as you, through the Slack connector of the fulflld Claude setup, so you can
-# review and send it from Slack; --post sends it instead. Returns the message's or draft's link when Slack gives one.
-# --post shows the message and asks first (on stderr) unless --yes. The text goes out as-is, so Markdown lists from
-# `jira me changed` stay lists.
-# The connector must be signed in once: start `claude` under the fulflld setup and authenticate Slack in /mcp.
-# Usage: jira me changed | fulbot slack post team-updates                 # draft
-#        jira me changed | fulbot slack post "#team-updates" --post [--yes]
-def 'fulbot slack post' [channel: string, --post(-p), --yes(-y)] {
+# Drafts piped text as you in a Slack channel (name, or "#name") or a direct message (@username), through the Slack connector
+# of the fulflld Claude setup, so you can review and send it from Slack; --post sends it instead. Returns the
+# message's or draft's link when Slack gives one. --post shows the message and asks first (on stderr) unless --yes.
+# The text goes out as-is, so Markdown lists from `jira me changed` stay lists. A # prefix needs quotes: unquoted, it
+# starts a nushell comment.
+# The connector reaches one workspace, the one it was signed in to (in /mcp under the fulflld setup).
+# Usage: jira me changed | fulbot slack post team-updates                # draft in a channel
+#        jira me changed | fulbot slack post @roy --post [--yes]          # send as a DM
+#        jira me changed | fulbot slack post @me                          # draft in your DM with yourself
+def 'fulbot slack post' [target: string, --post(-p), --yes(-y)] {
     let text = ($in | default "" | into string | str trim)
     if ($text | is-empty) {
         error make {msg: "Nothing to post; pipe the message in."}
     }
-    let channel = ($channel | str trim --left --char "#")
+    let kind = if ($target | str starts-with "@") { "user" } else { "channel" }
+    let name = ($target | str trim --left --char "#" | str trim --left --char "@")
     if $post and not $yes {
-        print -e $"To #($channel):\n($text)\n"
+        print -e $"To ($target):\n($text)\n"
         let answer = (try { input "Post it? [y/N] " } catch {
             print -e "[WARN] No terminal to ask on; pass --yes to post without asking."
             "n"
@@ -615,14 +618,31 @@ def 'fulbot slack post' [channel: string, --post(-p), --yes(-y)] {
     let action = if $post {
         "Send the stdin text as a message"
     } else {
-        "Save the stdin text as a draft message (do NOT send it; if no Slack tool can save a draft, report that and send nothing)"
+        "Save the stdin text as a draft message (do NOT send it)"
     }
+    let where = if $kind == "channel" {
+        $"in the Slack channel named ($name)"
+    } else if $name == "me" {
+        "in my direct message with myself; get my user ID from my own profile and use it as the channel"
+    } else {
+        $"in my direct message with the Slack user whose username or display name is ($name); use their user ID as the channel"
+    }
+    # Only the lookup and the one write asked for; never the other of draft and send.
+    let tools = [
+        (
+            if $kind == "channel" { "mcp__claude_ai_Slack__slack_search_channels" }
+            else if $name == "me" { "mcp__claude_ai_Slack__slack_read_user_profile" }
+            else { "mcp__claude_ai_Slack__slack_search_users" }
+        )
+        (if $post { "mcp__claude_ai_Slack__slack_send_message" } else { "mcp__claude_ai_Slack__slack_send_message_draft" })
+    ]
     let result = (
         $text
-        | ai ask $"($action) in the Slack channel #($channel)." --setup fulflld --mcp [mcp__claude_ai_Slack] --system (
+        | ai ask $"($action) ($where)." --setup fulflld --mcp $tools --system (
             "You make one Slack message or draft and do nothing else. Use the stdin text exactly as given: same "
-            + "words, line breaks, list markers and indentation; no greeting, summary or edits. Find the channel by "
-            + "name; if it does not exist or you cannot write there, do not use any other channel. Report what happened."
+            + "words, line breaks, list markers and indentation; no greeting, summary or edits. Write only to the "
+            + "channel or person asked for: if there is no exact match, several people match, or you cannot write "
+            + "there, write nowhere and say so. Report what happened."
         ) --schema {
             type: object
             properties: {
@@ -635,8 +655,8 @@ def 'fulbot slack post' [channel: string, --post(-p), --yes(-y)] {
     )
     let what = if $post { "Not posted" } else { "No draft saved" }
     if not $result.done {
-        error make {msg: $"($what) in #($channel): ($result.error)"}
+        error make {msg: $"($what) for ($target): ($result.error)"}
     }
-    if not $post { print -e $"[INFO] Draft saved in #($channel); review and send it from Slack." }
+    if not $post { print -e $"[INFO] Draft saved for ($target); review and send it from Slack." }
     $result.link
 }

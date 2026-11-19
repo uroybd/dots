@@ -20,7 +20,9 @@ def ai-setup-env [setup: string] {
 #   --system    instructions appended to Claude's system prompt
 #   --schema    a JSON Schema (as a record) the answer must match
 #   --tools     the tools it may use, all allowed without asking (e.g. [Read Grep Glob]); none by default
-#   --mcp       connector (MCP) tools or whole servers it may use without asking (e.g. [mcp__claude_ai_Slack])
+#   --mcp       connector (MCP) tools or whole servers it may use without asking (e.g. [mcp__claude_ai_Slack]); with
+#               it, claude waits for connectors to load first, since in -p mode they load in the background and the
+#               answer can come before their tools exist
 #   --here      run in the current directory, so its project instructions and files are in reach; otherwise a temp
 #               directory, so nothing about where you are leaks in
 #   --model, --effort   passed on to claude
@@ -51,8 +53,9 @@ def 'ai ask' [
     )
     let workdir = if $here { $env.PWD } else { $env.TMPDIR? | default "/tmp" }
 
+    let env_vars = (ai-setup-env $setup) | merge (if ($mcp | is-empty) { {} } else { {MCP_CONNECTION_NONBLOCKING: "0"} })
     let run = (
-        with-env (ai-setup-env $setup) {
+        with-env $env_vars {
             # personal must not inherit a CLAUDE_CONFIG_DIR from the calling shell either
             if $config_dir == null { hide-env -i CLAUDE_CONFIG_DIR }
             cd $workdir
