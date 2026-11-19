@@ -1,5 +1,9 @@
 {
+  "tui": {
+    "sync": "startAndClose"
+  },
   "appearance": {
+    "idFallback": true,
     "progress": {
       "progress": {
         "max": 100,
@@ -9,10 +13,10 @@
     "transformations": [
       {
         "fields": [
-          "description",
           "jira",
           "todo",
-          "annotations"
+          "annotations",
+          "details"
         ],
         "match": "\\b(FUL-\\d+)\\b",
         "replace": "[$1](https://dlivrdio.atlassian.net/browse/$1)"
@@ -335,17 +339,8 @@
             },
             {
               "color": "bright blue",
-              "filter": "status:pending -review",
+              "filter": "status:pending",
               "label": "Pending",
-              "span": {
-                "from": "entry",
-                "to": "end",
-                "unless": "start"
-              }
-            },
-            {
-              "filter": "status:pending +review",
-              "label": "Review",
               "span": {
                 "from": "entry",
                 "to": "end",
@@ -438,25 +433,22 @@
     }
   ],
   "boardsVersion": 1,
-  "tui": {
-    "sync": "startAndClose"
-  },
-  "version": 2,
   "taskCommands": [
     {
-      "name": "fail",
       "command": "done outcome:failed -review",
-      "icon": "circle-x"
+      "icon": "circle-x",
+      "name": "fail"
     },
     {
-      "name": "finish",
       "command": "done outcome:success -review",
-      "icon": "circle-check"
+      "icon": "circle-check",
+      "name": "finish"
     },
     {
-      "name": "review",
       "command": "modify +review progress:90",
-      "icon": "circle-dashed-check"
+      "icon": "circle-dashed-check",
+      "name": "review"
     }
-  ]
+  ],
+  "version": 2
 }
