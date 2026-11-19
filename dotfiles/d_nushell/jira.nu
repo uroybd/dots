@@ -74,9 +74,10 @@ def jira-status-rank [status: string] {
 }
 
 # Markdown list of my tickets that moved forward in status recently, e.g. for posting to Slack.
-# Grouped by epic, one line per ticket:
-#   - EPIC-KEY: Epic Name
-#       - Ticket summary, Old Status -> New Status, <link>
+# Grouped by epic, epics numbered and tickets numbered from 1 again beneath each:
+#   1. EPIC-KEY: Epic Name
+#       1. Ticket summary, Old Status -> New Status, <link>
+# The 4-space indent keeps tickets nested under two-digit epic numbers too.
 # Backward moves are ignored. Bare URLs so Slack unfurls them as Jira chips. Multiple transitions
 # in the window collapse into first-from -> last-to.
 # Usage: jira me changed [--since 3day]
@@ -126,13 +127,19 @@ def 'jira me changed' [--since(-S): duration = 1day] {
         | sort-by rank key
         | group-by --to-table epic
         | sort-by {|g| if $g.epic == "No epic" { "~" } else { $g.epic } }
-        | each {|g|
+        | enumerate
+        | each {|e|
+            let g = $e.item
             let items = (
                 $g.items
-                | each {|i| $"    - ($i.summary), ($i.from) -> ($i.to), (jira-ticket-to-url $i.key)" }
+                | enumerate
+                | each {|t|
+                    let i = $t.item
+                    $"    ($t.index + 1). ($i.summary), ($i.from) -> ($i.to), (jira-ticket-to-url $i.key)"
+                }
                 | str join "\n"
             )
-            $"- ($g.epic)\n($items)"
+            $"($e.index + 1). ($g.epic)\n($items)"
         }
         | str join "\n"
     )
@@ -579,4 +586,57 @@ def 'jira me issues top' [] {
         }
         print $"  (ansi $color)($issue.KEY): ($title)(ansi reset)"
     }
+}
+
+# Drafts piped text in a Slack channel as you, through the Slack connector of the fulflld Claude setup, so you can
+# review and send it from Slack; --post sends it instead. Returns the message's or draft's link when Slack gives one.
+# --post shows the message and asks first (on stderr) unless --yes. The text goes out as-is, so Markdown lists from
+# `jira me changed` stay lists.
+# The connector must be signed in once: start `claude` under the fulflld setup and authenticate Slack in /mcp.
+# Usage: jira me changed | fulbot slack post team-updates                 # draft
+#        jira me changed | fulbot slack post "#team-updates" --post [--yes]
+def 'fulbot slack post' [channel: string, --post(-p), --yes(-y)] {
+    let text = ($in | default "" | into string | str trim)
+    if ($text | is-empty) {
+        error make {msg: "Nothing to post; pipe the message in."}
+    }
+    let channel = ($channel | str trim --left --char "#")
+    if $post and not $yes {
+        print -e $"To #($channel):\n($text)\n"
+        let answer = (try { input "Post it? [y/N] " } catch {
+            print -e "[WARN] No terminal to ask on; pass --yes to post without asking."
+            "n"
+        })
+        if ($answer | str lowercase) not-in [y yes] {
+            print -e "[INFO] Not posted."
+            return
+        }
+    }
+    let action = if $post {
+        "Send the stdin text as a message"
+    } else {
+        "Save the stdin text as a draft message (do NOT send it; if no Slack tool can save a draft, report that and send nothing)"
+    }
+    let result = (
+        $text
+        | ai ask $"($action) in the Slack channel #($channel)." --setup fulflld --mcp [mcp__claude_ai_Slack] --system (
+            "You make one Slack message or draft and do nothing else. Use the stdin text exactly as given: same "
+            + "words, line breaks, list markers and indentation; no greeting, summary or edits. Find the channel by "
+            + "name; if it does not exist or you cannot write there, do not use any other channel. Report what happened."
+        ) --schema {
+            type: object
+            properties: {
+                done: {type: boolean, description: "Whether the message was sent, or the draft saved, as asked"}
+                link: {type: string, description: "Link to the message or draft, or empty"}
+                error: {type: string, description: "Why it was not done, or empty"}
+            }
+            required: [done link error]
+        }
+    )
+    let what = if $post { "Not posted" } else { "No draft saved" }
+    if not $result.done {
+        error make {msg: $"($what) in #($channel): ($result.error)"}
+    }
+    if not $post { print -e $"[INFO] Draft saved in #($channel); review and send it from Slack." }
+    $result.link
 }

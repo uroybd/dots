@@ -20,6 +20,7 @@ def ai-setup-env [setup: string] {
 #   --system    instructions appended to Claude's system prompt
 #   --schema    a JSON Schema (as a record) the answer must match
 #   --tools     the tools it may use, all allowed without asking (e.g. [Read Grep Glob]); none by default
+#   --mcp       connector (MCP) tools or whole servers it may use without asking (e.g. [mcp__claude_ai_Slack])
 #   --here      run in the current directory, so its project instructions and files are in reach; otherwise a temp
 #               directory, so nothing about where you are leaks in
 #   --model, --effort   passed on to claude
@@ -31,6 +32,7 @@ def 'ai ask' [
     --system: string
     --schema: record
     --tools: list<string> = []
+    --mcp: list<string> = []
     --here
     --model: string
     --effort: string
@@ -40,7 +42,8 @@ def 'ai ask' [
     let config_dir = ($AI_SETUPS | get $setup)
     let args = (
         [-p $prompt --no-session-persistence --output-format json]
-        | append (if ($tools | is-empty) { [--tools ""] } else { [--tools ($tools | str join ",") --allowedTools ($tools | str join ",")] })
+        | append (if ($tools | is-empty) { [--tools ""] } else { [--tools ($tools | str join ",")] })
+        | append (if ($tools ++ $mcp | is-empty) { [] } else { [--allowedTools ($tools ++ $mcp | str join ",")] })
         | append (if $system == null { [] } else { [--append-system-prompt $system] })
         | append (if $schema == null { [] } else { [--json-schema ($schema | to json -r)] })
         | append (if $model == null { [] } else { [--model $model] })

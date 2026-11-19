@@ -441,6 +441,7 @@
   "tui": {
     "sync": "startAndClose"
   },
+  "version": 2,
   "taskCommands": [
     {
       "name": "fail",
