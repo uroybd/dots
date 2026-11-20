@@ -80,12 +80,16 @@ def jira-status-rank [status: string] {
 # The 4-space indent keeps tickets nested under two-digit epic numbers too.
 # Backward moves are ignored. Bare URLs so Slack unfurls them as Jira chips. Multiple transitions
 # in the window collapse into first-from -> last-to.
-# Usage: jira me changed [--since 3day]
-def 'jira me changed' [--since(-S): duration = 1day] {
+# --in-progress also lists tickets now In Progress that did not move forward in the window, as
+#       1. Ticket summary, In Progress, <link>
+# Usage: jira me changed [--since 3day] [--in-progress]
+def 'jira me changed' [--since(-S): duration = 1day, --in-progress(-i)] {
     let me = (jira me)
     let cutoff = (date now) - $since
-    let jql = $"assignee = \"($me)\" AND status CHANGED AFTER \"($cutoff | format date '%Y/%m/%d %H:%M')\""
-    let issues = (jira-rest-search $jql "summary,parent" --expand changelog)
+    let changed = $"status CHANGED AFTER \"($cutoff | format date '%Y/%m/%d %H:%M')\""
+    let filter = if $in_progress { $"\(($changed) OR status = \"In Progress\"\)" } else { $changed }
+    let jql = $"assignee = \"($me)\" AND ($filter)"
+    let issues = (jira-rest-search $jql "summary,parent,status" --expand changelog)
     let forward = (
         $issues
         | each {|issue|
@@ -96,30 +100,38 @@ def 'jira me changed' [--since(-S): duration = 1day] {
                 | each {|h| $h.items | where field == "status" }
                 | flatten
             )
-            if ($moves | is-empty) { null } else {
+            let move = if ($moves | is-empty) { null } else {
                 let from = $moves | first | get fromString
                 let to = $moves | last | get toString
                 # skip tickets that bounced back or moved backward
                 if (jira-status-rank $from) != 99 and (jira-status-rank $to) != 99 and (jira-status-rank $to) <= (jira-status-rank $from) {
                     null
                 } else {
-                    let parent = $issue.fields | get -o parent
-                    let epic = if ($parent | get -o fields.issuetype.name) == "Epic" { $"($parent.key): ($parent.fields.summary)" } else { "No epic" }
-                    {
-                        key: $issue.key
-                        summary: $issue.fields.summary
-                        epic: $epic
-                        from: $from
-                        to: $to
-                        rank: (jira-status-rank $to)
-                    }
+                    {from: $from, to: $to}
+                }
+            }
+            let status = $issue.fields.status.name
+            let move = if $move == null and $in_progress and ($status | str lowercase) == "in progress" {
+                {from: null, to: $status}
+            } else { $move }
+            if $move == null { null } else {
+                let parent = $issue.fields | get -o parent
+                let epic = if ($parent | get -o fields.issuetype.name) == "Epic" { $"($parent.key): ($parent.fields.summary)" } else { "No epic" }
+                {
+                    key: $issue.key
+                    summary: $issue.fields.summary
+                    epic: $epic
+                    from: $move.from
+                    to: $move.to
+                    rank: (jira-status-rank $move.to)
                 }
             }
         }
         | compact
     )
     if ($forward | is-empty) {
-        print -e $"No forward status changes in the last ($since)."
+        let extra = if $in_progress { " and nothing In Progress" } else { "" }
+        print -e $"No forward status changes in the last ($since)($extra)."
         return
     }
     let out = (
@@ -135,7 +147,8 @@ def 'jira me changed' [--since(-S): duration = 1day] {
                 | enumerate
                 | each {|t|
                     let i = $t.item
-                    $"    ($t.index + 1). ($i.summary), ($i.from) -> ($i.to), (jira-ticket-to-url $i.key)"
+                    let status = if $i.from == null { $i.to } else { $"($i.from) -> ($i.to)" }
+                    $"    ($t.index + 1). ($i.summary), ($status), (jira-ticket-to-url $i.key)"
                 }
                 | str join "\n"
             )
