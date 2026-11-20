@@ -56,3 +56,27 @@ color.sync.rejected=bold red
 
 # Precedence & Merging Mechanics
 rule.color.merge=yes
+
+
+# Custom
+# Projects take the hues the states and outcomes leave free (magenta, cyan). `bright` on a
+# foreground draws as the plain color, so the bright shades are palette indexes 8-15, which the
+# terminal theme still sets. Chores have no rule of their own, so they take their project's color.
+color.project.FUL=magenta
+color.project.FUL.WME=color13
+color.project.P=cyan
+color.project.P.Intus=color14
+color.project.P.LTerm=bold cyan
+color.uda.priority.H=bold red
+color.uda.priority.M=yellow
+color.uda.priority.L=cyan
+color.uda.outcome.success=green
+color.uda.outcome.failed=red
+color.uda.progressState.inprogress=bright blue
+color.uda.progressState.review=bright yellow
+
+
+# Precedence, first is highest. Low to high: basic rules < not completed < priority < project
+# < state In progress < Review < Done < outcome failed. Sub-projects come before project. so
+# FUL.WME beats FUL, which also matches it.
+rule.precedence.color=uda.outcome.failed,uda.outcome.success,completed,uda.progressState.review,uda.progressState.inprogress,project.FUL.,project.P.,project.,uda.priority.,uda.outcome.none,deleted,active,keyword.,tag.,overdue,scheduled,due.today,due,blocked,blocking,recurring,tagged,uda.

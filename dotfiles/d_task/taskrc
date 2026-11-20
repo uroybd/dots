@@ -35,6 +35,12 @@ uda.progress.type=numeric
 uda.progress.label=Progress
 uda.progress.default=0
 
+
+## Kanban
+uda.progressState.type=string
+uda.progressState.label=Progress
+uda.progressState.values=inprogress,review
+
 # Journaling
 journal.time=on
 journal.time.start.annotation="Start Session"
@@ -69,6 +75,14 @@ report.completed.columns=id,uuid.short,entry,end,outcome,entry.age,depends,prior
 report.completed.labels=ID,UUID,Created,Completed,Outcome,Age,Deps,P,Project,Tags,R,Due,Description
 report.completed.sort=project+/,outcome+,end+
 
+
+# Report: Kanban
+report.kanban.description=Open tasks and the ones finished lately, for Kanban
+report.kanban.columns=id,priority,project,jira,tags,due.relative,scheduled.countdown,description
+report.kanban.labels=ID,P,Project,Jira,Tags,Due,Sch,Description
+report.kanban.filter=( +PENDING or +COMPLETED )
+report.kanban.sort=urgency-
+
 # Urgency
 urgency.inherit=1
 urgency.user.project.FUL.coefficient=1.5
@@ -83,17 +97,6 @@ report._reviewed.columns=uuid
 report._reviewed.sort=reviewed+,modified+
 report._reviewed.filter=( reviewed.none: or reviewed.before:now-6days ) and ( +PENDING or +WAITING )
 
-color.project.FUL=bright blue
-color.project.P=cyan
-color.project.P.Intus=bright green
-color.project.P.LTerm=bright magenta
-rule.precedence.color=deleted,completed,active,keyword.,tag.,uda.outcome.failed,project.P.Intus,project.P.LTerm,project.,overdue,scheduled,due.today,due,blocked,blocking,recurring,tagged,uda.
-color.uda.priority.H=bold red
-color.uda.priority.M=yellow
-color.uda.priority.L=cyan
-color.uda.outcome.success=green
-color.uda.outcome.failed=red
-color.tag.review=grey20
 
 # Contexts
 context.this_month.read=+MONTH or (end.after:som and end.before:eom) or (scheduled.after:som and scheduled.before:eom)

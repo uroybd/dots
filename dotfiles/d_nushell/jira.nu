@@ -305,6 +305,7 @@ def fulbot-tickets [tickets: list<string>, piped: any, --epic: string] {
 # is left out of the table (a lone ticket errors instead).
 # --codebase: run from the repo the tickets target; Claude reads the code they would touch (read-only) to size them.
 # --offset: headroom in percent added to Claude's raw days before sizing (default 20, the skill's convention).
+#           --for-tzia is another name for it; give only one.
 # --explain: the whole estimate (raw days, offset, padded days, split, reason) instead of only the points.
 # --epic: also estimate the epic's child tickets that aren't done (several epics: comma-separated). With it, giving
 #         tickets is optional.
@@ -316,7 +317,8 @@ def fulbot-tickets [tickets: list<string>, piped: any, --epic: string] {
 #        "FUL-1\nFUL-2" | fulbot guess story-point
 def 'fulbot guess story-point' [
     --epic(-E): string
-    --offset(-o): number = 20
+    --offset(-o): number
+    --for-tzia: number
     --codebase(-c)
     --explain(-e)
     --json(-j)
@@ -324,6 +326,10 @@ def 'fulbot guess story-point' [
     --yes(-y)
     ...tickets: string
 ] {
+    if $offset != null and $for_tzia != null {
+        error make {msg: "--for-tzia is another name for --offset; give only one."}
+    }
+    let offset = ($offset | default $for_tzia | default 20)
     let tickets = (fulbot-tickets $tickets $in --epic $epic)
     let estimates = (
         story-point-estimates $tickets --codebase=$codebase
