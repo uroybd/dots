@@ -1,7 +1,4 @@
 {
-  "tui": {
-    "sync": "startAndClose"
-  },
   "appearance": {
     "idFallback": true,
     "progress": {
@@ -450,5 +447,48 @@
       "name": "review"
     }
   ],
-  "version": 2
+  "version": 2,
+  "homepage": {
+    "board": "ataglance"
+  },
+  "kanban": {
+    "enabled": true,
+    "setup": "automatic",
+    "uda": "progressState",
+    "report": "kanban",
+    "filter": "",
+    "completedSince": "today-14d",
+    "columns": [
+      {
+        "name": "To do",
+        "filter": "status:pending progressState:",
+        "move": "modify status:pending progressState:"
+      },
+      {
+        "name": "In progress",
+        "filter": "status:pending progressState:inprogress",
+        "move": "modify status:pending progressState:inprogress"
+      },
+      {
+        "name": "Review",
+        "filter": "status:pending progressState:review",
+        "move": "modify status:pending progressState:review progress:90 reviewed:"
+      },
+      {
+        "name": "Done",
+        "filter": "status:completed",
+        "move": "finish"
+      }
+    ],
+    "kanbans": [
+      {
+        "id": "main",
+        "name": "Main",
+        "report": "kanban"
+      }
+    ]
+  },
+  "tui": {
+    "sync": "startAndClose"
+  }
 }
