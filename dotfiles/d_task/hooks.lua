@@ -146,7 +146,11 @@ end
 -- Done: progress is 100, and an outcome nobody gave is success (outcome:failed stays failed). Otherwise a changed todo
 -- recounts progress.
 function on_modify(old, new)
+	if new.status == "pending" and old.status ~= "pending" then
+		new.progressState = ""
+	end
 	if new.status == "completed" then
+		new.progressState = ""
 		if old.status ~= "completed" then
 			new.progress = 100
 			if is_unset(new.outcome) then

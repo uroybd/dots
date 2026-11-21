@@ -3,24 +3,43 @@ banner = false
 symlink = false
 prompt_backend = "bitwarden"
 
-[packages.d_ghostty]
-src = "dotfiles/d_ghostty"
-dest = "~/.config/ghostty/"
-dependencies = ["d_nushell", "d_zellij"]
-pre_actions = ["{{ PACKAGE_INSTALLER }} --cask font-maple-mono"]
-post_actions = ["pkill -SIGUSR2 ghostty"]
+[packages.d_claude_fulflld_jira_ticket]
+src = "dotfiles/d_claude/skills/fulflld/jira-ticket"
+dest = "~/.claude-fulflld/skills/jira-ticket"
+dependencies = []
+
+[packages.f_claude_shared_md]
+src = "dotfiles/d_claude/instructions/shared.md"
+dest = "~/.config/claude-shared/CLAUDE.md"
+dependencies = []
+pre_actions = ["mkdir -p ~/.config/claude-shared"]
+
+[packages.f_gitconfig]
+src = "dotfiles/f_gitconfig"
+dest = "~/.gitconfig"
+dependencies = []
+pre_actions = ["{{ PACKAGE_INSTALLER }} git git-delta"]
+
+[packages.f_claude_fulflld_md]
+src = "dotfiles/d_claude/instructions/fulflld.md"
+dest = "~/.claude-fulflld/CLAUDE.md"
+dependencies = ["f_claude_shared_md"]
+pre_actions = [
+    "{{ PACKAGE_INSTALLER }} jq",
+    "mkdir -p ~/.claude-fulflld",
+]
+post_actions = ["./dotfiles/d_claude/setup_plugins.sh fulflld"]
+
+[packages.d_zellij]
+src = "dotfiles/d_zellij"
+dest = "~/.config/zellij/"
+dependencies = []
+pre_actions = ["{{ PACKAGE_INSTALLER }} zellij"]
 
 [packages.f_ssh_config]
 src = "dotfiles/f_ssh_config"
 dest = "~/.ssh/config"
 dependencies = []
-
-[packages.d_aerospace]
-src = "dotfiles/d_aerospace"
-dest = "~/.config/aerospace/"
-dependencies = []
-pre_actions = ["{{ PACKAGE_INSTALLER }} aerospace"]
-post_actions = ["aerospace reload-config"]
 
 [packages.d_carapace]
 src = "dotfiles/d_carapace"
@@ -31,59 +50,23 @@ pre_actions = ["{{ PACKAGE_INSTALLER }} carapace"]
 [packages.d_carapace.targets]
 mac = "~/Library/Application Support/carapace"
 
-[packages.f_zshrc]
-src = "dotfiles/f_zshrc"
-dest = "~/.zshrc"
-dependencies = []
-
-[packages.f_zshrc.targets]
-mac = "~/.zshrc"
-
-
-[packages.d_zellij]
-src = "dotfiles/d_zellij"
-dest = "~/.config/zellij/"
-dependencies = []
-pre_actions = ["{{ PACKAGE_INSTALLER }} zellij"]
-
-[packages.d_nvim]
-src = "dotfiles/d_nvim"
-dest = "~/.config/nvim/"
-dependencies = []
-pre_actions = ["{{ PACKAGE_INSTALLER }} neovim tectonic mermaid-cli"]
-ignore = [".gitignore", ".git", ".git/**"]
-
-[packages.f_gitconfig]
-src = "dotfiles/f_gitconfig"
-dest = "~/.gitconfig"
-dependencies = []
-pre_actions = ["{{ PACKAGE_INSTALLER }} git git-delta"]
-
-[packages.d_task]
-src = "dotfiles/d_task"
-dest = "~/.config/task"
-pre_actions = [
-  "{{ PACKAGE_INSTALLER }} task tasksh uroybd/tap/meghnaad-hook uroybd/tap/meghnaad",
-  "mkdir -p ~/.config/task/hooks",
+[packages.d_ghostty]
+src = "dotfiles/d_ghostty"
+dest = "~/.config/ghostty/"
+dependencies = [
+    "d_nushell",
+    "d_zellij",
 ]
-post_actions = [
-  "find ~/.config/task/hooks -name '*.dotrbak' -type f -print -delete | sed 's/^/[INFO] Removed backup: /'",
-  "./scripts/setup_tw_hook.sh",
-  "chmod +x ~/.config/task/hooks/* && echo '[INFO] Hooks are now executable.'",
-]
-ignore = ["hooks/*.meghnaad"]
-
-[packages.d_task.prompts]
-TW_CLIENT_ID = "TW_CLIENT_ID"
-TW_ENCRYPTION_SECRET = "TW_ENCRYPTION_SECRET"
+pre_actions = ["{{ PACKAGE_INSTALLER }} --cask font-maple-mono"]
+post_actions = ["pkill -SIGUSR2 ghostty"]
 
 [packages.d_nushell]
 src = "dotfiles/d_nushell"
 dest = "~/.config/nushell"
-dependencies = ["d_atuin", "d_carapace"]
+dependencies = ["d_carapace"]
 pre_actions = [
-  "{{ PACKAGE_INSTALLER }} nu direnv zoxide",
-  "cargo install --locked prmt",
+    "{{ PACKAGE_INSTALLER }} nu direnv zoxide",
+    "cargo install --locked prmt",
 ]
 ignore = ["history.txt"]
 
@@ -93,19 +76,10 @@ mac = "~/Library/Application Support/nushell"
 [packages.d_nushell.prompts]
 TASKNOTES_TOKEN = "TASKNOTES TOKEN"
 
-[packages.d_atuin]
-src = "dotfiles/d_atuin"
-dest = "~/.config/atuin/"
+[packages.d_claude_fulflld_jira_enrich]
+src = "dotfiles/d_claude/skills/fulflld/jira-enrich"
+dest = "~/.claude-fulflld/skills/jira-enrich"
 dependencies = []
-pre_actions = ["{{ PACKAGE_INSTALLER }} atuin"]
-
-[packages.d_bin]
-src = "dotfiles/d_bin"
-dest = "~/bin"
-dependencies = []
-
-[packages.d_bin.targets]
-mac = "~/bin"
 
 [packages.d_yazi]
 src = "dotfiles/d_yazi"
@@ -113,17 +87,13 @@ dest = "~/.config/yazi/"
 dependencies = []
 pre_actions = ["{{ PACKAGE_INSTALLER }} yazi"]
 
-[packages.d_vi_mongo]
-src = "dotfiles/d_vi_mongo"
-dest = "~/.config/vi-mongo/"
+[packages.f_zshrc]
+src = "dotfiles/f_zshrc"
+dest = "~/.zshrc"
 dependencies = []
-pre_actions = [
-  'command -v vi-mongo &> /dev/null || echo "[WARN] vi-mongo could not be found, install manually."',
-]
-ignore = ["history.txt"]
 
-[packages.d_vi_mongo.targets]
-mac = "~/Library/Application Support/vi-mongo"
+[packages.f_zshrc.targets]
+mac = "~/.zshrc"
 
 [packages.d_jira]
 src = "dotfiles/d_jira"
@@ -136,23 +106,109 @@ JIRA_EMAIL = "JIRA EMAIL"
 JIRA_HOST = "JIRA HOST"
 JIRA_API_TOKEN = "JIRA API TOKEN"
 
+[packages.d_aerospace]
+src = "dotfiles/d_aerospace"
+dest = "~/.config/aerospace/"
+dependencies = []
+pre_actions = ["{{ PACKAGE_INSTALLER }} aerospace"]
+post_actions = ["aerospace reload-config"]
+
+[packages.d_task]
+src = "dotfiles/d_task"
+dest = "~/.config/task"
+dependencies = []
+pre_actions = [
+    "{{ PACKAGE_INSTALLER }} task tasksh uroybd/tap/meghnaad-hook uroybd/tap/meghnaad",
+    "mkdir -p ~/.config/task/hooks",
+]
+post_actions = [
+    "find ~/.config/task/hooks -name '*.dotrbak' -type f -print -delete | sed 's/^/[INFO] Removed backup: /'",
+    "./scripts/setup_tw_hook.sh",
+    "chmod +x ~/.config/task/hooks/* && echo '[INFO] Hooks are now executable.'",
+]
+ignore = ["hooks/*.meghnaad"]
+
+[packages.d_task.prompts]
+TW_CLIENT_ID = "TW_CLIENT_ID"
+TW_ENCRYPTION_SECRET = "TW_ENCRYPTION_SECRET"
+
+[packages.d_bin]
+src = "dotfiles/d_bin"
+dest = "~/bin"
+dependencies = []
+
+[packages.d_bin.targets]
+mac = "~/bin"
+
+[packages.d_nvim]
+src = "dotfiles/d_nvim"
+dest = "~/.config/nvim/"
+dependencies = []
+pre_actions = ["{{ PACKAGE_INSTALLER }} neovim tectonic mermaid-cli"]
+ignore = [
+    ".gitignore",
+    ".git",
+    ".git/**",
+]
+
+[packages.f_claude_md]
+src = "dotfiles/d_claude/instructions/personal.md"
+dest = "~/.claude/CLAUDE.md"
+dependencies = ["f_claude_shared_md"]
+pre_actions = [
+    "{{ PACKAGE_INSTALLER }} jq",
+    "mkdir -p ~/.claude",
+]
+post_actions = ["./dotfiles/d_claude/setup_plugins.sh personal"]
+
+[packages.d_vi_mongo]
+src = "dotfiles/d_vi_mongo"
+dest = "~/.config/vi-mongo/"
+dependencies = []
+pre_actions = ['command -v vi-mongo &> /dev/null || echo "[WARN] vi-mongo could not be found, install manually."']
+ignore = ["history.txt"]
+
+[packages.d_vi_mongo.targets]
+mac = "~/Library/Application Support/vi-mongo"
+
+[packages.d_claude_fulflld_jira_story_points]
+src = "dotfiles/d_claude/skills/fulflld/jira-story-points"
+dest = "~/.claude-fulflld/skills/jira-story-points"
+dependencies = []
+
+[packages.d_claude_fulflld_jira_ticktify]
+src = "dotfiles/d_claude/skills/fulflld/jira-ticktify"
+dest = "~/.claude-fulflld/skills/jira-ticktify"
+dependencies = []
+
 [profiles.default]
 dependencies = [
-  "d_zellij",
-  "d_nvim",
-  "d_aerospace",
-  "f_gitconfig",
-  "d_ghostty",
-  "d_atuin",
-  "d_jira",
-  "f_ssh_config",
-  "d_yazi",
-  "f_zshrc",
-  "d_bin",
-  "d_nushell",
-  "d_carapace",
-  "d_vi_mongo",
-  "d_task",
+    "d_zellij",
+    "d_nvim",
+    "d_aerospace",
+    "f_gitconfig",
+    "d_ghostty",
+    "d_jira",
+    "f_ssh_config",
+    "d_yazi",
+    "f_zshrc",
+    "d_bin",
+    "d_nushell",
+    "d_carapace",
+    "d_vi_mongo",
+    "d_task",
+]
+platform = "mac"
+
+[profiles.claude]
+dependencies = [
+    "f_claude_shared_md",
+    "f_claude_md",
+    "f_claude_fulflld_md",
+    "d_claude_fulflld_jira_ticket",
+    "d_claude_fulflld_jira_story_points",
+    "d_claude_fulflld_jira_enrich",
+    "d_claude_fulflld_jira_ticktify",
 ]
 platform = "mac"
 
@@ -161,52 +217,3 @@ pre_actions = ["./scripts/install_homebrew.sh"]
 
 [platforms.mac.variables]
 PACKAGE_INSTALLER = "brew install"
-
-# Claude Code: instructions, skills and plugins live in the private d_claude submodule. Settings are deliberately not tracked; Claude Code manages them.
-# Instructions both Claude setups follow; each setup's CLAUDE.md imports this file with an @ line.
-[packages.f_claude_shared_md]
-src = "dotfiles/d_claude/instructions/shared.md"
-dest = "~/.config/claude-shared/CLAUDE.md"
-pre_actions = ["mkdir -p ~/.config/claude-shared"]
-
-[packages.f_claude_md]
-src = "dotfiles/d_claude/instructions/personal.md"
-dest = "~/.claude/CLAUDE.md"
-dependencies = ["f_claude_shared_md"]
-pre_actions = ["{{ PACKAGE_INSTALLER }} jq", "mkdir -p ~/.claude"]
-post_actions = ["./dotfiles/d_claude/setup_plugins.sh personal"]
-
-[packages.f_claude_fulflld_md]
-src = "dotfiles/d_claude/instructions/fulflld.md"
-dest = "~/.claude-fulflld/CLAUDE.md"
-dependencies = ["f_claude_shared_md"]
-pre_actions = ["{{ PACKAGE_INSTALLER }} jq", "mkdir -p ~/.claude-fulflld"]
-post_actions = ["./dotfiles/d_claude/setup_plugins.sh fulflld"]
-
-[packages.d_claude_fulflld_jira_ticket]
-src = "dotfiles/d_claude/skills/fulflld/jira-ticket"
-dest = "~/.claude-fulflld/skills/jira-ticket"
-
-[packages.d_claude_fulflld_jira_story_points]
-src = "dotfiles/d_claude/skills/fulflld/jira-story-points"
-dest = "~/.claude-fulflld/skills/jira-story-points"
-
-[packages.d_claude_fulflld_jira_enrich]
-src = "dotfiles/d_claude/skills/fulflld/jira-enrich"
-dest = "~/.claude-fulflld/skills/jira-enrich"
-
-[packages.d_claude_fulflld_jira_ticktify]
-src = "dotfiles/d_claude/skills/fulflld/jira-ticktify"
-dest = "~/.claude-fulflld/skills/jira-ticktify"
-
-[profiles.claude]
-dependencies = [
-  "f_claude_shared_md",
-  "f_claude_md",
-  "f_claude_fulflld_md",
-  "d_claude_fulflld_jira_ticket",
-  "d_claude_fulflld_jira_story_points",
-  "d_claude_fulflld_jira_enrich",
-  "d_claude_fulflld_jira_ticktify",
-]
-platform = "mac"

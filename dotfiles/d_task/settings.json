@@ -1,5 +1,6 @@
 {
   "appearance": {
+    "cardIcons": true,
     "idFallback": true,
     "progress": {
       "progress": {
@@ -430,65 +431,68 @@
     }
   ],
   "boardsVersion": 1,
-  "taskCommands": [
-    {
-      "command": "done outcome:failed -review",
-      "icon": "circle-x",
-      "name": "fail"
-    },
-    {
-      "command": "done outcome:success -review",
-      "icon": "circle-check",
-      "name": "finish"
-    },
-    {
-      "command": "modify +review progress:90",
-      "icon": "circle-dashed-check",
-      "name": "review"
-    }
-  ],
-  "version": 2,
-  "homepage": {
-    "board": "ataglance"
-  },
   "kanban": {
-    "enabled": true,
-    "setup": "automatic",
-    "uda": "progressState",
-    "report": "kanban",
-    "filter": "",
-    "completedSince": "today-14d",
     "columns": [
       {
-        "name": "To do",
         "filter": "status:pending progressState:",
-        "move": "modify status:pending progressState:"
+        "move": "modify status:pending progressState:",
+        "name": "To do"
       },
       {
-        "name": "In progress",
         "filter": "status:pending progressState:inprogress",
-        "move": "modify status:pending progressState:inprogress"
+        "move": "modify status:pending progressState:inprogress",
+        "name": "In progress"
       },
       {
-        "name": "Review",
         "filter": "status:pending progressState:review",
-        "move": "modify status:pending progressState:review progress:90 reviewed:"
+        "move": "modify status:pending progressState:review progress:90 reviewed:",
+        "name": "Review"
       },
       {
-        "name": "Done",
         "filter": "status:completed",
-        "move": "finish"
+        "move": "done",
+        "name": "Done"
       }
     ],
+    "completedSince": "today-14d",
+    "enabled": true,
+    "filter": "",
     "kanbans": [
       {
         "id": "main",
         "name": "Main",
         "report": "kanban"
+      },
+      {
+        "filter": "rc.report.kanban.sort=urgency-,project+/,end- project:FUL",
+        "id": "fulflld",
+        "name": "FULFLLD",
+        "report": "kanban"
       }
-    ]
+    ],
+    "report": "kanban",
+    "setup": "automatic",
+    "uda": "progressState"
   },
+  "taskCommands": [
+    {
+      "name": "pending",
+      "command": "modify status:pending progressState:",
+      "icon": "circle-dashed"
+    },
+    {
+      "name": "inprogress",
+      "command": "modify status:pending progressState:inprogress",
+      "icon": "loader-circle"
+    },
+    {
+      "command": "modify status:pending progressState:review progress:90 reviewed:",
+      "icon": "eye",
+      "name": "review"
+    }
+  ],
   "tui": {
     "sync": "startAndClose"
-  }
+  },
+  "version": 3
 }

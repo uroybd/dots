@@ -75,13 +75,13 @@ report.completed.columns=id,uuid.short,entry,end,outcome,entry.age,depends,prior
 report.completed.labels=ID,UUID,Created,Completed,Outcome,Age,Deps,P,Project,Tags,R,Due,Description
 report.completed.sort=project+/,outcome+,end+
 
-
 # Report: Kanban
 report.kanban.description=Open tasks and the ones finished lately, for Kanban
-report.kanban.columns=id,priority,project,jira,tags,due.relative,scheduled.countdown,description
-report.kanban.labels=ID,P,Project,Jira,Tags,Due,Sch,Description
+report.kanban.columns=id,description,progress,todo,Urgency,project,jira,tags,due.relative,scheduled.countdown
+report.kanban.labels=ID,Description,Progress,TODO,U,Project,Jira,Tags,Due,Sch
 report.kanban.filter=( +PENDING or +COMPLETED )
-report.kanban.sort=urgency-
+report.kanban.sort=end-,urgency-
+
 
 # Urgency
 urgency.inherit=1

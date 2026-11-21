@@ -636,6 +636,18 @@ $env.config = {
             mode: emacs
             event: {edit: capitalizechar}
         }
+        {
+            name: up_arrow_history_menu
+            modifier: none
+            keycode: up
+            mode: [emacs, vi_normal, vi_insert]
+            event: {
+                until: [
+                    {send: menuup}
+                    {send: menu, name: history_menu}
+                ]
+            }
+        }
     ]
 }
 
@@ -646,7 +658,6 @@ def --env claude-fulflld [...args: string] {
 }
 
 source $"($nu.default-config-dir)/fnm.nu"
-source $"($nu.default-config-dir)/atuin.nu"
 source $"($nu.default-config-dir)/zoxide.nu"
 source $"($nu.default-config-dir)/carapace.nu"
 source $"($nu.default-config-dir)/ai.nu" # before jira.nu, which uses it
