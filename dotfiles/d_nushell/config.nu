@@ -356,11 +356,11 @@ $env.config = {
             }
         }
         {
-            name: history_menu
+            name: history_fzf
             modifier: control
             keycode: char_r
             mode: [emacs, vi_insert, vi_normal]
-            event: {send: menu, name: history_menu}
+            event: {send: executehostcommand, cmd: "history-fzf"}
         }
         {
             name: help_menu
@@ -663,27 +663,39 @@ $env.config = {
     ]
 }
 
-# Picks a command from history with fzf and puts it on the command line; the Up arrow runs it. The typed text is the
-# starting query, newest commands first. It starts on this session's commands, Ctrl-G switches to all of history and
-# Ctrl-S back; plaintext history keeps no sessions, so there it shows all of history only. Esc changes nothing.
+# Picks a command from history with fzf and puts it on the command line; Up and Ctrl-R run it. The typed text is the
+# starting query, newest commands first. It starts on this session's commands and Ctrl-Alt-R toggles between them and
+# all of history, the prompt's icon saying which; plaintext history keeps no sessions, so there it shows all of history
+# only. Esc changes nothing.
 def history-fzf [] {
     let sessions = $env.config.history.file_format == "sqlite"
+    # Nerd Font glyphs: a boxed terminal for this session, globe for all of history, and the shell prompt's chevron.
+    let icon_session = "\u{f489}"
+    let icon_global = "\u{f0ac}"
+    let prompt_session = $"($icon_session) \u{f054} "
+    let prompt_global = $"($icon_global) \u{f054} "
     let dir = (mktemp -d)
     let global = $"($dir)/global"
     let session = $"($dir)/session"
     let all = (if $sessions { history --long } else { history } | reverse) # only --long has session_id
     $all | get command | uniq | str join (char nul) | save $global
-    let keys = "Ctrl-G: Global | Ctrl-S: Session | Up/Down: Navigate"
     let args = if $sessions {
         # Imported rows have an empty session_id, so they show under Global only.
         $all | where session_id == (history session) | get command | uniq | str join (char nul) | save $session
+        # The prompt's icon says which list is showing, so the toggle reads it to pick the other one.
+        let toggle = (
+            'case "$FZF_PROMPT" in '
+            + $"($icon_session)*\) echo \"reload\(cat '($global)')+change-prompt\(($prompt_global))\" ;; "
+            + $"*\) echo \"reload\(cat '($session)')+change-prompt\(($prompt_session))\" ;; esac"
+        )
         [
-            $"--header=[Session History] | ($keys)"
-            $"--bind=ctrl-g:reload\(cat '($global)'\)+change-header\([Global History] | ($keys)\)"
-            $"--bind=ctrl-s:reload\(cat '($session)'\)+change-header\([Session History] | ($keys)\)"
+            $"--prompt=($prompt_session)"
+            $"--header=Ctrl-Alt-R: ($icon_session) Session / ($icon_global) Global"
+            "--with-shell=sh -c"
+            $"--bind=ctrl-alt-r:transform:($toggle)"
         ]
     } else {
-        ["--header=[Global History] | Up/Down: Navigate"]
+        [$"--prompt=($prompt_global)"]
     }
     let picked = (
         open --raw (if $sessions { $session } else { $global })
