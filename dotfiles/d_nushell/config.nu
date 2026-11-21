@@ -235,7 +235,7 @@ $env.config = {
     history: {
         max_size: 100_000 # Session has to be reloaded for this to take effect
         sync_on_enter: true # Enable to share history between multiple sessions, else you have to close the session to write history to file
-        file_format: "plaintext" # "sqlite" or "plaintext"
+        file_format: "sqlite" # "sqlite" or "plaintext"
         isolation: false # only available with sqlite file_format. true enables history isolation, false disables it. true will allow the history to be isolated to the current session using up/down arrows. false will allow the history to be shared across all sessions.
     }
     completions: {
@@ -636,19 +636,66 @@ $env.config = {
             mode: emacs
             event: {edit: capitalizechar}
         }
+        # {
+        #     name: up_arrow_history_menu
+        #     modifier: none
+        #     keycode: up
+        #     mode: [emacs, vi_normal, vi_insert]
+        #     event: {
+        #         until: [
+        #             {send: menuup}
+        #             {send: menu, name: history_menu}
+        #         ]
+        #     }
+        # }
         {
-            name: up_arrow_history_menu
+            name: fzf_up_arrow_history
             modifier: none
             keycode: up
             mode: [emacs, vi_normal, vi_insert]
             event: {
                 until: [
                     {send: menuup}
-                    {send: menu, name: history_menu}
+                    {send: executehostcommand, cmd: "history-fzf"}
                 ]
             }
         }
     ]
+}
+
+# Picks a command from history with fzf and puts it on the command line; the Up arrow runs it. The typed text is the
+# starting query, newest commands first. It starts on this session's commands, Ctrl-G switches to all of history and
+# Ctrl-S back; plaintext history keeps no sessions, so there it shows all of history only. Esc changes nothing.
+def history-fzf [] {
+    let sessions = $env.config.history.file_format == "sqlite"
+    let dir = (mktemp -d)
+    let global = $"($dir)/global"
+    let session = $"($dir)/session"
+    let all = (if $sessions { history --long } else { history } | reverse) # only --long has session_id
+    $all | get command | uniq | str join (char nul) | save $global
+    let keys = "Ctrl-G: Global | Ctrl-S: Session | Up/Down: Navigate"
+    let args = if $sessions {
+        # Imported rows have an empty session_id, so they show under Global only.
+        $all | where session_id == (history session) | get command | uniq | str join (char nul) | save $session
+        [
+            $"--header=[Session History] | ($keys)"
+            $"--bind=ctrl-g:reload\(cat '($global)'\)+change-header\([Global History] | ($keys)\)"
+            $"--bind=ctrl-s:reload\(cat '($session)'\)+change-header\([Session History] | ($keys)\)"
+        ]
+    } else {
+        ["--header=[Global History] | Up/Down: Navigate"]
+    }
+    let picked = (
+        open --raw (if $sessions { $session } else { $global })
+        | ^fzf --read0 --tiebreak=index --height=40% --layout=reverse $"--query=(commandline)" ...$args
+        | complete
+    )
+    rm -r $dir
+    let selected = ($picked.stdout | str trim --right --char "\n")
+    if $picked.exit_code == 0 and ($selected | is-not-empty) {
+        commandline edit --replace $selected
+        commandline set-cursor --end
+    }
 }
 
 def --env claude-fulflld [...args: string] {

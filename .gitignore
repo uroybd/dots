@@ -2,3 +2,6 @@
 
 # Stray dirs from an unexpanded ~ in a path
 /~/
+
+# Nushell sqlite history, pulled in by dotr update
+dotfiles/d_nushell/history.sqlite3*

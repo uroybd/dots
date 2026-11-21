@@ -68,7 +68,7 @@ pre_actions = [
     "{{ PACKAGE_INSTALLER }} nu direnv zoxide",
     "cargo install --locked prmt",
 ]
-ignore = ["history.txt"]
+ignore = ["history.txt", "history.sqlite3*"]
 
 [packages.d_nushell.targets]
 mac = "~/Library/Application Support/nushell"
