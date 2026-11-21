@@ -664,9 +664,9 @@ $env.config = {
 }
 
 # Picks a command from history with fzf and puts it on the command line; Up and Ctrl-R run it. The typed text is the
-# starting query, newest commands first. It starts on this session's commands and Ctrl-Alt-R toggles between them and
-# all of history, the prompt's icon saying which; plaintext history keeps no sessions, so there it shows all of history
-# only. Esc changes nothing.
+# starting query. It starts on all of history, this session's commands first, then the rest, each newest first, and
+# Ctrl-Alt-R toggles to this session's commands alone and back, the prompt's icon saying which; plaintext history keeps
+# no sessions, so there it shows all of history only, newest first. Esc changes nothing.
 def history-fzf [] {
     let sessions = $env.config.history.file_format == "sqlite"
     # Nerd Font glyphs: a boxed terminal for this session, globe for all of history, and the shell prompt's chevron.
@@ -678,10 +678,12 @@ def history-fzf [] {
     let global = $"($dir)/global"
     let session = $"($dir)/session"
     let all = (if $sessions { history --long } else { history } | reverse) # only --long has session_id
-    $all | get command | uniq | str join (char nul) | save $global
+    # Imported rows have an empty session_id, so they are never this session's.
+    let mine = if $sessions { $all | where session_id == (history session) | get command | uniq } else { [] }
+    # uniq keeps the first of each, so a command run this session stays in the session part.
+    $mine | append ($all | get command) | uniq | str join (char nul) | save $global
     let args = if $sessions {
-        # Imported rows have an empty session_id, so they show under Global only.
-        $all | where session_id == (history session) | get command | uniq | str join (char nul) | save $session
+        $mine | str join (char nul) | save $session
         # The prompt's icon says which list is showing, so the toggle reads it to pick the other one.
         let toggle = (
             'case "$FZF_PROMPT" in '
@@ -689,17 +691,16 @@ def history-fzf [] {
             + $"*\) echo \"reload\(cat '($session)')+change-prompt\(($prompt_session))\" ;; esac"
         )
         [
-            $"--prompt=($prompt_session)"
             $"--header=Ctrl-Alt-R: ($icon_session) Session / ($icon_global) Global"
             "--with-shell=sh -c"
             $"--bind=ctrl-alt-r:transform:($toggle)"
         ]
     } else {
-        [$"--prompt=($prompt_global)"]
+        []
     }
     let picked = (
-        open --raw (if $sessions { $session } else { $global })
-        | ^fzf --read0 --tiebreak=index --height=40% --layout=reverse $"--query=(commandline)" ...$args
+        open --raw $global
+        | ^fzf --read0 --tiebreak=index --height=40% --layout=reverse $"--prompt=($prompt_global)" $"--query=(commandline)" ...$args
         | complete
     )
     rm -r $dir
