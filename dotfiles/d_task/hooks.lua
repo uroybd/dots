@@ -152,7 +152,6 @@ function on_modify(old, new)
 	if new.status == "completed" then
 		new.progressState = ""
 		if old.status ~= "completed" then
-			new.progress = 100
 			if is_unset(new.outcome) then
 				new.outcome = "success"
 			end
