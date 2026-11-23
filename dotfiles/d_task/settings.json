@@ -486,7 +486,7 @@
       "icon": "loader-circle"
     },
     {
-      "command": "modify status:pending progressState:review progress:90 reviewed:",
+      "command": "modify status:pending progressState:review reviewed:",
       "icon": "eye",
       "name": "review"
     },
