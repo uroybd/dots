@@ -105,12 +105,15 @@ def jira-type-tag [type: string] {
 # Usage: jira tw pull [--dry-run] <KEY>...
 #        jira tw pull [--dry-run] --epic <EPIC-KEY> [--mine] [--sprint]
 #        jira tw pull [--dry-run] --mine [--sprint]
-#   e.g. `jira tw pull FUL-3560 FUL-3569`, `jira tw pull -e FUL-12 -m`, `jira tw pull --mine -s`
+#        jira tw pull [--dry-run] --sprint
+#   e.g. `jira tw pull FUL-3560 FUL-3569`, `jira tw pull -e FUL-12 -m`, `jira tw pull -s`
 # Each task gets: description = summary, `jira` UDA = key, `details` UDA = Jira description,
 # project = key prefix (FUL), due = Jira due date, and the tags +jira plus one for the issue type
 # (Bug -> +bugfix, Story/Feature Request -> +feature, Task -> +task, Epic -> +epic, Sub-task -> +subtask).
-# --epic pulls the epic's child issues that are not done; --mine limits to my issues (alone: all my
-# issues that are not done); --sprint limits either to open sprints. Keys can't be combined with these.
+# Only my issues and no epics, unless keys are given: someone else's issue or an epic comes in only by its key.
+# --epic pulls my child issues of the epic that are not done; --mine alone pulls all my issues that are not
+# done (with --epic or --sprint it changes nothing); --sprint limits to open sprints. Keys can't be combined
+# with these.
 # Issues that already have a task (any status except deleted) are skipped, as are done issues.
 def "jira tw pull" [
     --epic(-e): string
@@ -119,8 +122,8 @@ def "jira tw pull" [
     --dry-run(-n)
     ...keys: string
 ] {
-    if ($keys | is-empty) and $epic == null and not $mine {
-        error make {msg: "Give issue keys, --epic, or --mine."}
+    if ($keys | is-empty) and $epic == null and not $mine and not $sprint {
+        error make {msg: "Give issue keys, --epic, --mine or --sprint."}
     }
     if (not ($keys | is-empty)) and ($epic != null or $mine or $sprint) {
         error make {msg: "Issue keys can't be combined with --epic, --mine or --sprint."}
@@ -135,8 +138,9 @@ def "jira tw pull" [
     let jql = if ($keys | is-empty) {
         [
             "statusCategory != Done"
+            "issuetype != Epic"
             (if ($epic | is-empty) { null } else { $"parent = ($epic)" })
-            (if $mine { $"assignee = \"((^jira me | str trim))\"" } else { null })
+            $"assignee = \"((^jira me | str trim))\""
             (if $sprint { "sprint in openSprints()" } else { null })
         ] | compact | str join " AND "
     } else {
