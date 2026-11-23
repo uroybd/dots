@@ -489,6 +489,11 @@
       "command": "modify status:pending progressState:review progress:90 reviewed:",
       "icon": "eye",
       "name": "review"
+    },
+    {
+      "name": "fail",
+      "command": "done outcome:failed",
+      "icon": "circle-x"
     }
   ],
   "tui": {
