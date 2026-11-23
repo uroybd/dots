@@ -80,14 +80,17 @@ def jira-status-rank [status: string] {
 # The 4-space indent keeps tickets nested under two-digit epic numbers too.
 # Backward moves are ignored. Bare URLs so Slack unfurls them as Jira chips. Multiple transitions
 # in the window collapse into first-from -> last-to.
-# --in-progress also lists tickets now In Progress that did not move forward in the window, as
-#       1. Ticket summary, In Progress, <link>
+# --in-progress also lists tickets now In Progress, Code Review or Product Review that did not move forward in the
+# window, as
+#       1. Ticket summary, Code Review, <link>
 # Usage: jira me changed [--since 3day] [--in-progress]
 def 'jira me changed' [--since(-S): duration = 1day, --in-progress(-i)] {
+    let open_statuses = ["In Progress", "Code Review", "Product Review"]
     let me = (jira me)
     let cutoff = (date now) - $since
     let changed = $"status CHANGED AFTER \"($cutoff | format date '%Y/%m/%d %H:%M')\""
-    let filter = if $in_progress { $"\(($changed) OR status = \"In Progress\"\)" } else { $changed }
+    let open_jql = ($open_statuses | each {|st| $"\"($st)\"" } | str join ", ")
+    let filter = if $in_progress { $"\(($changed) OR status IN \(($open_jql)\)\)" } else { $changed }
     let jql = $"assignee = \"($me)\" AND ($filter)"
     let issues = (jira-rest-search $jql "summary,parent,status" --expand changelog)
     let forward = (
@@ -111,7 +114,7 @@ def 'jira me changed' [--since(-S): duration = 1day, --in-progress(-i)] {
                 }
             }
             let status = $issue.fields.status.name
-            let move = if $move == null and $in_progress and ($status | str lowercase) == "in progress" {
+            let move = if $move == null and $in_progress and ($status | str lowercase) in ($open_statuses | str lowercase) {
                 {from: null, to: $status}
             } else { $move }
             if $move == null { null } else {
@@ -130,7 +133,7 @@ def 'jira me changed' [--since(-S): duration = 1day, --in-progress(-i)] {
         | compact
     )
     if ($forward | is-empty) {
-        let extra = if $in_progress { " and nothing In Progress" } else { "" }
+        let extra = if $in_progress { " and nothing in progress or review" } else { "" }
         print -e $"No forward status changes in the last ($since)($extra)."
         return
     }
