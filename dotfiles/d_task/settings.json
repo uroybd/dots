@@ -461,16 +461,14 @@
       {
         "id": "main",
         "name": "Main",
-        "report": "kanban"
       },
       {
-        "filter": "rc.report.kanban.sort=urgency-,project+/,end- project:FUL",
+        "filter": "rc.report._kanban.sort=urgency-,project+/,end- project:FUL",
         "id": "fulflld",
         "name": "FULFLLD",
-        "report": "kanban"
       }
     ],
-    "report": "kanban",
+    "report": "_kanban",
     "setup": "automatic",
     "uda": "progressState"
   },
