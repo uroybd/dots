@@ -78,6 +78,7 @@ def jira-status-rank [status: string] {
 #   1. EPIC-KEY: Epic Name
 #       1. Ticket summary, Old Status -> New Status, <link>
 # The 4-space indent keeps tickets nested under two-digit epic numbers too.
+# Epics are never listed as tickets; one shows only as the heading over its own tickets that made the list.
 # Backward moves are ignored. Bare URLs so Slack unfurls them as Jira chips. Multiple transitions
 # in the window collapse into first-from -> last-to.
 # --in-progress also lists tickets now In Progress, Code Review or Product Review that did not move forward in the
@@ -92,9 +93,11 @@ def 'jira me changed' [--since(-S): duration = 1day, --in-progress(-i)] {
     let open_jql = ($open_statuses | each {|st| $"\"($st)\"" } | str join ", ")
     let filter = if $in_progress { $"\(($changed) OR status IN \(($open_jql)\)\)" } else { $changed }
     let jql = $"assignee = \"($me)\" AND ($filter)"
-    let issues = (jira-rest-search $jql "summary,parent,status" --expand changelog)
+    let issues = (jira-rest-search $jql "summary,parent,status,issuetype" --expand changelog)
     let forward = (
         $issues
+        # epics only appear as headings, over the tickets beneath them that made the list
+        | where {|issue| ($issue.fields | get -o issuetype.name) != "Epic" }
         | each {|issue|
             let moves = (
                 $issue.changelog.histories

@@ -17,7 +17,8 @@
           "details"
         ],
         "match": "\\b(FUL-\\d+)\\b",
-        "replace": "[$1](https://dlivrdio.atlassian.net/browse/$1)"
+        "replace": "[$1](https://dlivrdio.atlassian.net/browse/$1)",
+        "condition": "project:FUL"
       }
     ]
   },
@@ -460,12 +461,17 @@
     "kanbans": [
       {
         "id": "main",
-        "name": "Main",
+        "name": "Main"
       },
       {
         "filter": "rc.report._kanban.sort=urgency-,project+/,end- project:FUL",
         "id": "fulflld",
-        "name": "FULFLLD",
+        "name": "FULFLLD"
+      },
+      {
+        "id": "meghnaad",
+        "name": "Meghnaad",
+        "filter": "rc.report._kanban.sort=urgency-,project+/,end- project:Meghnaad"
       }
     ],
     "report": "_kanban",
