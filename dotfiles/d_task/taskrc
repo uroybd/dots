@@ -30,6 +30,11 @@ uda.outcome.values=success,failed
 uda.todo.type=string
 uda.todo.label=TODO
 
+
+## VCS
+uda.vcs.type=string
+uda.vcs.label=VCS
+
 ## Progress
 uda.progress.type=numeric
 uda.progress.label=Progress
@@ -77,8 +82,8 @@ report.completed.sort=project+/,outcome+,end+
 
 # Report: Kanban
 report._kanban.description=Open tasks and the ones finished lately, for Kanban
-report._kanban.columns=id,description,progress,todo,Urgency,project,jira,tags,due.relative,scheduled.countdown
-report._kanban.labels=ID,Description,Progress,TODO,U,Project,Jira,Tags,Due,Sch
+report._kanban.columns=id,description,progress,todo,Urgency,project,jira,vcs,tags,due.relative,scheduled.countdown
+report._kanban.labels=ID,Description,Progress,TODO,U,Project,Jira,VCS,Tags,Due,Sch
 report._kanban.filter=( +PENDING or +COMPLETED )
 report._kanban.sort=end-,urgency-
 

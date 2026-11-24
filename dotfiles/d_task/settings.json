@@ -19,6 +19,26 @@
         "match": "\\b(FUL-\\d+)\\b",
         "replace": "[$1](https://dlivrdio.atlassian.net/browse/$1)",
         "condition": "project:FUL"
+      },
+      {
+        "match": "(^|[^(\\w/])(https?://github\\.com/[\\w.-]+/([\\w.-]+)/issues/(\\d+)(?:[/?#][\\w#/?=&%.-]*[\\w/=%-])?)",
+        "replace": "$1[◉ $3#$4]($2)",
+        "fields": [
+          "vcs",
+          "annotations",
+          "details",
+          "todo"
+        ]
+      },
+      {
+        "match": "(^|[^(\\w/])(https?://github\\.com/[\\w.-]+/([\\w.-]+)/pull/(\\d+)(?:[/?#][\\w#/?=&%.-]*[\\w/=%-])?)",
+        "replace": "$1[⑂ $3#$4]($2)",
+        "fields": [
+          "annotations",
+          "vcs",
+          "details",
+          "todo"
+        ]
       }
     ]
   },
