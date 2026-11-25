@@ -456,17 +456,17 @@
     "columns": [
       {
         "filter": "status:pending progressState:",
-        "move": "modify status:pending progressState:",
+        "move": "pending",
         "name": "To do"
       },
       {
         "filter": "status:pending progressState:inprogress",
-        "move": "modify status:pending progressState:inprogress",
+        "move": "inprogress",
         "name": "In progress"
       },
       {
         "filter": "status:pending progressState:review",
-        "move": "modify status:pending progressState:review progress:90 reviewed:",
+        "move": "toreview",
         "name": "Review"
       },
       {
@@ -510,9 +510,9 @@
       "icon": "loader-circle"
     },
     {
+      "name": "toreview",
       "command": "modify status:pending progressState:review reviewed:",
-      "icon": "eye",
-      "name": "review"
+      "icon": "eye"
     },
     {
       "name": "fail",
