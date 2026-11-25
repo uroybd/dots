@@ -546,7 +546,12 @@ def jira-ticket-to-url [ticket: string] {
     return $"($env.JIRA_HOST)/browse/($ticket)"
 }
 
-def 'jira issues branch review' [--create-pr(-p)] {
+# Moves the branch's ticket to Code Review; with -p also opens the PR with a TICKET: line on top.
+# A PR body piped in goes right after the TICKET: line and the PR is created in one call
+# (`$body | nu -l --stdin -c '$in | jira issues branch review -p'`; nu only hands stdin to the script, hence `$in |`).
+# Without one the first commit's body is used.
+def 'jira issues branch review' [--create-pr(-p)]: [nothing -> nothing, string -> nothing] {
+    let piped_body = ($in | default "" | into string | str trim)
 
     # Get the current branch name
     let current_branch = (git branch --show-current)
@@ -554,13 +559,20 @@ def 'jira issues branch review' [--create-pr(-p)] {
         let ticket = (get-ticket-from-branch)
         ^jira issue move $ticket "Code Review"
         if $create_pr {
-            gh pr create --fill-first
-            print "Created PR successfully"
-            let pr_body = gh pr view --json body | from json | get body
-            let ticket_url = (jira-ticket-to-url $ticket)
-            let updated_body = $"TICKET: ($ticket_url)\n\n($pr_body)"
-            gh pr edit --body $updated_body
-            print "Updated Ticket link in the PR"
+            let ticket_line = $"TICKET: (jira-ticket-to-url $ticket)"
+            if $piped_body != "" {
+                # --body overrides the body from --fill-first; the title still comes from the first commit.
+                gh pr create --fill-first --body $"($ticket_line)\n\n($piped_body)"
+                print "Created PR with the ticket link and the piped body"
+            } else {
+                gh pr create --fill-first
+                print "Created PR successfully"
+                let pr_body = gh pr view --json body | from json | get body
+                gh pr edit --body $"($ticket_line)\n\n($pr_body)"
+                print "Updated Ticket link in the PR"
+            }
+        } else if $piped_body != "" {
+            print -e "[WARN] A PR body was piped in without -p; it was ignored."
         }
     } else {
         print "Current branch is not a FUL- branch, skipping Jira issue move."
