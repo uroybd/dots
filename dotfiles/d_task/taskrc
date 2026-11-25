@@ -82,7 +82,7 @@ report.completed.sort=project+/,outcome+,end+
 
 # Report: Kanban
 report._kanban.description=Open tasks and the ones finished lately, for Kanban
-report._kanban.columns=id,description,progress,todo,Urgency,project,jira,vcs,tags,due.relative,scheduled.countdown
+report._kanban.columns=id,description,progress,todo,urgency,project,jira,vcs,tags,due.relative,scheduled.countdown
 report._kanban.labels=ID,Description,Progress,TODO,U,Project,Jira,VCS,Tags,Due,Sch
 report._kanban.filter=( +PENDING or +COMPLETED )
 report._kanban.sort=end-,urgency-
