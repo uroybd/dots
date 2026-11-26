@@ -57,7 +57,8 @@ def dotcommit [...msg] {
             dot-commit-push $commit_message
         }
     }
-    print "Committing in dotfiles..."
+    print "Committing in dotfiles...\nChecking for leaked secrets..."
+    dotr scan --staged
     dot-commit-push $commit_message
 }
 
