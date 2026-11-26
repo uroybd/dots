@@ -498,32 +498,33 @@
     "setup": "automatic",
     "uda": "progressState"
   },
+  "tui": {
+    "nerdFont": true,
+    "sync": "startAndClose"
+  },
+  "version": 5,
   "taskCommands": [
     {
+      "name": "pending",
       "command": "modify status:pending progressState:",
-      "icon": "circle-dashed",
-      "name": "pending"
+      "icon": "circle-dashed"
     },
     {
+      "name": "inprogress",
       "command": "modify status:pending progressState:inprogress",
       "icon": "loader-circle",
-      "name": "inprogress",
       "label": "In Progress"
     },
     {
+      "name": "toreview",
       "command": "modify status:pending progressState:review reviewed:",
       "icon": "eye",
-      "name": "toreview",
       "label": "Review"
     },
     {
+      "name": "fail",
       "command": "done outcome:failed",
-      "icon": "circle-x",
-      "name": "fail"
+      "icon": "circle-x"
     }
-  ],
-  "tui": {
-    "sync": "startAndClose"
-  },
-  "version": 4
+  ]
 }

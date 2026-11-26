@@ -711,7 +711,7 @@ def history-fzf [] {
     }
 }
 
-def --env claude-fulflld [...args: string] {
+def --env claude_f [...args: string] {
     with-env { CLAUDE_CONFIG_DIR: $"($env.HOME)/.claude-fulflld" } {
         claude ...$args
     }
