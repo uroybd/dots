@@ -5,6 +5,8 @@
 # You can use it to add commands that run after AeroSpace startup.
 # 'after-startup-command' is run after 'after-login-command'
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
+config-version = 2
+
 after-startup-command = [
   'exec-and-forget open -n /Applications/Ghostty.app',
   'exec-and-forget open -n /Applications/Obsidian.app',
