@@ -93,7 +93,7 @@ urgency.inherit=1
 urgency.user.project.FUL.coefficient=1.5
 urgency.user.project.J.coefficient=1.3
 urgency.user.project.Meghnaad.coefficient=1.2
-urgency.uda.progressState.review.coefficient=-3
+urgency.uda.progressState.review.coefficient=-4.5
 
 # Review
 uda.reviewed.type=date

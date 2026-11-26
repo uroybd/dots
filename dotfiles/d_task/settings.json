@@ -10,6 +10,7 @@
     },
     "transformations": [
       {
+        "condition": "project:FUL",
         "fields": [
           "jira",
           "todo",
@@ -17,28 +18,27 @@
           "details"
         ],
         "match": "\\b(FUL-\\d+)\\b",
-        "replace": "[$1](https://dlivrdio.atlassian.net/browse/$1)",
-        "condition": "project:FUL"
+        "replace": "[$1](https://dlivrdio.atlassian.net/browse/$1)"
       },
       {
+        "fields": [
+          "vcs",
+          "annotations",
+          "details",
+          "todo"
+        ],
         "match": "(^|[^(\\w/])(https?://github\\.com/[\\w.-]+/([\\w.-]+)/issues/(\\d+)(?:[/?#][\\w#/?=&%.-]*[\\w/=%-])?)",
-        "replace": "$1[◉ $3#$4]($2)",
-        "fields": [
-          "vcs",
-          "annotations",
-          "details",
-          "todo"
-        ]
+        "replace": "$1[◉ $3#$4]($2)"
       },
       {
-        "match": "(^|[^(\\w/])(https?://github\\.com/[\\w.-]+/([\\w.-]+)/pull/(\\d+)(?:[/?#][\\w#/?=&%.-]*[\\w/=%-])?)",
-        "replace": "$1[⑂ $3#$4]($2)",
         "fields": [
           "annotations",
           "vcs",
           "details",
           "todo"
-        ]
+        ],
+        "match": "(^|[^(\\w/])(https?://github\\.com/[\\w.-]+/([\\w.-]+)/pull/(\\d+)(?:[/?#][\\w#/?=&%.-]*[\\w/=%-])?)",
+        "replace": "$1[⑂ $3#$4]($2)"
       }
     ]
   },
@@ -489,9 +489,9 @@
         "name": "FULFLLD"
       },
       {
+        "filter": "rc.report._kanban.sort=urgency-,project+/,end- project:Meghnaad",
         "id": "meghnaad",
-        "name": "Meghnaad",
-        "filter": "rc.report._kanban.sort=urgency-,project+/,end- project:Meghnaad"
+        "name": "Meghnaad"
       }
     ],
     "report": "_kanban",
@@ -500,28 +500,30 @@
   },
   "taskCommands": [
     {
-      "name": "pending",
       "command": "modify status:pending progressState:",
-      "icon": "circle-dashed"
+      "icon": "circle-dashed",
+      "name": "pending"
     },
     {
-      "name": "inprogress",
       "command": "modify status:pending progressState:inprogress",
-      "icon": "loader-circle"
+      "icon": "loader-circle",
+      "name": "inprogress",
+      "label": "In Progress"
     },
     {
-      "name": "toreview",
       "command": "modify status:pending progressState:review reviewed:",
-      "icon": "eye"
+      "icon": "eye",
+      "name": "toreview",
+      "label": "Review"
     },
     {
-      "name": "fail",
       "command": "done outcome:failed",
-      "icon": "circle-x"
+      "icon": "circle-x",
+      "name": "fail"
     }
   ],
   "tui": {
     "sync": "startAndClose"
   },
-  "version": 3
+  "version": 4
 }
