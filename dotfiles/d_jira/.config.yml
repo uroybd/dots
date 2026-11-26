@@ -605,9 +605,9 @@ issue:
       name: Support
       handle: Support
       subtask: false
-login: roy@fulflld.com
+login: {{ JIRA_EMAIL }}
 project:
   key: FUL
   type: classic
-server: https://dlivrdio.atlassian.net
+server: {{ JIRA_HOST }}
 timezone: Asia/Dhaka

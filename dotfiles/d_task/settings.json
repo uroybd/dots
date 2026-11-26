@@ -18,7 +18,7 @@
           "details"
         ],
         "match": "\\b(FUL-\\d+)\\b",
-        "replace": "[$1](https://dlivrdio.atlassian.net/browse/$1)"
+        "replace": "[$1]({{ JIRA_HOST }}/browse/$1)"
       },
       {
         "fields": [
