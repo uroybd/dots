@@ -1,6 +1,4 @@
-def nuopen [arg, --raw(-r)] {
-    if $raw { open -r $arg } else { open $arg }
-}
+alias nuopen = open
 alias open = ^open
 alias neovide = ^open -a NeoVide.app
 alias comm = cz c -a

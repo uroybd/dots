@@ -138,6 +138,16 @@ let light_theme = {
 
 def zellij-smart-rename [] {
     if not ("ZELLIJ" in $env) { return }
+    # Floating panes are scratch shells; only tiled panes name the tab
+    let is_floating = (
+        try {
+            zellij action list-panes --json --state e> /dev/null
+            | from json
+            | where {|p| not $p.is_plugin and ($p.id | into string) == ($env.ZELLIJ_PANE_ID? | default "") }
+            | get is_floating?.0? | default false
+        } catch { false }
+    )
+    if $is_floating { return }
     # 1. Fetch current tab info, muting stderr strings silently
     let active_tab_info = (
         try {
