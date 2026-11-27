@@ -41,9 +41,23 @@ def dot-commit-push [message: string] {
     }
 }
 
-# Commit with the arguments as the message in each submodule and push, then do the same in the main repository
+# Stage the main repository's changes and stop with an error if `dotr scan` finds a secret in them, or cannot finish.
+# Submodule pointers stay unstaged: scan reads each staged path with `git show`, which fails on a submodule's entry.
+# The submodules' own files are not scanned: dotr only runs where config.toml is.
+def dot-scan-staged [] {
+    git add --all
+    git restore --staged ...($DOT_SUBMODULES | each {|sub| $"dotfiles/($sub)" })
+    try { dotr scan --staged } catch {
+        error make --unspanned {msg: "dotcommit stopped: `dotr scan --staged` found a secret or could not finish. Nothing was committed or pushed."}
+    }
+}
+
+# Scan the main repository for secrets, then commit with the arguments as the message in each submodule and push,
+# then do the same in the main repository
 def dotcommit [...msg] {
     let commit_message = $msg | str join " "
+    print "Checking dotfiles for leaked secrets..."
+    dot-scan-staged
     for sub in $DOT_SUBMODULES {
         print $"Committing in ($sub) submodule..."
         do {
@@ -55,8 +69,7 @@ def dotcommit [...msg] {
             dot-commit-push $commit_message
         }
     }
-    print "Committing in dotfiles...\nChecking for leaked secrets..."
-    dotr scan --staged
+    print "Committing in dotfiles..."
     dot-commit-push $commit_message
 }
 
@@ -86,4 +99,20 @@ def diff_from_now [dateinput] {
     } else {
         echo $diff
     }
+}
+
+# `bw login`, `bw unlock` and `bw lock` with every flag and argument passed through to bw. Only with --raw do they
+# also keep $env.BW_SESSION: login and unlock put the session key bw prints there instead of on screen, so later bw
+# commands in this shell use it, and lock removes it.
+def --env --wrapped "bw login" [...args] {
+    if "--raw" in $args { $env.BW_SESSION = (^bw login ...$args) } else { ^bw login ...$args }
+}
+
+def --env --wrapped "bw unlock" [...args] {
+    if "--raw" in $args { $env.BW_SESSION = (^bw unlock ...$args) } else { ^bw unlock ...$args }
+}
+
+def --env --wrapped "bw lock" [...args] {
+    ^bw lock ...$args
+    if "--raw" in $args { hide-env -i BW_SESSION }
 }
