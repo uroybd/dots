@@ -101,18 +101,23 @@ def diff_from_now [dateinput] {
     }
 }
 
-# `bw login`, `bw unlock` and `bw lock` with every flag and argument passed through to bw. Only with --raw do they
-# also keep $env.BW_SESSION: login and unlock put the session key bw prints there instead of on screen, so later bw
-# commands in this shell use it, and lock removes it.
+# `bw login`, `bw unlock`, `bw lock` and `bw logout` pass every flag and argument through to bw and print what it
+# prints. Bare, with nothing after them, they keep $env.BW_SESSION instead: login and unlock run with --raw and put
+# the session key there, so later bw commands in this shell use it; lock and logout remove it.
 def --env --wrapped "bw login" [...args] {
-    if "--raw" in $args { $env.BW_SESSION = (^bw login ...$args) } else { ^bw login ...$args }
+    if ($args | is-empty) { $env.BW_SESSION = (^bw login --raw) } else { ^bw login ...$args }
 }
 
 def --env --wrapped "bw unlock" [...args] {
-    if "--raw" in $args { $env.BW_SESSION = (^bw unlock ...$args) } else { ^bw unlock ...$args }
+    if ($args | is-empty) { $env.BW_SESSION = (^bw unlock --raw) } else { ^bw unlock ...$args }
 }
 
 def --env --wrapped "bw lock" [...args] {
     ^bw lock ...$args
-    if "--raw" in $args { hide-env -i BW_SESSION }
+    if ($args | is-empty) { hide-env -i BW_SESSION }
+}
+
+def --env --wrapped "bw logout" [...args] {
+    ^bw logout ...$args
+    if ($args | is-empty) { hide-env -i BW_SESSION }
 }
